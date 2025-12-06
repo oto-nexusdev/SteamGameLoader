@@ -1,0 +1,295 @@
+<!-- frontend/search.html - Página de Busca Limpa e Modularizada -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam GameLoader Ultimate | Busca de Jogos</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/global_components.css">
+    <link rel="stylesheet" href="/css/search.css"> <!-- CSS específico da busca -->
+    
+    <!-- Fontes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos específicos para garantir compatibilidade -->
+    <style>
+        /* Garantir que notificações unificadas tenham prioridade */
+        #unified-notification-container {
+            z-index: 9999 !important;
+        }
+        
+        /* Remover estilos conflitantes */
+        .notification-container:not(#unified-notification-container) {
+            display: none !important;
+        }
+        
+        /* Garantir que botões funcionem corretamente */
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* Loading states */
+        .search-btn .fa-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="search-page">
+    <!-- Background -->
+    <div class="search-background"></div>
+    
+    <!-- Header -->
+    <div id="header-container"></div>
+    
+    <!-- Menu Mobile -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Container Principal -->
+    <div class="main-container" id="main-container">
+        <!-- Sidebar -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Conteúdo -->
+        <main class="main-content" id="main-content">
+            <div class="search-container">
+                <!-- Header -->
+                <div class="search-header">
+                    <h1 class="search-title">🎮 Busca de Jogos Steam</h1>
+                    <p class="search-subtitle">
+                        Encontre qualquer jogo na Steam Store. Busque por nome, gênero ou categoria.
+                        Instale jogos diretamente ou faça upload via arquivo ZIP.
+                    </p>
+                </div>
+                
+                <!-- Card de Busca -->
+                <div class="search-main-card">
+                    <!-- Controles -->
+                    <div class="search-controls">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" 
+                                   id="searchInput" 
+                                   class="search-input" 
+                                   placeholder="Digite o nome de um jogo (mínimo 2 caracteres)..."
+                                   autocomplete="off"
+                                   aria-label="Campo de busca de jogos"
+                                   spellcheck="false">
+                        </div>
+                        
+                        <button id="btnSearch" class="search-btn" aria-label="Buscar jogos">
+                            <i class="fas fa-search"></i>
+                            <span>Buscar Jogos</span>
+                        </button>
+                        
+                        <button id="btnInstallZip" class="zip-btn" aria-label="Upload via arquivo ZIP">
+                            <i class="fas fa-file-archive"></i>
+                            <span>Upload via ZIP</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Input ZIP (oculto) -->
+                    <input type="file" id="zipFileInput" accept=".zip" style="display: none;" />
+                    
+                    <!-- Status -->
+                    <div class="muted small" style="margin-top: 15px;">
+                        <i class="fas fa-info-circle" style="margin-right: 8px; color: #7a2aff;"></i>
+                        <span id="systemStatusText">Sistema de busca carregando...</span>
+                    </div>
+                    
+                    <!-- Estatísticas -->
+                    <div class="search-stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="stat-games-found">0</div>
+                            <div class="stat-label">Jogos Encontrados</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="stat-free-games">0</div>
+                            <div class="stat-label">Gratuitos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="stat-installed">0</div>
+                            <div class="stat-label">Instalados</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="stat-total-size">0 GB</div>
+                            <div class="stat-label">Espaço Total</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Resultados -->
+                <div class="results-section">
+                    <div class="results-header">
+                        <div class="results-title">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Resultados da Busca</span>
+                        </div>
+                        <div class="results-count" id="resultsCount">0 jogos</div>
+                    </div>
+                    
+                    <!-- Grid de Resultados -->
+                    <div class="results-grid" id="resultsGrid">
+                        <!-- Dinâmico -->
+                        <div class="search-empty" id="initialEmptyState">
+                            <i class="fas fa-search"></i>
+                            <h3>Nenhuma busca realizada</h3>
+                            <p>Digite o nome de um jogo acima para começar sua busca na Steam Store.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading -->
+                    <div class="search-loading" id="loadingState" style="display: none;">
+                        <div class="search-loader"></div>
+                        <p>Buscando jogos na Steam Store...</p>
+                    </div>
+                    
+                    <!-- Área ZIP -->
+                    <div class="zip-upload-section" id="zipUploadArea" role="button" tabindex="0" aria-label="Área de upload ZIP">
+                        <div class="zip-icon">
+                            <i class="fas fa-file-archive"></i>
+                        </div>
+                        <h3>Instalação via ZIP</h3>
+                        <p>
+                            Arraste e solte um arquivo ZIP aqui ou clique para selecionar
+                        </p>
+                        
+                        <div class="zip-progress" id="zipProgress" style="display: none;">
+                            <div class="zip-progress-bar" id="zipProgressBar"></div>
+                            <div class="zip-progress-text" id="zipProgressText" style="text-align: center; margin-top: 5px; font-size: 12px;"></div>
+                        </div>
+                        <div id="zipStatus"></div>
+                    </div>
+                    
+                    <!-- Botão Limpar -->
+                    <div style="text-align: center; margin-top: 40px;">
+                        <button id="btnClearResults" class="zip-btn" style="display: none;">
+                            <i class="fas fa-trash"></i>
+                            <span>Limpar Resultados</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Footer -->
+    <div id="footer-container"></div>
+    
+    <!-- Modal de Detalhes -->
+    <div id="gameDetailsModal" class="game-details-modal" style="display: none;">
+        <div class="game-details-content" id="gameDetailsContent">
+            <!-- Dinâmico -->
+        </div>
+    </div>
+    
+    <!-- Botão Tema -->
+    <div class="dark-mode-toggle" id="darkModeToggle" title="Alternar tema" role="button" tabindex="0" aria-label="Alternar modo escuro">
+        <i class="fas fa-moon"></i>
+    </div>
+    
+    <!-- JavaScript -->
+    <!-- IMPORTANTE: Ordem de carregamento corrigida -->
+    <script src="/js/index.js"></script> <!-- Sistema de apoio (deve carregar primeiro) -->
+    <script src="/js/notification.js"></script> <!-- SISTEMA UNIFICADO DE NOTIFICAÇÃO -->
+    <script src="/js/search.js"></script> <!-- Sistema de busca (usa sistema unificado) -->
+    
+    <!-- Script de inicialização otimizado -->
+    <script>
+        // Script de inicialização otimizado
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página de busca carregada - Inicializando...');
+            
+            // Configurar modo escuro inicial
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                const icon = document.querySelector('#darkModeToggle i');
+                if (icon) {
+                    icon.className = 'fas fa-sun';
+                }
+            }
+            
+            // Configurar botão de tema
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('dark-mode');
+                    const isDark = document.body.classList.contains('dark-mode');
+                    localStorage.setItem('darkMode', isDark);
+                    
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                    
+                    // Usar sistema unificado de notificações
+                    if (window.unifiedNotifications) {
+                        window.unifiedNotifications.show(
+                            '🎨 Tema Alterado',
+                            `Modo ${isDark ? 'escuro' : 'claro'} ativado`,
+                            'info',
+                            3000
+                        );
+                    }
+                });
+            }
+            
+            // Verificar parâmetros de busca na URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchQuery = urlParams.get('q');
+            if (searchQuery && searchQuery.trim().length >= 2) {
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = searchQuery;
+                    // Aguardar sistema carregar antes de buscar
+                    setTimeout(() => {
+                        if (window.searchSystem && typeof window.searchSystem.performSearch === 'function') {
+                            window.searchSystem.performSearch();
+                        }
+                    }, 1000);
+                }
+            }
+            
+            // Verificar se há erros de carregamento
+            setTimeout(() => {
+                const systemStatus = document.getElementById('systemStatusText');
+                if (systemStatus && systemStatus.textContent.includes('carregando')) {
+                    systemStatus.innerHTML = '<i class="fas fa-check-circle"></i> Sistema de busca pronto';
+                }
+            }, 2000);
+            
+            console.log('✅ Página de busca inicializada com sucesso');
+        });
+        
+        // Tratamento de erros global para busca
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('search')) {
+                console.error('❌ Erro detectado no sistema de busca:', e);
+                
+                // Usar sistema unificado para mostrar erro
+                if (window.unifiedNotifications) {
+                    window.unifiedNotifications.show(
+                        '⚠️ Erro no Sistema',
+                        'Ocorreu um erro no sistema de busca. Tente recarregar a página.',
+                        'error',
+                        5000
+                    );
+                }
+            }
+        });
+    </script>
+</body>
+</html>

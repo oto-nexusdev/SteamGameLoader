@@ -1,0 +1,832 @@
+<!-- steam_detect.html - VERSÃO OTIMIZADA E REFINADA -->
+<div id="steamDetectRoot" class="steam-config-card fade-in">
+    <div class="config-header">
+        <div class="config-header-title">Configuração do Steam</div>
+        <div class="config-header-subtitle">Detecção automática ou configuração manual</div>
+    </div>
+
+    <div id="steamConfigArea">
+        <!-- Status da Detecção -->
+        <div id="autoDetectionStatus" class="status-message status-info">
+            🔍 Iniciando detecção automática...
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="steam-actions">
+            <button id="btnAutoDetect" class="btn primary">
+                🔄 Redetectar
+            </button>
+            <button id="btnManualSelect" class="btn secondary">
+                📁 Seleção Manual
+            </button>
+            <button id="btnClearCache" class="btn tertiary small" title="Limpar cache de detecção">
+                🧹 Cache
+            </button>
+        </div>
+
+        <!-- Seleção Manual -->
+        <div id="manualSelection" class="manual-selection" style="display:none;">
+            <div class="input-group-header">
+                <span class="input-label">Caminho do Steam</span>
+                <span class="input-hint">Digite o caminho completo ou selecione a pasta</span>
+            </div>
+            
+            <div class="path-input-group">
+                <input type="text" 
+                       id="manualSteamPath" 
+                       placeholder="Ex: C:\Program Files (x86)\Steam"
+                       class="path-input" />
+                <button id="btnValidatePath" class="btn primary">
+                    Validar
+                </button>
+            </div>
+            <div id="pathValidationResult" class="validation-result"></div>
+            
+            <div class="path-examples">
+                <strong>Exemplos válidos:</strong>
+                <ul>
+                    <li><code>C:\Program Files (x86)\Steam</code></li>
+                    <li><code>C:\Program Files\Steam</code></li>
+                    <li><code>D:\Steam</code></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Resultado da Configuração -->
+        <div id="steamConfigResult" style="display:none;">
+            <div class="status-message status-success">
+                <div class="success-header">
+                    <span class="success-icon">✅</span>
+                    <span class="success-text">Steam configurado com sucesso!</span>
+                </div>
+            </div>
+            
+            <div class="steam-path-display">
+                <div class="path-label">Caminho configurado:</div>
+                <div class="path-value" id="currentSteamPath"></div>
+            </div>
+            
+            <div class="config-actions">
+                <button id="btnTestSteam" class="btn secondary small">
+                    Testar Steam
+                </button>
+                <button id="btnChangePath" class="btn secondary small">
+                    Alterar Caminho
+                </button>
+                <button id="btnSystemReport" class="btn secondary small">
+                    Relatório do Sistema
+                </button>
+            </div>
+        </div>
+
+        <!-- Informações do Sistema -->
+        <div id="systemInfo" class="system-info" style="display:none;">
+            <div class="info-header">📊 Status do Sistema</div>
+            <div id="systemInfoContent" class="info-content"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+.steam-config-card {
+    background: rgba(21, 18, 37, 0.95);
+    border: 1px solid rgba(120, 40, 255, 0.25);
+    border-radius: 12px;
+    padding: 18px;
+    margin: 12px 0;
+    box-shadow: 0 8px 25px rgba(6, 2, 20, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+.steam-config-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, #7a2aff, #ff2a6d, #4de0ff);
+    opacity: 0.6;
+}
+
+.config-header {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.config-header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.config-header-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    opacity: 0.8;
+}
+
+.status-message {
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin: 12px 0;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    border-left: 3px solid;
+    line-height: 1.4;
+}
+
+.status-info {
+    background: rgba(59, 130, 246, 0.08);
+    border-left-color: #3b82f6;
+    color: #93c5fd;
+}
+
+.status-success {
+    background: rgba(34, 197, 94, 0.08);
+    border-left-color: #22c55e;
+    color: #bbf7d0;
+}
+
+.status-error {
+    background: rgba(239, 68, 68, 0.08);
+    border-left-color: #ef4444;
+    color: #fecaca;
+}
+
+.status-warning {
+    background: rgba(245, 158, 11, 0.08);
+    border-left-color: #f59e0b;
+    color: #fed7aa;
+}
+
+.success-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.steam-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+}
+
+.config-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.manual-selection {
+    padding: 16px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    margin: 14px 0;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.input-group-header {
+    margin-bottom: 12px;
+}
+
+.input-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.input-hint {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.8;
+}
+
+.path-input-group {
+    display: flex;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.path-input {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    transition: all 0.3s ease;
+}
+
+.path-input:focus {
+    outline: none;
+    border-color: var(--electric-blue);
+    box-shadow: 0 0 0 2px rgba(102, 192, 244, 0.15);
+    background: rgba(15, 23, 42, 0.95);
+}
+
+.path-input::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+}
+
+.validation-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.success-result {
+    background: rgba(34, 197, 94, 0.08);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.error-result {
+    background: rgba(239, 68, 68, 0.08);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.path-examples {
+    margin-top: 14px;
+    padding: 10px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.path-examples ul {
+    margin: 6px 0 0 0;
+    padding-left: 18px;
+}
+
+.path-examples li {
+    margin: 3px 0;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.path-examples code {
+    background: rgba(148, 163, 184, 0.1);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: var(--electric-blue);
+    font-size: 11px;
+}
+
+.steam-path-display {
+    background: rgba(15, 23, 42, 0.7);
+    padding: 14px;
+    border-radius: 10px;
+    margin: 14px 0;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.path-label {
+    font-weight: 600;
+    color: var(--electric-blue);
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.path-value {
+    color: var(--text-primary);
+    word-break: break-all;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.system-info {
+    margin-top: 16px;
+    padding: 14px;
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 10px;
+    border: 1px solid rgba(102, 192, 244, 0.2);
+}
+
+.info-header {
+    font-weight: 600;
+    color: var(--electric-blue);
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.info-content {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.info-content pre {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 6px 0;
+    font-size: 11px;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, #7a2aff, #5e17cc);
+    color: white;
+}
+
+.btn.primary:hover {
+    background: linear-gradient(135deg, #5e17cc, #4a12a8);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(122, 42, 255, 0.3);
+}
+
+.btn.secondary {
+    background: rgba(148, 163, 184, 0.1);
+    color: var(--text-primary);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.btn.secondary:hover {
+    background: rgba(148, 163, 184, 0.2);
+    border-color: var(--electric-blue);
+    transform: translateY(-1px);
+}
+
+.btn.tertiary {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fed7aa;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.btn.tertiary:hover {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+}
+
+.btn.small {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .steam-config-card {
+        padding: 14px;
+        margin: 10px 0;
+    }
+    
+    .steam-actions {
+        flex-direction: column;
+    }
+    
+    .path-input-group {
+        flex-direction: column;
+    }
+    
+    .config-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+// =========================================
+// SISTEMA DE CONFIGURAÇÃO DO STEAM (OTIMIZADO)
+// =========================================
+
+(function () {
+    'use strict';
+
+    // ✅ Toast simplificado
+    function safeToast(message, type = 'info') {
+        if (window.showToast && typeof window.showToast === 'function') {
+            window.showToast(message, type);
+            return;
+        }
+        // Fallback básico
+        const el = document.createElement('div');
+        el.textContent = message;
+        el.style.cssText = `
+            position:fixed;
+            right:18px;
+            top:100px;
+            padding:10px 14px;
+            border-radius:8px;
+            color:#fff;
+            z-index:12000;
+            font-weight:600;
+            font-size:13px;
+            background:${type === 'error' ? 'linear-gradient(135deg, #ff5555, #d32f2f)' : 
+                         type === 'success' ? 'linear-gradient(135deg, #00e676, #00c853)' : 
+                         type === 'warning' ? 'linear-gradient(135deg, #ffaa00, #ff6d00)' : 
+                         'linear-gradient(135deg, #2196f3, #1976d2)'};
+            box-shadow:0 6px 20px rgba(0,0,0,0.3);
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+    }
+
+    // ✅ Fetch otimizado
+    async function safeJsonFetch(url, options = {}) {
+        const startTime = Date.now();
+        try {
+            const res = await fetch(url, {
+                ...options,
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache',
+                    ...options.headers
+                }
+            });
+            
+            const text = await res.text();
+            
+            try {
+                const data = JSON.parse(text);
+                console.debug(`[STEAM DETECT] ${url} → ${res.status} (${Date.now() - startTime}ms)`);
+                return data;
+            } catch (err) {
+                console.error(`[STEAM DETECT] Resposta não-JSON de ${url}:`, text.substring(0, 200));
+                throw new Error(`Resposta inválida do servidor (${res.status})`);
+            }
+        } catch (err) {
+            console.error(`[STEAM DETECT] Erro em ${url}:`, err);
+            throw err;
+        }
+    }
+
+    class SteamConfigManager {
+        constructor() {
+            this.steamPath = null;
+            this.configKey = 'steam_config';
+            this.initialized = false;
+            this.isDetecting = false;
+            this._bindUI();
+            this.init();
+        }
+
+        async init() {
+            await this.loadSavedConfig();
+            if (!this.isSteamConfigured()) {
+                await this.autoDetectSteam();
+            } else {
+                this.updateStatus('✅ Steam configurado (carregado)', 'success');
+                this.showSuccessState();
+            }
+            this.initialized = true;
+            
+            window.dispatchEvent(new CustomEvent('steamDetectReady', {
+                detail: { configured: this.isSteamConfigured() }
+            }));
+        }
+
+        // ==== API ====
+        getSteamPath() {
+            return this.steamPath;
+        }
+
+        isSteamConfigured() {
+            return !!(this.steamPath && String(this.steamPath).trim() !== '');
+        }
+
+        // ==== UI BIND ====
+        _bindUI() {
+            const auto = document.getElementById('btnAutoDetect');
+            const manualBtn = document.getElementById('btnManualSelect');
+            const validate = document.getElementById('btnValidatePath');
+            const manualInput = document.getElementById('manualSteamPath');
+            const changePath = document.getElementById('btnChangePath');
+            const testSteam = document.getElementById('btnTestSteam');
+            const clearCache = document.getElementById('btnClearCache');
+            const systemReport = document.getElementById('btnSystemReport');
+
+            if (auto) auto.addEventListener('click', () => this.autoDetectSteam());
+            if (manualBtn) manualBtn.addEventListener('click', () => this.showManualSelection());
+            if (validate) validate.addEventListener('click', async () => await this.validateManualPath());
+            if (manualInput) manualInput.addEventListener('keypress', async (e) => {
+                if (e.key === 'Enter') await this.validateManualPath();
+            });
+            if (changePath) changePath.addEventListener('click', () => this.showManualSelection());
+            if (testSteam) testSteam.addEventListener('click', async () => await this.testSteamIntegration());
+            if (clearCache) clearCache.addEventListener('click', async () => await this.clearSteamCache());
+            if (systemReport) systemReport.addEventListener('click', async () => await this.showSystemReport());
+        }
+
+        // ==== STORAGE / LOAD ====
+        async loadSavedConfig() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(this.configKey) || '{}');
+                if (saved.steamPath) {
+                    this.steamPath = saved.steamPath;
+                    this._emitConfigUpdated(false);
+                    console.log('[STEAM CONFIG] Configuração carregada:', this.steamPath);
+                }
+            } catch (e) {
+                console.warn('[STEAM CONFIG] erro ao carregar config local', e);
+            }
+        }
+
+        saveConfig() {
+            localStorage.setItem(
+                this.configKey,
+                JSON.stringify({
+                    steamPath: this.steamPath,
+                    lastUpdated: new Date().toISOString()
+                })
+            );
+            console.log('[STEAM CONFIG] Configuração salva:', this.steamPath);
+        }
+
+        // ==== AUTO DETECT ====
+        async autoDetectSteam() {
+            if (this.isDetecting) return;
+            
+            this.isDetecting = true;
+            this.updateStatus('🔍 Procurando instalação do Steam...', 'info');
+            
+            try {
+                const res = await safeJsonFetch('/api/steam/path', { 
+                    cache: 'no-cache'
+                });
+
+                console.log('[STEAM CONFIG] Resposta detecção:', res);
+
+                if (res && res.success && res.path) {
+                    this.steamPath = res.path;
+                    this.saveConfig();
+                    this.showSuccessState();
+                    this.updateStatus('✅ Steam detectado automaticamente!', 'success');
+                    safeToast('Steam detectado automaticamente!', 'success');
+                    this._emitConfigUpdated(true);
+                } else {
+                    const errorMsg = res?.message || 'Steam não encontrado';
+                    this.updateStatus(`❌ ${errorMsg}`, 'error');
+                    this.showManualSelection();
+                    safeToast('Steam não encontrado automaticamente', 'warning');
+                }
+            } catch (err) {
+                console.error('[STEAM CONFIG] erro na detecção automática', err);
+                this.updateStatus('❌ Erro na detecção automática', 'error');
+                this.showManualSelection();
+                safeToast('Erro na detecção do Steam', 'error');
+            } finally {
+                this.isDetecting = false;
+            }
+        }
+
+        // ==== VALIDATE MANUAL PATH ====
+        async validateManualPath() {
+            const field = document.getElementById('manualSteamPath');
+            const msg = document.getElementById('pathValidationResult');
+            
+            if (!field || !msg) return false;
+
+            const rawPath = field.value.trim();
+            if (!rawPath) {
+                this.showValidationResult('⚠ Digite um caminho', 'warning');
+                safeToast('Digite um caminho do Steam', 'warning');
+                return false;
+            }
+
+            this.showValidationResult('⏳ Validando caminho...', 'info');
+            
+            try {
+                const res = await safeJsonFetch('/api/steam/validate-path', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: rawPath })
+                });
+
+                console.log('[STEAM CONFIG] Resposta validação:', res);
+
+                if (res && res.valid) {
+                    this.steamPath = res.normalized_path || rawPath;
+                    this.saveConfig();
+                    this.showSuccessState();
+                    this.showValidationResult('✅ Caminho válido!', 'success');
+                    safeToast('Caminho do Steam configurado com sucesso', 'success');
+                    this._emitConfigUpdated(false);
+                    return true;
+                } else {
+                    const errorMsg = res?.error || 'Caminho inválido';
+                    this.showValidationResult(`❌ ${errorMsg}`, 'error');
+                    safeToast('Caminho do Steam inválido', 'error');
+                    return false;
+                }
+            } catch (err) {
+                console.error('[STEAM CONFIG] erro na validação de caminho', err);
+                this.showValidationResult('❌ Erro na validação', 'error');
+                safeToast('Erro na validação do caminho', 'error');
+                return false;
+            }
+        }
+
+        async testSteamIntegration() {
+            try {
+                this.updateStatus('🧪 Testando integração com Steam...', 'info');
+                const res = await safeJsonFetch('/api/steam/test-integration');
+                
+                if (res && res.success) {
+                    this.updateStatus('✅ Teste de integração concluído!', 'success');
+                    safeToast('Teste de integração bem-sucedido!', 'success');
+                    
+                    this.showSystemInfo(res.test_results);
+                } else {
+                    this.updateStatus('❌ Teste de integração falhou', 'error');
+                    safeToast('Teste de integração falhou', 'error');
+                }
+            } catch (err) {
+                console.error('[STEAM CONFIG] erro no teste de integração', err);
+                this.updateStatus('❌ Erro no teste de integração', 'error');
+                safeToast('Erro no teste de integração', 'error');
+            }
+        }
+
+        async clearSteamCache() {
+            try {
+                this.updateStatus('🧹 Limpando cache do Steam...', 'info');
+                const res = await safeJsonFetch('/api/steam/clear-cache', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (res && res.success) {
+                    this.updateStatus('✅ Cache limpo com sucesso!', 'success');
+                    safeToast('Cache do Steam limpo!', 'success');
+                    
+                    setTimeout(() => this.autoDetectSteam(), 1000);
+                } else {
+                    this.updateStatus('❌ Falha ao limpar cache', 'error');
+                    safeToast('Falha ao limpar cache', 'warning');
+                }
+            } catch (err) {
+                console.error('[STEAM CONFIG] erro ao limpar cache', err);
+                this.updateStatus('❌ Erro ao limpar cache', 'error');
+                safeToast('Erro ao limpar cache', 'error');
+            }
+        }
+
+        async showSystemReport() {
+            try {
+                const res = await safeJsonFetch('/api/steam/detection-report');
+                
+                if (res && res.success) {
+                    this.showSystemInfo(res.report);
+                    safeToast('Relatório do sistema gerado', 'success');
+                } else {
+                    safeToast('Erro ao gerar relatório', 'error');
+                }
+            } catch (err) {
+                console.error('[STEAM CONFIG] erro ao obter relatório', err);
+                safeToast('Erro ao obter relatório do sistema', 'error');
+            }
+        }
+
+        // ==== UI HELPERS ====
+        updateStatus(msg, type = 'info') {
+            const el = document.getElementById('autoDetectionStatus');
+            if (!el) return;
+            
+            el.textContent = msg;
+            el.className = 'status-message';
+            
+            if (type === 'success') el.classList.add('status-success');
+            else if (type === 'error') el.classList.add('status-error');
+            else if (type === 'warning') el.classList.add('status-warning');
+            else el.classList.add('status-info');
+        }
+
+        showValidationResult(message, type = 'info') {
+            const msgEl = document.getElementById('pathValidationResult');
+            if (!msgEl) return;
+            
+            msgEl.textContent = message;
+            msgEl.className = 'validation-result';
+            
+            if (type === 'success') msgEl.classList.add('success-result');
+            else if (type === 'error' || type === 'warning') msgEl.classList.add('error-result');
+        }
+
+        showManualSelection() {
+            const manual = document.getElementById('manualSelection');
+            const result = document.getElementById('steamConfigResult');
+            
+            if (manual) {
+                manual.style.display = 'block';
+                if (result) result.style.display = 'none';
+                
+                const input = document.getElementById('manualSteamPath');
+                if (input) {
+                    input.value = '';
+                    setTimeout(() => input.focus(), 100);
+                }
+            }
+        }
+
+        showSuccessState() {
+            const resultEl = document.getElementById('steamConfigResult');
+            const pathEl = document.getElementById('currentSteamPath');
+            const manualEl = document.getElementById('manualSelection');
+            const systemInfo = document.getElementById('systemInfo');
+            
+            if (resultEl && pathEl) {
+                pathEl.textContent = this.steamPath || '';
+                resultEl.style.display = 'block';
+            }
+            
+            if (manualEl) manualEl.style.display = 'none';
+            if (systemInfo) systemInfo.style.display = 'none';
+        }
+
+        showSystemInfo(data) {
+            const systemInfo = document.getElementById('systemInfo');
+            const content = document.getElementById('systemInfoContent');
+            
+            if (systemInfo && content) {
+                content.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                systemInfo.style.display = 'block';
+            }
+        }
+
+        _emitConfigUpdated(autoDetected) {
+            if (!this.steamPath) return;
+            
+            window.dispatchEvent(new CustomEvent('steamConfigUpdated', {
+                detail: {
+                    path: this.steamPath,
+                    autoDetected: !!autoDetected,
+                    timestamp: Date.now()
+                }
+            }));
+            
+            console.log('[STEAM CONFIG] Configuração atualizada:', this.steamPath);
+        }
+    }
+
+    if (!window.steamConfigManager) {
+        window.steamConfigManager = new SteamConfigManager();
+    }
+
+    window.SteamConfigManager = SteamConfigManager;
+    
+    console.log('[STEAM DETECT] Sistema de configuração do Steam carregado');
+
+})();
+</script>

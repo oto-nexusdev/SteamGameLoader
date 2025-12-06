@@ -1,0 +1,43 @@
+<!-- frontend/header.html - VERSÃO FINAL OTIMIZADA -->
+<header class="home-header" id="homeHeader">
+    <!-- Layout corrigido com grid para melhor distribuição -->
+    <div class="header-container">
+        <!-- Seção 1: Logo e Branding (Esquerda) -->
+        <div class="header-section logo-section" onclick="window.location.href='/dashboard'">
+            <div class="logo-icon">
+                <div class="logo-animation">
+                    <i class="fas fa-gamepad"></i>
+                    <div class="logo-sparkle"></div>
+                    <div class="logo-sparkle sparkle-2"></div>
+                </div>
+            </div>
+            <div class="brand-text">
+                <h1>Steam GameLoader</h1>
+                <span class="version-badge">v19.0</span>
+            </div>
+        </div>
+        
+        <!-- Seção 3: User Controls (Direita) -->
+        <div class="header-section user-section">
+            <div class="user-controls-grid">
+                <button class="action-btn refresh-btn" onclick="forceRefreshAll()" title="Atualizar tudo">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                
+                <div class="user-info-card">
+                    <div class="greeting-text" id="greeting-text">Carregando...</div>
+                    <div class="username-display" id="username-display">
+                        <i class="fas fa-user"></i>
+                        <span class="username-text">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Incluir CSS externo -->
+<link rel="stylesheet" href="css/header.css">
+
+<!-- Incluir JavaScript externo -->
+<script src="js/header.js"></script>

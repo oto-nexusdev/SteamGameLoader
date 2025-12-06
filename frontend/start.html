@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Steam GameLoader Ultimate v8.0 - Inicializando</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root { 
+      --muted:#9aa3b8; 
+      --electric-blue:#66c0f4;
+      --success:#00ff88;
+      --warning:#ffaa00;
+      --error:#ff4444;
+    }
+
+    * { 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+    }
+
+    body {
+      font-family:'Montserrat', sans-serif;
+      background:linear-gradient(135deg,#030207f7,#0a0618f2);
+      color:#fff;
+      min-height:100vh;
+      overflow:hidden;
+    }
+
+    /* Overlay Principal */
+    #appLoadingOverlay{
+      position:fixed; 
+      inset:0; 
+      display:flex; 
+      align-items:center; 
+      justify-content:center;
+      background:linear-gradient(135deg,#030207f7,#0a0618f2);
+      backdrop-filter:blur(30px); 
+      z-index:9999;
+    }
+
+    .loader-box{
+      width:520px; 
+      max-width:90%; 
+      padding:32px; 
+      border-radius:20px; 
+      text-align:center;
+      background:linear-gradient(160deg,rgba(21,18,37,.95),rgba(30,26,53,.9));
+      border:1px solid rgba(120,40,255,.3); 
+      box-shadow:0 25px 80px rgba(6,2,20,.9);
+      animation:float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform:translateY(0px); }
+      50% { transform:translateY(-10px); }
+    }
+
+    .loader-icon{
+      font-size:64px; 
+      margin-bottom:18px;
+      animation:pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform:scale(1); }
+      50% { transform:scale(1.1); }
+    }
+
+    .loader-title{
+      font-size:24px; 
+      font-weight:900; 
+      margin-bottom:8px;
+      background:linear-gradient(135deg,#7a2aff,#ff2a6d,#4de0ff);
+      -webkit-background-clip:text; 
+      -webkit-text-fill-color:transparent;
+      background-size:200% auto;
+      animation:gradientShift 3s ease-in-out infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position:0% 50%; }
+      50% { background-position:100% 50%; }
+    }
+
+    .loader-sub{
+      color:var(--muted); 
+      font-size:14px; 
+      margin-bottom:24px;
+      min-height:20px;
+    }
+
+    .current-task{
+      color:var(--electric-blue);
+      font-weight:600;
+      font-size:13px;
+      margin-bottom:16px;
+      min-height:18px;
+      transition:all 0.3s ease;
+    }
+
+    .progress-container{
+      width:100%; 
+      height:14px; 
+      margin:20px 0;
+      background:rgba(255,255,255,.06); 
+      border-radius:10px; 
+      overflow:hidden;
+      position:relative;
+    }
+
+    .progress-fill{
+      width:0%; 
+      height:100%;
+      background:linear-gradient(90deg,#7a2aff,#ff2a6d,#4de0ff);
+      transition:width .5s cubic-bezier(0.4, 0, 0.2, 1);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .progress-fill::after {
+      content:'';
+      position:absolute;
+      top:0; 
+      left:-100%; 
+      width:100%; 
+      height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation:shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left:-100%; }
+      100% { left:100%; }
+    }
+
+    .progress-text{
+      display:flex; 
+      justify-content:space-between;
+      color:var(--muted); 
+      font-size:12px; 
+      margin-top:8px;
+    }
+
+    .tips-container{
+      margin-top:20px; 
+      padding:16px; 
+      background:rgba(255,255,255,.05); 
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .tip-header{
+      display:flex; 
+      align-items:center; 
+      gap:8px;
+      color:var(--electric-blue); 
+      font-size:12px; 
+      font-weight:600;
+      margin-bottom:8px;
+    }
+
+    #tipText{
+      color:var(--muted); 
+      font-size:12px; 
+      line-height:1.4;
+      min-height:32px; 
+      display:flex; 
+      align-items:center;
+      justify-content:center;
+    }
+
+    .system-check{
+      margin-top:16px; 
+      padding-top:16px;
+      border-top:1px solid rgba(255,255,255,.1);
+    }
+
+    .check-item{
+      display:flex; 
+      align-items:center; 
+      gap:8px;
+      color:var(--muted); 
+      font-size:11px; 
+      margin:4px 0;
+      transition:all 0.3s ease;
+    }
+
+    .check-status{
+      width:8px; 
+      height:8px; 
+      border-radius:50%;
+      background:var(--warning);
+      transition:all 0.3s ease;
+    }
+
+    .check-status.ready{ 
+      background:var(--success); 
+      box-shadow:0 0 8px var(--success);
+    }
+    
+    .check-status.error{ 
+      background:var(--error); 
+    }
+
+    .version-info{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:10px;
+      opacity:0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="appLoadingOverlay">
+    <div class="loader-box">
+      <div class="loader-icon">🎮</div>
+      <div class="loader-title">Steam GameLoader Ultimate</div>
+      <div class="loader-sub" id="currentPhase">Inicializando sistemas...</div>
+      <div class="current-task" id="currentTask">Verificando ambiente...</div>
+
+      <div class="progress-container">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="progress-text">
+        <span id="progressText">Carregando...</span>
+        <span id="progressPercent">0%</span>
+      </div>
+
+      <div class="system-check">
+        <div class="check-item">
+          <div class="check-status" id="checkCore"></div>
+          <span>Sistema Principal</span>
+        </div>
+        <div class="check-item">
+          <div class="check-status" id="checkUI"></div>
+          <span>Interface Gráfica</span>
+        </div>
+        <div class="check-item">
+          <div class="check-status" id="checkGameData"></div>
+          <span>Dados dos Jogos</span>
+        </div>
+        <div class="check-item">
+          <div class="check-status" id="checkAPIs"></div>
+          <span>APIs do Sistema</span>
+        </div>
+        <div class="check-item">
+          <div class="check-status" id="checkFixes"></div>
+          <span>Base de Fixes</span>
+        </div>
+        <div class="check-item">
+          <div class="check-status" id="checkDLCs"></div>
+          <span>Gerenciador DLC</span>
+        </div>
+      </div>
+
+      <div class="tips-container">
+        <div class="tip-header">
+          <span>💡</span>
+          <span>Dica do Sistema</span>
+        </div>
+        <div id="tipText">Use a busca rápida para encontrar jogos</div>
+      </div>
+
+      <div class="version-info">
+        v8.0 Ultimate • Sistema Integrado • Ready for Gaming
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class StartupManager {
+      constructor() {
+        this.progress = 0;
+        this.targetProgress = 0;
+        this.animationFrame = null;
+        this.currentPhase = 0;
+        
+        this.phases = [
+          { 
+            name: "Inicializando sistemas...", 
+            tasks: [
+              "Verificando ambiente...",
+              "Carregando configurações...",
+              "Inicializando core..."
+            ] 
+          },
+          { 
+            name: "Verificando APIs...", 
+            tasks: [
+              "Testando API de jogos...",
+              "Verificando DLC Manager...",
+              "Conectando Steam API..."
+            ] 
+          },
+          { 
+            name: "Carregando dados...", 
+            tasks: [
+              "Analisando biblioteca Steam...",
+              "Carregando base de fixes...",
+              "Processando DLCs disponíveis..."
+            ] 
+          },
+          { 
+            name: "Preparando interface...", 
+            tasks: [
+              "Carregando componentes...",
+              "Otimizando performance...",
+              "Inicializando módulos..."
+            ] 
+          },
+          { 
+            name: "Finalizando...", 
+            tasks: [
+              "Aplicando configurações...",
+              "Verificando integridade...",
+              "Preparando para iniciar..."
+            ] 
+          }
+        ];
+        
+        this.checks = {
+          core: false,
+          ui: false,
+          gameData: false,
+          apis: false,
+          fixes: false,
+          dlcs: false
+        };
+        
+        this.tips = [
+          "Use a busca rápida para encontrar jogos instantaneamente",
+          "Configure o Steam automaticamente para melhor performance",
+          "Gerencie DLCs e Fixes com um clique",
+          "Detecte jogos instalados automaticamente",
+          "Instale jogos via ZIP com sistema de extração inteligente",
+          "Use atalhos do teclado F1-F12 para navegação rápida",
+          "Monitore o status do sistema em tempo real",
+          "Backup automático de configurações importantes",
+          "Suporte a múltiplas bibliotecas Steam",
+          "Detecção automática de problemas e fixes"
+        ];
+        
+        this.init();
+      }
+
+      init() {
+        console.log('🚀 Iniciando Steam GameLoader Ultimate...');
+        this.setupTips();
+        this.startProgressAnimation();
+        this.simulateSystemChecks();
+        
+        // Quando tudo estiver carregado, redirecionar
+        setTimeout(() => {
+          this.redirectToMain();
+        }, 6000); // Aumentado para 6 segundos para melhor experiência
+      }
+
+      setupTips() {
+        const tipElement = document.getElementById('tipText');
+        let currentTip = 0;
+        
+        setInterval(() => {
+          currentTip = (currentTip + 1) % this.tips.length;
+          tipElement.style.opacity = '0';
+          
+          setTimeout(() => {
+            tipElement.textContent = this.tips[currentTip];
+            tipElement.style.opacity = '1';
+          }, 300);
+        }, 3500);
+      }
+
+      updatePhase() {
+        if (this.currentPhase < this.phases.length - 1) {
+          this.currentPhase++;
+          const phase = this.phases[this.currentPhase];
+          document.getElementById('currentPhase').textContent = phase.name;
+          this.updateTask(phase.tasks[0]);
+        }
+      }
+
+      updateTask(task) {
+        document.getElementById('currentTask').textContent = task;
+      }
+
+      startProgressAnimation() {
+        const progressFill = document.querySelector('.progress-fill');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressText = document.getElementById('progressText');
+        
+        const updateProgress = () => {
+          // Progresso não-linear para sensação mais natural
+          if (this.progress < this.targetProgress) {
+            this.progress += Math.min(0.8, (this.targetProgress - this.progress) * 0.1);
+            progressFill.style.width = this.progress + '%';
+            progressPercent.textContent = Math.round(this.progress) + '%';
+            
+            // Atualizar texto baseado no progresso
+            if (this.progress < 25) {
+              progressText.textContent = 'Inicializando...';
+            } else if (this.progress < 50) {
+              progressText.textContent = 'Carregando sistemas...';
+            } else if (this.progress < 75) {
+              progressText.textContent = 'Processando dados...';
+            } else {
+              progressText.textContent = 'Finalizando...';
+            }
+          }
+          
+          this.animationFrame = requestAnimationFrame(updateProgress);
+        };
+        
+        // Simular carregamento em fases com tarefas
+        const phases = this.phases;
+        phases.forEach((phase, index) => {
+          setTimeout(() => {
+            this.updatePhase();
+            
+            // Atualizar tarefas dentro de cada fase
+            phase.tasks.forEach((task, taskIndex) => {
+              setTimeout(() => {
+                this.updateTask(task);
+              }, (index * 1000) + (taskIndex * 300));
+            });
+          }, index * 1200);
+        });
+        
+        // Progresso em fases
+        setTimeout(() => this.targetProgress = 15, 500);
+        setTimeout(() => this.targetProgress = 35, 1500);
+        setTimeout(() => this.targetProgress = 60, 2500);
+        setTimeout(() => this.targetProgress = 80, 3500);
+        setTimeout(() => this.targetProgress = 95, 4500);
+        setTimeout(() => this.targetProgress = 100, 5500);
+        
+        updateProgress();
+      }
+
+      simulateSystemChecks() {
+        const checkOrder = [
+          { id: 'checkCore', delay: 800 },
+          { id: 'checkAPIs', delay: 1600 },
+          { id: 'checkFixes', delay: 2400 },
+          { id: 'checkDLCs', delay: 3200 },
+          { id: 'checkGameData', delay: 4000 },
+          { id: 'checkUI', delay: 4800 }
+        ];
+        
+        checkOrder.forEach((check, index) => {
+          setTimeout(() => {
+            const element = document.getElementById(check.id);
+            element.classList.add('ready');
+            const systemName = check.id.replace('check', '').toLowerCase();
+            this.checks[systemName] = true;
+            
+            // Log no console para debug
+            console.log(`✅ Sistema ${systemName} verificado`);
+          }, check.delay);
+        });
+      }
+
+      redirectToMain() {
+        console.log('🎯 Redirecionando para aplicação principal...');
+        
+        // Adicionar efeito de fade out
+        const overlay = document.getElementById('appLoadingOverlay');
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.8s ease';
+        
+        // Atualizar texto final
+        document.getElementById('currentPhase').textContent = 'Pronto!';
+        document.getElementById('currentTask').textContent = 'Iniciando aplicação...';
+        document.getElementById('progressText').textContent = 'Completo!';
+        
+        setTimeout(() => {
+          // Redirecionar para a aplicação principal
+          window.location.href = '/app';
+        }, 800);
+      }
+
+      destroy() {
+        if (this.animationFrame) {
+          cancelAnimationFrame(this.animationFrame);
+        }
+      }
+    }
+
+    // Inicializar quando o DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', () => {
+      window.startupManager = new StartupManager();
+    });
+
+    // Prevenir que o usuário fique preso na tela de loading
+    setTimeout(() => {
+      if (window.startupManager && window.startupManager.progress < 100) {
+        console.warn('⚠️ Redirecionamento de fallback ativado');
+        window.location.href = '/app';
+      }
+    }, 10000); // 10 segundos de timeout
+
+    // Adicionar feedback de carregamento para recursos
+    window.addEventListener('load', () => {
+      console.log('📦 Todos os recursos carregados');
+    });
+  </script>
+
+</body>
+</html>

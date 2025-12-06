@@ -1,0 +1,2324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Manager | Steam GameLoader Ultimate</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <style>
+        /* ====== VARIÁVEIS DO TEMA ====== */
+        :root {
+            --primary-purple: #7a2aff;
+            --neon-purple: #bb33ff;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff2a6d;
+            --electric-blue: #4de0ff;
+            --success-green: #00ff88;
+            --warning-orange: #ffaa00;
+            --danger-red: #ff2a2a;
+            --bg-primary: #0a0814;
+            --bg-secondary: #0f0c1f;
+            --bg-tertiary: #151225;
+            --bg-card: rgba(20, 15, 35, 0.9);
+            --border-color: rgba(122, 42, 255, 0.4);
+            --border-hover: rgba(122, 42, 255, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2c9;
+            --text-tertiary: #7a7f8f;
+            --shadow-glow: 0 0 25px rgba(122, 42, 255, 0.5);
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --radius-xl: 20px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --radius-xs: 4px;
+            --header-height: 80px;
+            --sidebar-width: 280px;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+
+        /* ====== RESET E LAYOUT ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ====== CONTAINER PRINCIPAL COM HEADER/SIDEBAR ====== */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            height: var(--header-height);
+        }
+
+        #sidebar-container {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        /* ====== CONTEÚDO PRINCIPAL (FIXES) ====== */
+        .fixes-main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 35px 45px;
+            min-height: calc(100vh - var(--header-height));
+            background: linear-gradient(135deg, rgba(10, 8, 20, 0.85) 0%, rgba(15, 12, 31, 0.9) 100%);
+            backdrop-filter: blur(15px);
+            transition: margin-left var(--transition-normal), padding var(--transition-normal);
+        }
+
+        /* ====== BACKGROUND DYNAMIC ====== */
+        .fixes-background {
+            position: fixed;
+            top: var(--header-height);
+            left: var(--sidebar-width);
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(122, 42, 255, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 85% 75%, rgba(255, 42, 109, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 50% 50%, rgba(0, 243, 255, 0.1) 0%, transparent 40%);
+            animation: gradientShift 20s ease infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+
+        /* ====== HEADER DA PÁGINA FIXES ====== */
+        .fixes-header {
+            margin-bottom: 35px;
+            padding: 35px;
+            background: linear-gradient(155deg, #0d0b15 0%, #1a1435 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .fixes-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(122, 42, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .fixes-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #7a2aff 0%, #ff2a6d 50%, #00f3ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            text-shadow: 0 0 30px rgba(122, 42, 255, 0.3);
+        }
+
+        .fixes-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            max-width: 800px;
+        }
+
+        /* ====== MODE SELECTOR ====== */
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 14px 28px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .mode-btn:hover {
+            background: rgba(122, 42, 255, 0.2);
+            border-color: var(--neon-purple);
+            color: var(--electric-blue);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn:hover::before {
+            left: 100%;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #7a2aff 0%, #bb33ff 100%);
+            color: #0b0610;
+            border: none;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(122, 42, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* ====== STATS ====== */
+        .fixes-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: rgba(15, 12, 31, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-purple), var(--neon-cyan));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-normal);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--neon-purple);
+            box-shadow: 0 15px 35px rgba(122, 42, 255, 0.25);
+        }
+
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(122, 42, 255, 0.25) 0%, rgba(77, 224, 255, 0.25) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--neon-purple);
+            flex-shrink: 0;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            text-shadow: 0 0 10px rgba(122, 42, 255, 0.3);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ====== FILTROS ====== */
+        .fixes-filters {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 24px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-btn {
+            padding: 14px 26px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover:not(:disabled) {
+            background: rgba(122, 42, 255, 0.2);
+            border-color: var(--neon-purple);
+            color: var(--electric-blue);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #00f3ff 0%, #0099ff 100%);
+            color: #0b0610;
+            border: none;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 243, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 320px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 50px 14px 24px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            transition: all var(--transition-normal);
+        }
+
+        .search-box input:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 0 3px rgba(122, 42, 255, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            transition: color var(--transition-normal);
+        }
+
+        .search-box input:focus + i {
+            color: var(--neon-purple);
+        }
+
+        /* ====== LISTA DE JOGOS ====== */
+        .games-list-container {
+            background: rgba(15, 12, 31, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 35px;
+            margin-top: 25px;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(10px);
+        }
+
+        .games-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .games-list-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .games-list-title i {
+            color: var(--neon-cyan);
+        }
+
+        .games-count {
+            background: rgba(122, 42, 255, 0.25);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neon-purple);
+            border: 1px solid rgba(122, 42, 255, 0.3);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 28px;
+        }
+
+        /* ====== CARD DE JOGO ====== */
+        .game-card {
+            background: linear-gradient(155deg, #151225 0%, #0f0c1f 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(122, 42, 255, 0.05) 0%, rgba(0, 243, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-purple);
+            box-shadow: 0 25px 50px rgba(122, 42, 255, 0.3);
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 22px;
+        }
+
+        .game-title-section {
+            flex: 1;
+            min-width: 0;
+            padding-right: 18px;
+        }
+
+        .game-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-appid {
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            background: rgba(0, 243, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: var(--radius-xs);
+            display: inline-block;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+
+        .game-status {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+            min-width: 130px;
+        }
+
+        /* ====== BADGES DE STATUS ====== */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+            border: 1.5px solid;
+        }
+
+        .status-available {
+            background: rgba(0, 243, 255, 0.15);
+            color: var(--neon-cyan);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+
+        .status-applied {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--success-green);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        .status-none {
+            background: rgba(255, 42, 106, 0.15);
+            color: var(--neon-pink);
+            border-color: rgba(255, 42, 106, 0.3);
+        }
+
+        .status-installed {
+            background: rgba(122, 42, 255, 0.15);
+            color: var(--neon-purple);
+            border-color: rgba(122, 42, 255, 0.3);
+        }
+
+        .status-not-installed {
+            background: rgba(168, 178, 201, 0.15);
+            color: var(--text-secondary);
+            border-color: rgba(168, 178, 201, 0.3);
+        }
+
+        .status-native {
+            background: rgba(187, 51, 255, 0.15);
+            color: var(--neon-purple);
+            border-color: rgba(187, 51, 255, 0.3);
+        }
+
+        /* ====== INFORMAÇÕES DO JOGO ====== */
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+            padding: 22px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            color: var(--text-tertiary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 15px;
+            word-break: break-word;
+        }
+
+        /* ====== AÇÕES ====== */
+        .game-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 14px 22px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all var(--transition-normal);
+            font-size: 15px;
+            min-width: 150px;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-apply {
+            background: linear-gradient(135deg, #7a2aff 0%, #bb33ff 100%);
+            color: white;
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #ff2a6d 0%, #ff6a8e 100%);
+            color: white;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #00f3ff 0%, #4de0ff 100%);
+            color: #0b0610;
+        }
+
+        .btn-generic {
+            background: rgba(122, 42, 255, 0.15);
+            border: 1.5px solid var(--neon-purple);
+            color: var(--neon-purple);
+        }
+
+        .btn-online {
+            background: rgba(0, 243, 255, 0.15);
+            border: 1.5px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            color: #0b0610;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ====== PROGRESS BAR ====== */
+        .progress-container {
+            margin-top: 22px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: none;
+            animation: fadeIn 0.4s ease;
+            border: 1px solid rgba(122, 42, 255, 0.2);
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: linear-gradient(90deg, #7a2aff, #bb33ff);
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: shimmer 2.5s infinite;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ====== DOWNLOAD INFO ====== */
+        .download-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: var(--radius-md);
+            display: none;
+        }
+
+        .download-info.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .download-info i {
+            color: var(--success-green);
+            margin-right: 10px;
+        }
+
+        /* ====== SEM JOGOS ====== */
+        .no-games {
+            text-align: center;
+            padding: 70px 35px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: var(--radius-lg);
+            border: 2px dashed var(--border-color);
+            display: none;
+        }
+
+        .no-games-icon {
+            font-size: 56px;
+            color: var(--neon-purple);
+            margin-bottom: 25px;
+            opacity: 0.6;
+        }
+
+        .no-games-title {
+            font-size: 26px;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+        }
+
+        .no-games-message {
+            color: var(--text-secondary);
+            font-size: 17px;
+            margin-bottom: 35px;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        /* ====== LOADING ====== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 8, 20, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            flex-direction: column;
+            gap: 30px;
+            backdrop-filter: blur(15px);
+            display: none;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 5px solid transparent;
+            border-top: 5px solid var(--neon-purple);
+            border-right: 5px solid var(--neon-purple);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+        }
+
+        .loading-text {
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        /* ====== ANIMAÇÕES ====== */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ====== RESPONSIVIDADE ====== */
+        @media (max-width: 1200px) {
+            .fixes-main-content {
+                margin-left: 0;
+                padding: 25px;
+            }
+            
+            #sidebar-container {
+                transform: translateX(-100%);
+                transition: transform var(--transition-normal);
+            }
+            
+            #sidebar-container.active {
+                transform: translateX(0);
+            }
+            
+            .fixes-background {
+                left: 0;
+            }
+            
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
+            
+            .fixes-header {
+                padding: 28px;
+            }
+            
+            .fixes-title {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fixes-main-content {
+                padding: 20px;
+                margin-top: calc(var(--header-height) + 70px);
+            }
+            
+            #header-container {
+                height: auto;
+                min-height: var(--header-height);
+            }
+            
+            .fixes-header {
+                padding: 24px;
+            }
+            
+            .fixes-title {
+                font-size: 26px;
+            }
+            
+            .fixes-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-actions {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            .mode-selector, .fixes-filters {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fixes-main-content {
+                padding: 15px;
+                margin-top: calc(var(--header-height) + 90px);
+            }
+            
+            .fixes-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .fixes-filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-btn, .mode-btn {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .stat-card {
+                padding: 24px 20px;
+            }
+            
+            .game-card {
+                padding: 24px;
+            }
+            
+            .games-list-container {
+                padding: 24px;
+            }
+            
+            .games-list-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .games-count {
+                align-self: flex-start;
+            }
+        }
+
+        /* ====== UTILITY CLASSES ====== */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(122, 42, 255, 0.5);
+        }
+
+        /* ====== DOWNLOAD STATS ====== */
+        .download-stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(122, 42, 255, 0.2);
+        }
+
+        .download-stat {
+            flex: 1;
+            text-align: center;
+        }
+
+        .download-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            margin-bottom: 5px;
+        }
+
+        .download-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Container principal -->
+    <div class="app-container">
+        <!-- Header será injetado aqui -->
+        <div id="header-container"></div>
+        
+        <!-- Sidebar será injetado aqui -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Background -->
+        <div class="fixes-background"></div>
+        
+        <!-- Conteúdo principal -->
+        <main class="fixes-main-content" id="main-content">
+            <!-- Header da página Fixes -->
+            <header class="fixes-header">
+                <h1 class="fixes-title">
+                    <i class="fas fa-wrench"></i>
+                    Fix Manager
+                </h1>
+                <p class="fixes-subtitle">
+                    Gerencie e aplique fixes, patches e correções para seus jogos Steam. Detecta automaticamente jogos instalados e verifica disponibilidade de correções nativas do arquivo fixes_list.json.
+                </p>
+                
+                <!-- Seletor de Modo -->
+                <div class="mode-selector">
+                    <button class="mode-btn active" id="btn-native-fixes" onclick="setMode('native-fixes')">
+                        <i class="fas fa-star"></i>
+                        Fixes Locais (JSON)
+                    </button>
+                    <button class="mode-btn" id="btn-installed" onclick="setMode('installed')">
+                        <i class="fas fa-download"></i>
+                        Jogos Instalados
+                    </button>
+                    <button class="mode-btn" id="btn-combined" onclick="setMode('combined')">
+                        <i class="fas fa-layer-group"></i>
+                        Todos os Jogos
+                    </button>
+                    <button class="mode-btn" id="btn-downloads" onclick="showDownloadsManager()">
+                        <i class="fas fa-archive"></i>
+                        Downloads
+                    </button>
+                </div>
+                
+                <!-- Estatísticas -->
+                <div class="fixes-stats">
+                    <div class="stat-card" onclick="setMode('native-fixes')">
+                        <div class="stat-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="total-native-fixes">0</div>
+                            <div class="stat-label">Fixes Locais</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="setMode('installed')">
+                        <div class="stat-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="total-installed-games">0</div>
+                            <div class="stat-label">Jogos Instalados</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="setMode('installed'); setFilter('with-fix');">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="fixes-applied-count">0</div>
+                            <div class="stat-label">Fixes Aplicados</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="setMode('installed'); setFilter('available');">
+                        <div class="stat-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="fixes-available-count">0</div>
+                            <div class="stat-label">Fixes Disponíveis</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Download Stats -->
+                <div class="download-stats" id="download-stats" style="display: none;">
+                    <div class="download-stat">
+                        <div class="download-stat-value" id="total-downloads">0</div>
+                        <div class="download-stat-label">Total de Downloads</div>
+                    </div>
+                    <div class="download-stat">
+                        <div class="download-stat-value" id="total-download-size">0 B</div>
+                        <div class="download-stat-label">Tamanho Total</div>
+                    </div>
+                    <div class="download-stat">
+                        <div class="download-stat-value" id="last-download">N/A</div>
+                        <div class="download-stat-label">Último Download</div>
+                    </div>
+                </div>
+                
+                <!-- Filtros e busca -->
+                <div class="fixes-filters">
+                    <button class="filter-btn active" id="btn-filter-all" onclick="setFilter('all')">
+                        <i class="fas fa-list"></i>
+                        <span>Todos</span>
+                    </button>
+                    <button class="filter-btn" id="btn-filter-with-fix" onclick="setFilter('with-fix')" disabled>
+                        <i class="fas fa-check"></i>
+                        <span>Com Fix</span>
+                    </button>
+                    <button class="filter-btn" id="btn-filter-available" onclick="setFilter('available')" disabled>
+                        <i class="fas fa-download"></i>
+                        <span>Disponíveis</span>
+                    </button>
+                    
+                    <div class="search-box">
+                        <input type="text" id="game-search" placeholder="Buscar jogo por nome..." oninput="searchGames()">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    
+                    <button class="filter-btn" onclick="refreshGames()" style="background: linear-gradient(135deg, #00f3ff 0%, #0099ff 100%); color: #0b0610;">
+                        <i class="fas fa-redo"></i>
+                        <span>Atualizar</span>
+                    </button>
+                    
+                    <button class="filter-btn" onclick="testFixLocalConnection()" style="background: linear-gradient(135deg, #7a2aff 0%, #bb33ff 100%); color: white;">
+                        <i class="fas fa-vial"></i>
+                        <span>Testar Conexão Fixes</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Container da lista de jogos -->
+            <div class="games-list-container">
+                <div class="games-list-header">
+                    <div>
+                        <h2 class="games-list-title" id="list-title">
+                            <i class="fas fa-database"></i>
+                            Fixes Locais (JSON)
+                        </h2>
+                        <div class="games-count" id="filtered-count">0 jogos</div>
+                    </div>
+                    <div style="font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Clique em um jogo para mais detalhes</span>
+                    </div>
+                </div>
+                
+                <!-- Lista de jogos será injetada aqui -->
+                <div id="games-list" class="games-grid">
+                    <!-- Os jogos serão carregados aqui via JavaScript -->
+                </div>
+                
+                <!-- Mensagem "Sem jogos" -->
+                <div id="no-games" class="no-games">
+                    <div class="no-games-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3 class="no-games-title" id="no-games-title">Nenhum jogo encontrado</h3>
+                    <p class="no-games-message" id="no-games-message">
+                        Não foi possível encontrar jogos correspondentes aos critérios de busca.
+                    </p>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="refreshGames()" class="action-btn btn-check" style="max-width: 220px;">
+                            <i class="fas fa-redo"></i>
+                            Tentar Novamente
+                        </button>
+                        <button onclick="window.location.href = '/dashboard'" class="action-btn btn-generic" style="max-width: 220px;">
+                            <i class="fas fa-tachometer-alt"></i>
+                            Ir para Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading -->
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="spinner"></div>
+                <div class="loading-text" id="loading-text">Carregando jogos...</div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        // ====== VARIÁVEIS GLOBAIS ======
+        let allGames = {
+            'native-fixes': [],
+            'installed': [],
+            'combined': []
+        };
+        let currentMode = 'native-fixes';
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let isLoading = false;
+        let activeDownloads = {};
+        let downloadsList = [];
+
+        // ====== INICIALIZAÇÃO ======
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 Fix Manager Ultimate - Inicializando...');
+            
+            // Criar sistema de notificações global se não existir
+            if (typeof window.showNotification !== 'function') {
+                window.showNotification = showNotification;
+            }
+            
+            loadHeaderAndSidebar();
+            
+            setTimeout(() => {
+                loadAllGames();
+                loadDownloadsList();
+                startAutoRefresh();
+            }, 500);
+        });
+        
+        // ====== CARREGAR HEADER E SIDEBAR ======
+        async function loadHeaderAndSidebar() {
+            try {
+                const [headerResponse, sidebarResponse] = await Promise.all([
+                    fetch('/header.html'),
+                    fetch('/sidebar.html')
+                ]);
+                
+                if (headerResponse.ok) {
+                    document.getElementById('header-container').innerHTML = await headerResponse.text();
+                }
+                
+                if (sidebarResponse.ok) {
+                    document.getElementById('sidebar-container').innerHTML = await sidebarResponse.text();
+                }
+                
+                executeComponentScripts();
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar componentes:', error);
+                document.getElementById('header-container').innerHTML = '<div style="height: 80px; background: #0a0814;"></div>';
+                document.getElementById('sidebar-container').innerHTML = '';
+            }
+        }
+        
+        function executeComponentScripts() {
+            if (typeof initializeHomeHeader === 'function') {
+                setTimeout(() => initializeHomeHeader(), 100);
+            }
+            if (typeof initializeHomeSidebar === 'function') {
+                setTimeout(() => initializeHomeSidebar(), 100);
+            }
+        }
+        
+        // ====== CARREGAMENTO DE JOGOS ======
+        async function loadAllGames() {
+            if (isLoading) return;
+            isLoading = true;
+            
+            showLoading('Carregando todos os jogos...');
+            
+            try {
+                console.log('📂 Carregando todos os jogos...');
+                
+                await Promise.all([
+                    loadNativeFixes(),
+                    loadInstalledGames()
+                ]);
+                
+                updateCombinedList();
+                updateStats();
+                renderGamesList();
+                
+                hideLoading();
+                showNotification('✅ Sucesso', 'Jogos carregados com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar jogos:', error);
+                hideLoading();
+                showNotification('❌ Erro', 'Não foi possível carregar os jogos', 'error');
+                showNoGamesMessage('Erro ao carregar jogos: ' + error.message);
+            } finally {
+                isLoading = false;
+            }
+        }
+        
+        // ====== CARREGAR FIXES LOCAIS (DO JSON) - FUNÇÃO CRÍTICA CORRIGIDA ======
+        async function loadNativeFixes() {
+            try {
+                console.log('📦 Carregando fixes locais do JSON...');
+                
+                // ✅ USAR A ROTA CORRETA QUE FOI CRIADA NO steam_routes.py
+                const response = await fetch('/api/fixes/local/all');
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Erro na resposta do servidor');
+                }
+                
+                // ✅ USAR O CAMPO CORRETO "games" QUE A ROTA RETORNA
+                allGames['native-fixes'] = data.games || [];
+                console.log(`✅ ${allGames['native-fixes'].length} fixes locais carregados do JSON`);
+                
+                // Se não houver fixes, mostrar mensagem informativa
+                if (allGames['native-fixes'].length === 0) {
+                    console.warn('⚠️ Nenhum fix local encontrado no arquivo fixes_list.json');
+                    showNotification('⚠️ Aviso', 
+                        'Nenhum fix local encontrado. Verifique se o arquivo fixes_list.json existe e está formatado corretamente.', 
+                        'warning');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar fixes locais:', error);
+                allGames['native-fixes'] = [];
+                showNotification('❌ Erro', 
+                    `Falha ao carregar fixes locais: ${error.message}`, 
+                    'error');
+            }
+        }
+        
+        // ====== CARREGAR JOGOS INSTALADOS ======
+        async function loadInstalledGames() {
+            try {
+                console.log('🎮 Carregando jogos instalados...');
+                const response = await fetch('/api/games/installed');
+                
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    throw new Error(data.error || 'Erro na resposta do servidor');
+                }
+                
+                let installedGames = data.games || [];
+                console.log(`✅ ${installedGames.length} jogos instalados encontrados`);
+                
+                allGames['installed'] = await processInstalledGames(installedGames);
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar jogos instalados:', error);
+                allGames['installed'] = [];
+                showNotification('⚠️ Aviso', 
+                    'Não foi possível carregar jogos instalados', 
+                    'warning');
+            }
+        }
+        
+        async function processInstalledGames(games) {
+            if (!games || games.length === 0) return [];
+            
+            const processedGames = [];
+            
+            const batchSize = 5;
+            for (let i = 0; i < games.length; i += batchSize) {
+                const batch = games.slice(i, i + batchSize);
+                const batchPromises = batch.map(async (game) => {
+                    try {
+                        const fixResponse = await fetch(`/api/fixes/check/${game.appid}`);
+                        
+                        if (fixResponse.ok) {
+                            const fixData = await fixResponse.json();
+                            
+                            return {
+                                ...game,
+                                genericAvailable: fixData.genericFix?.available || false,
+                                onlineAvailable: fixData.onlineFix?.available || false,
+                                localAvailable: fixData.localFix?.available || false,
+                                hasAvailableFix: fixData.genericFix?.available || fixData.onlineFix?.available || fixData.localFix?.available || false,
+                                type: 'installed',
+                                is_native: false,
+                                installed: true,
+                                fixStatus: game.has_fix ? 'applied' : 
+                                         (fixData.genericFix?.available || fixData.onlineFix?.available || fixData.localFix?.available ? 'available' : 'none')
+                            };
+                        }
+                    } catch (error) {
+                        console.warn(`⚠️ Erro ao verificar fixes para ${game.appid}:`, error);
+                    }
+                    
+                    return {
+                        ...game,
+                        genericAvailable: false,
+                        onlineAvailable: false,
+                        localAvailable: false,
+                        hasAvailableFix: false,
+                        type: 'installed',
+                        is_native: false,
+                        installed: true,
+                        fixStatus: game.has_fix ? 'applied' : 'none'
+                    };
+                });
+                
+                const results = await Promise.all(batchPromises);
+                processedGames.push(...results);
+                
+                if (i + batchSize < games.length) {
+                    await new Promise(resolve => setTimeout(resolve, 150));
+                }
+            }
+            
+            return processedGames;
+        }
+        
+        // ====== ATUALIZAR LISTA COMBINADA ======
+        function updateCombinedList() {
+            allGames['combined'] = [...allGames['installed']];
+            
+            const installedNames = new Set(allGames['installed'].map(g => g.name.toLowerCase()));
+            
+            allGames['native-fixes'].forEach(fix => {
+                if (!installedNames.has(fix.name.toLowerCase())) {
+                    allGames['combined'].push(fix);
+                }
+            });
+            
+            allGames['combined'].sort((a, b) => a.name.localeCompare(b.name));
+            
+            console.log(`📊 Lista combinada: ${allGames['combined'].length} jogos`);
+        }
+        
+        // ====== RENDERIZAÇÃO DA LISTA DE JOGOS ======
+        function renderGamesList() {
+            console.log(`🎨 Renderizando jogos (Modo: ${currentMode}, Filtro: ${currentFilter})`);
+            
+            const container = document.getElementById('games-list');
+            const noGames = document.getElementById('no-games');
+            const listTitle = document.getElementById('list-title');
+            
+            let games = allGames[currentMode] || [];
+            
+            const titles = {
+                'native-fixes': 'Fixes Locais (JSON)',
+                'installed': 'Jogos Instalados',
+                'combined': 'Todos os Jogos'
+            };
+            listTitle.textContent = titles[currentMode];
+            
+            games = applyFilters(games);
+            games = applySearch(games);
+            
+            document.getElementById('filtered-count').textContent = `${games.length} jogos`;
+            
+            if (games.length === 0) {
+                container.innerHTML = '';
+                showNoGamesMessage(getNoGamesMessage());
+                return;
+            }
+            
+            noGames.style.display = 'none';
+            container.innerHTML = '';
+            
+            games.forEach(game => {
+                const gameCard = createGameCard(game);
+                const div = document.createElement('div');
+                div.innerHTML = gameCard;
+                container.appendChild(div.firstElementChild);
+            });
+            
+            attachButtonEvents();
+        }
+        
+        function applyFilters(games) {
+            if (!games || games.length === 0) return [];
+            
+            let filtered = [...games];
+            
+            if (currentMode === 'installed') {
+                switch (currentFilter) {
+                    case 'with-fix':
+                        filtered = filtered.filter(g => g.has_fix || g.fixStatus === 'applied');
+                        break;
+                    case 'available':
+                        filtered = filtered.filter(g => 
+                            !g.has_fix && (g.hasAvailableFix || g.genericAvailable || g.onlineAvailable || g.localAvailable)
+                        );
+                        break;
+                }
+            }
+            
+            return filtered;
+        }
+        
+        function applySearch(games) {
+            if (!games || games.length === 0 || !currentSearch) return games;
+            
+            const searchTerm = currentSearch.toLowerCase();
+            return games.filter(game => 
+                game.name.toLowerCase().includes(searchTerm) ||
+                (game.appid && game.appid.toString().includes(searchTerm)) ||
+                (game.original_name && game.original_name.toLowerCase().includes(searchTerm))
+            );
+        }
+        
+        function getNoGamesMessage() {
+            if (currentSearch) {
+                return 'Nenhum jogo encontrado para: "' + currentSearch + '"';
+            }
+            
+            switch (currentMode) {
+                case 'native-fixes':
+                    return 'Nenhum fix local encontrado no arquivo fixes_list.json';
+                case 'installed':
+                    return 'Nenhum jogo Steam instalado encontrado';
+                case 'combined':
+                    return 'Nenhum jogo disponível';
+                default:
+                    return 'Nenhum jogo encontrado';
+            }
+        }
+        
+        // ====== FUNÇÃO AUXILIAR PARA ESCAPAR STRINGS ======
+        function escapeAttribute(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#x27;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function createGameCard(game) {
+            if (!game) return '';
+            
+            const isNativeFix = game.is_native || game.type === 'native_fix' || game.source === 'fixes_list.json';
+            
+            if (isNativeFix) {
+                return createNativeFixCard(game);
+            } else {
+                return createInstalledGameCard(game);
+            }
+        }
+        
+        function createNativeFixCard(game) {
+            const gameName = game.name || game.original_name || `Fix ${game.appid || 'N/A'}`;
+            const appId = game.appid || 'N/A';
+            const fixUrl = game.fix_url || game.url || '';
+            const originalName = game.original_name || gameName;
+            
+            // Usar escapeAttribute para atributos HTML
+            const escapedGameName = escapeAttribute(gameName);
+            const escapedFixUrl = escapeAttribute(fixUrl);
+            const escapedOriginalName = escapeAttribute(originalName);
+            
+            return `
+                <div class="game-card" data-appid="${appId}" data-type="native" data-game-name="${escapedGameName}">
+                    <div class="game-card-header">
+                        <div class="game-title-section">
+                            <h3 class="game-title" title="${escapedOriginalName}">${escapeHtml(gameName)}</h3>
+                            <span class="game-appid">Fix ID: ${appId}</span>
+                        </div>
+                        <div class="game-status">
+                            <span class="status-badge status-native">
+                                <i class="fas fa-database"></i>
+                                FIX LOCAL
+                            </span>
+                            <span class="status-badge status-not-installed">
+                                <i class="fas fa-times"></i>
+                                NÃO INSTALADO
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="info-label">Tipo</span>
+                            <span class="info-value">Fix Local (JSON)</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Status</span>
+                            <span class="info-value">Disponível para Download</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">URL</span>
+                            <span class="info-value" style="font-size: 12px; word-break: break-all;" title="${fixUrl}">
+                                ${truncateText(fixUrl, 45)}
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Origem</span>
+                            <span class="info-value">fixes_list.json</span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-actions">
+                        <button class="action-btn btn-download" 
+                                data-url="${escapedFixUrl}" 
+                                data-game-name="${escapedGameName}" 
+                                data-appid="${appId}"
+                                title="Baixar este fix local">
+                            <i class="fas fa-download"></i>
+                            Baixar Fix
+                        </button>
+                        <button class="action-btn btn-check copy-url-btn" data-url="${escapedFixUrl}" title="Copiar URL do fix">
+                            <i class="fas fa-copy"></i>
+                            Copiar URL
+                        </button>
+                    </div>
+                    
+                    <div class="download-info" id="download-info-${appId}">
+                        <i class="fas fa-info-circle"></i>
+                        <span>O fix será salvo na pasta de downloads do sistema</span>
+                    </div>
+                    
+                    <div class="progress-container" id="progress-${appId}">
+                        <div class="progress-bar" id="progress-bar-${appId}"></div>
+                        <div class="progress-text" id="progress-text-${appId}">
+                            <span>0%</span>
+                            <span>Iniciando download...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function createInstalledGameCard(game) {
+            const gameName = game.name || `Jogo ${game.appid || 'N/A'}`;
+            const appId = game.appid || 'N/A';
+            const sizeFormatted = game.size_formatted || 'N/A';
+            const hasDLC = game.has_dlc ? 'Sim' : 'Não';
+            const installPath = game.install_path || 'N/A';
+            
+            const hasFixApplied = game.has_fix || game.fixStatus === 'applied';
+            const hasAvailableFix = game.hasAvailableFix || game.genericAvailable || game.onlineAvailable || game.localAvailable;
+            
+            const statusClass = hasFixApplied ? 'status-applied' : 
+                              hasAvailableFix ? 'status-available' : 'status-none';
+            
+            const statusText = hasFixApplied ? 'FIX APLICADO' :
+                             hasAvailableFix ? 'FIX DISPONÍVEL' : 'SEM FIX';
+            
+            const fixTypes = [];
+            if (game.genericAvailable) fixTypes.push('Generic');
+            if (game.onlineAvailable) fixTypes.push('Online');
+            if (game.localAvailable) fixTypes.push('Local');
+            const fixType = fixTypes.length > 0 ? fixTypes.join(' + ') : 'Nenhum';
+            
+            return `
+                <div class="game-card" data-appid="${appId}" data-type="installed">
+                    <div class="game-card-header">
+                        <div class="game-title-section">
+                            <h3 class="game-title">${escapeHtml(gameName)}</h3>
+                            <span class="game-appid">AppID: ${appId}</span>
+                        </div>
+                        <div class="game-status">
+                            <span class="status-badge ${statusClass}">
+                                <i class="fas fa-${hasFixApplied ? 'check' : hasAvailableFix ? 'star' : 'times'}"></i>
+                                ${statusText}
+                            </span>
+                            <span class="status-badge status-installed">
+                                <i class="fas fa-download"></i>
+                                INSTALADO
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="info-label">Tamanho</span>
+                            <span class="info-value">${sizeFormatted}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tipo de Fix</span>
+                            <span class="info-value">${fixType}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">DLCs</span>
+                            <span class="info-value">${hasDLC}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Localização</span>
+                            <span class="info-value" style="font-size: 12px;" title="${installPath}">
+                                ${truncatePath(installPath, 35)}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-actions">
+                        ${!hasFixApplied && hasAvailableFix ? `
+                            <button class="action-btn btn-apply" data-appid="${appId}" data-type="auto" title="Aplicar fix automaticamente">
+                                <i class="fas fa-magic"></i>
+                                Aplicar Auto-Fix
+                            </button>
+                            ${game.genericAvailable ? `
+                                <button class="action-btn btn-generic" data-appid="${appId}" data-type="generic" title="Aplicar Generic Fix">
+                                    <i class="fas fa-shield-alt"></i>
+                                    Generic Fix
+                                </button>
+                            ` : ''}
+                            ${game.onlineAvailable ? `
+                                <button class="action-btn btn-online" data-appid="${appId}" data-type="online" title="Aplicar Online Fix">
+                                    <i class="fas fa-wifi"></i>
+                                    Online Fix
+                                </button>
+                            ` : ''}
+                            ${game.localAvailable ? `
+                                <button class="action-btn" data-appid="${appId}" data-type="local" 
+                                        style="background: linear-gradient(135deg, #7a2aff 0%, #bb33ff 100%); color: white;"
+                                        title="Aplicar Fix Local">
+                                    <i class="fas fa-database"></i>
+                                    Fix Local
+                                </button>
+                            ` : ''}
+                        ` : ''}
+                        
+                        ${hasFixApplied ? `
+                            <button class="action-btn btn-remove" data-appid="${appId}" title="Remover fix aplicado">
+                                <i class="fas fa-trash"></i>
+                                Remover Fix
+                            </button>
+                        ` : ''}
+                        
+                        <button class="action-btn btn-check check-fix-btn" data-appid="${appId}" title="Verificar atualizações de fix">
+                            <i class="fas fa-sync-alt"></i>
+                            Verificar
+                        </button>
+                    </div>
+                    
+                    <div class="progress-container" id="progress-${appId}">
+                        <div class="progress-bar" id="progress-bar-${appId}"></div>
+                        <div class="progress-text" id="progress-text-${appId}">
+                            <span>0%</span>
+                            <span>Iniciando...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ====== ATTACH BUTTON EVENTS ======
+        function attachButtonEvents() {
+            // Botões de download (usando data attributes)
+            document.querySelectorAll('.btn-download').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const url = this.dataset.url;
+                    const gameName = this.dataset.gameName;
+                    const appId = this.dataset.appid;
+                    if (url && gameName && appId) {
+                        downloadNativeFix(url, gameName, parseInt(appId));
+                    }
+                });
+            });
+            
+            // Botões de copiar URL
+            document.querySelectorAll('.copy-url-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const url = this.dataset.url;
+                    if (url) {
+                        copyToClipboard(url, 'URL do fix copiada para a área de transferência');
+                    }
+                });
+            });
+            
+            // Botões de aplicar fix
+            document.querySelectorAll('.btn-apply, .btn-generic, .btn-online, .action-btn[data-type="local"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const appid = this.dataset.appid;
+                    const fixType = this.dataset.type;
+                    applyFix(appid, fixType);
+                });
+            });
+            
+            // Botões de remover fix
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const appid = this.dataset.appid;
+                    removeFix(appid);
+                });
+            });
+            
+            // Botões de verificar fix
+            document.querySelectorAll('.check-fix-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const appid = this.dataset.appid;
+                    checkGameFix(appid);
+                });
+            });
+        }
+        
+        // ====== CONTROLE DE MODO E FILTRO ======
+        function setMode(mode) {
+            if (currentMode === mode) return;
+            
+            currentMode = mode;
+            currentFilter = 'all';
+            currentSearch = '';
+            document.getElementById('game-search').value = '';
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-' + mode).classList.add('active');
+            
+            const filterAll = document.getElementById('btn-filter-all');
+            const filterWithFix = document.getElementById('btn-filter-with-fix');
+            const filterAvailable = document.getElementById('btn-filter-available');
+            
+            if (mode === 'installed') {
+                filterWithFix.disabled = false;
+                filterAvailable.disabled = false;
+            } else {
+                filterWithFix.disabled = true;
+                filterAvailable.disabled = true;
+                filterWithFix.classList.remove('active');
+                filterAvailable.classList.remove('active');
+                filterAll.classList.add('active');
+            }
+            
+            renderGamesList();
+        }
+        
+        function setFilter(filter) {
+            if (currentFilter === filter) return;
+            
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('btn-filter-' + filter).classList.add('active');
+            
+            renderGamesList();
+        }
+        
+        function searchGames() {
+            currentSearch = document.getElementById('game-search').value.trim();
+            renderGamesList();
+        }
+        
+        // ====== ATUALIZAÇÃO DE ESTATÍSTICAS ======
+        function updateStats() {
+            document.getElementById('total-native-fixes').textContent = allGames['native-fixes'].length;
+            document.getElementById('total-installed-games').textContent = allGames['installed'].length;
+            
+            const fixesApplied = allGames['installed'].filter(g => g.has_fix || g.fixStatus === 'applied').length;
+            document.getElementById('fixes-applied-count').textContent = fixesApplied;
+            
+            const fixesAvailable = allGames['installed'].filter(g => 
+                !g.has_fix && (g.hasAvailableFix || g.genericAvailable || g.onlineAvailable || g.localAvailable)
+            ).length;
+            document.getElementById('fixes-available-count').textContent = fixesAvailable;
+        }
+        
+        // ====== FUNÇÕES PARA FIXES LOCAIS ======
+        async function downloadNativeFix(url, gameName, appId) {
+            console.log(`📥 Iniciando download: ${gameName} (AppID: ${appId})`);
+            console.log(`📁 URL: ${url}`);
+            
+            if (!url || !url.startsWith('http')) {
+                showNotification('❌ Erro', 'URL inválida para download', 'error');
+                return;
+            }
+            
+            const confirmMsg = `Deseja baixar o fix para "${gameName}"?\n\nO arquivo será salvo na pasta de downloads do sistema.`;
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            
+            showNotification('📥 Download', `Iniciando download do fix para ${gameName}`, 'info');
+            
+            const downloadInfo = document.getElementById(`download-info-${appId}`);
+            const progressContainer = document.getElementById(`progress-${appId}`);
+            const progressBar = document.getElementById(`progress-bar-${appId}`);
+            const progressText = document.getElementById(`progress-text-${appId}`);
+            
+            if (downloadInfo) downloadInfo.classList.add('active');
+            if (progressContainer) progressContainer.classList.add('active');
+            
+            try {
+                showLoading(`Baixando fix para ${gameName}...`);
+                updateDownloadProgress(appId, 10, 'Conectando ao servidor...');
+                
+                const response = await fetch('/api/fixes/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        game_name: gameName,
+                        source: 'local_fix'
+                    })
+                });
+                
+                updateDownloadProgress(appId, 50, 'Processando download...');
+                
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (downloadInfo) downloadInfo.classList.remove('active');
+                if (progressContainer) progressContainer.classList.remove('active');
+                
+                if (data.success) {
+                    const fileSize = data.size_formatted || 'Tamanho desconhecido';
+                    const filename = data.filename || '';
+                    
+                    showNotification('✅ Sucesso', 
+                        `Download concluído!\n${gameName}\n${fileSize}\nArquivo: ${filename}`, 
+                        'success'
+                    );
+                    
+                    updateDownloadProgress(appId, 100, 'Download concluído');
+                    
+                    setTimeout(() => {
+                        if (confirm(`Download de "${gameName}" concluído com sucesso!\n\nDeseja abrir a pasta de downloads?`)) {
+                            openDownloadsFolder(data.download_dir);
+                        }
+                    }, 1000);
+                    
+                    loadDownloadsList();
+                    
+                } else {
+                    showNotification('❌ Erro', 
+                        data.error || 'Falha ao baixar o fix', 
+                        'error'
+                    );
+                    updateDownloadProgress(appId, 0, 'Erro no download');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                console.error('❌ Erro ao baixar fix:', error);
+                
+                if (downloadInfo) downloadInfo.classList.remove('active');
+                if (progressContainer) progressContainer.classList.remove('active');
+                
+                showNotification('❌ Erro', 
+                    `Erro ao conectar com o servidor: ${error.message}`, 
+                    'error'
+                );
+                updateDownloadProgress(appId, 0, 'Erro de conexão');
+            }
+        }
+        
+        function updateDownloadProgress(appId, percentage, message) {
+            const progressBar = document.getElementById(`progress-bar-${appId}`);
+            const progressText = document.getElementById(`progress-text-${appId}`);
+            
+            if (progressBar) {
+                progressBar.style.width = `${percentage}%`;
+            }
+            
+            if (progressText) {
+                progressText.innerHTML = `<span>${percentage}%</span><span>${message}</span>`;
+            }
+        }
+        
+        // ====== TESTE DE CONEXÃO PARA FIXES LOCAIS ======
+        async function testFixLocalConnection() {
+            showNotification('🧪 Teste', 'Testando conexão com fixes locais...', 'info');
+            
+            try {
+                const response = await fetch('/api/fixes/local/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('✅ Conexão OK', 
+                        `Fixes locais funcionando!\nTotal: ${data.stats.count} fixes carregados\nStatus: ${data.stats.loaded ? 'Carregado' : 'Não carregado'}`, 
+                        'success'
+                    );
+                } else {
+                    showNotification('⚠️ Atenção', 
+                        `Problema na conexão com fixes locais: ${data.error}`, 
+                        'warning'
+                    );
+                }
+                
+            } catch (error) {
+                showNotification('❌ Erro', 
+                    `Falha no teste: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+        
+        // ====== DOWNLOAD MANAGEMENT ======
+        async function loadDownloadsList() {
+            try {
+                const response = await fetch('/api/fixes/downloads/list');
+                const data = await response.json();
+                
+                if (data.success) {
+                    downloadsList = data.downloads || [];
+                    updateDownloadsStats();
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar lista de downloads:', error);
+                downloadsList = [];
+            }
+        }
+        
+        function updateDownloadsStats() {
+            const totalDownloads = downloadsList.length;
+            const totalSize = downloadsList.reduce((sum, item) => sum + (item.size || 0), 0);
+            const lastDownload = downloadsList.length > 0 ? downloadsList[0].game_name : 'N/A';
+            
+            document.getElementById('total-downloads').textContent = totalDownloads;
+            document.getElementById('total-download-size').textContent = formatFileSize(totalSize);
+            document.getElementById('last-download').textContent = lastDownload;
+        }
+        
+        function showDownloadsManager() {
+            const downloadStats = document.getElementById('download-stats');
+            downloadStats.style.display = downloadStats.style.display === 'none' ? 'flex' : 'none';
+            
+            if (downloadStats.style.display === 'flex') {
+                loadDownloadsList();
+            }
+        }
+        
+        async function openDownloadsFolder(folderPath) {
+            try {
+                const response = await fetch('/api/system/open-folder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        path: folderPath
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    console.warn('⚠️ Não foi possível abrir a pasta:', data.error);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao abrir pasta:', error);
+            }
+        }
+        
+        // ====== TESTE DE CONEXÃO ======
+        async function testDownloadConnection() {
+            showNotification('🧪 Teste', 'Testando conexão de download...', 'info');
+            
+            try {
+                const response = await fetch('/api/fixes/test-download', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('✅ Conexão OK', 
+                        `Servidor de downloads funcionando!\nStatus: ${data.status}`, 
+                        'success'
+                    );
+                } else {
+                    showNotification('⚠️ Atenção', 
+                        `Problema na conexão: ${data.error}`, 
+                        'warning'
+                    );
+                }
+                
+            } catch (error) {
+                showNotification('❌ Erro', 
+                    `Falha no teste: ${error.message}`, 
+                    'error'
+                );
+            }
+        }
+        
+        // ====== FUNÇÕES PARA JOGOS INSTALADOS ======
+        async function applyFix(appid, fixType) {
+            showNotification('⚙️ Processando', 'Aplicando fix...', 'info');
+            
+            try {
+                const response = await fetch('/api/fixes/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        appid: appid,
+                        fix_type: fixType
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('✅ Sucesso', 'Fix aplicado com sucesso!', 'success');
+                    setTimeout(() => loadAllGames(), 2000);
+                } else {
+                    showNotification('❌ Erro', data.error || 'Erro ao aplicar fix', 'error');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao aplicar fix:', error);
+                showNotification('❌ Erro', 'Falha ao aplicar fix', 'error');
+            }
+        }
+        
+        async function removeFix(appid) {
+            if (!confirm('Tem certeza que deseja remover o fix deste jogo?')) {
+                return;
+            }
+            
+            showNotification('⚙️ Processando', 'Removendo fix...', 'info');
+            
+            try {
+                const response = await fetch(`/api/fixes/remove/${appid}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('✅ Sucesso', 'Fix removido com sucesso!', 'success');
+                    setTimeout(() => loadAllGames(), 1000);
+                } else {
+                    showNotification('❌ Erro', data.error || 'Erro ao remover fix', 'error');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao remover fix:', error);
+                showNotification('❌ Erro', 'Falha ao remover fix', 'error');
+            }
+        }
+        
+        async function checkGameFix(appid) {
+            showNotification('🔍 Verificando', 'Verificando atualizações...', 'info');
+            
+            try {
+                const response = await fetch(`/api/fixes/check/${appid}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('✅ Atualizado', 'Informações do jogo atualizadas', 'success');
+                    setTimeout(() => loadAllGames(), 1000);
+                } else {
+                    showNotification('⚠️ Aviso', 'Nenhuma atualização disponível', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao verificar fix:', error);
+                showNotification('❌ Erro', 'Falha ao verificar atualizações', 'error');
+            }
+        }
+        
+        // ====== ATUALIZAÇÃO AUTOMÁTICA ======
+        function startAutoRefresh() {
+            setInterval(() => {
+                if (document.visibilityState === 'visible' && !isLoading) {
+                    refreshGames();
+                }
+            }, 180000); // 3 minutos
+        }
+        
+        function refreshGames() {
+            showNotification('🔄 Atualizando', 'Atualizando lista de jogos...', 'info');
+            loadAllGames();
+        }
+        
+        // ====== UTILITÁRIOS ======
+        function truncatePath(path, maxLength = 50) {
+            if (!path || path === 'N/A') return 'N/A';
+            if (path.length <= maxLength) return path;
+            return '...' + path.slice(-maxLength);
+        }
+        
+        function truncateText(text, maxLength = 50) {
+            if (!text) return '';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+        
+        async function copyToClipboard(text, message = 'Copiado para a área de transferência') {
+            try {
+                await navigator.clipboard.writeText(text);
+                showNotification('✅ Copiado', message, 'success');
+            } catch (err) {
+                console.error('Erro ao copiar: ', err);
+                // Fallback para navegadores antigos
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = text;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('✅ Copiado', message, 'success');
+                } catch (fallbackErr) {
+                    console.error('Fallback também falhou: ', fallbackErr);
+                    showNotification('❌ Erro', 'Falha ao copiar para a área de transferência', 'error');
+                }
+            }
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function showNoGamesMessage(message) {
+            const container = document.getElementById('games-list');
+            const noGames = document.getElementById('no-games');
+            const noGamesTitle = document.getElementById('no-games-title');
+            const noGamesMessage = document.getElementById('no-games-message');
+            
+            if (container) container.innerHTML = '';
+            if (noGames) {
+                noGames.style.display = 'block';
+                if (noGamesTitle && message) {
+                    noGamesTitle.textContent = 'Nenhum jogo encontrado';
+                }
+                if (noGamesMessage && message) {
+                    noGamesMessage.textContent = message;
+                }
+            }
+        }
+        
+        // ====== NOTIFICAÇÕES ======
+        function showNotification(title, message, type = 'info') {
+            // Verificar se a função já existe globalmente
+            if (typeof window.showNotification === 'function' && window.showNotification !== showNotification) {
+                window.showNotification(title, message, type);
+                return;
+            }
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                padding: 18px 24px;
+                background: ${type === 'success' ? 'linear-gradient(135deg, #00ff88 0%, #00cc66 100%)' : 
+                            type === 'error' ? 'linear-gradient(135deg, #ff2a6d 0%, #ff2a2a 100%)' : 
+                            type === 'warning' ? 'linear-gradient(135deg, #ffaa00 0%, #ff8800 100%)' : 
+                            'linear-gradient(135deg, #7a2aff 0%, #bb33ff 100%)'};
+                color: #0b0610;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                z-index: 10000;
+                font-weight: 600;
+                animation: fadeIn 0.3s ease;
+                max-width: 400px;
+                border: 1px solid rgba(255,255,255,0.1);
+                font-family: 'Inter', sans-serif;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-weight: 800; margin-bottom: 8px; font-size: 16px;">${title}</div>
+                <div style="font-size: 14px; line-height: 1.5;">${message}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 5000);
+        }
+        
+        // ====== LOADING ======
+        function showLoading(text = 'Carregando...') {
+            const overlay = document.getElementById('loading-overlay');
+            const loadingText = document.getElementById('loading-text');
+            
+            if (overlay) {
+                overlay.style.display = 'flex';
+            }
+            if (loadingText) {
+                loadingText.textContent = text;
+            }
+        }
+        
+        function hideLoading() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
+        
+        // ====== EXPORTAR FUNÇÕES ======
+        window.setMode = setMode;
+        window.setFilter = setFilter;
+        window.searchGames = searchGames;
+        window.refreshGames = refreshGames;
+        window.downloadNativeFix = downloadNativeFix;
+        window.copyToClipboard = copyToClipboard;
+        window.checkGameFix = checkGameFix;
+        window.testDownloadConnection = testDownloadConnection;
+        window.testFixLocalConnection = testFixLocalConnection;
+        window.showDownloadsManager = showDownloadsManager;
+        window.showNotification = showNotification;
+        
+        console.log('✅ Fix Manager Ultimate inicializado com sucesso!');
+    </script>
+</body>
+</html>

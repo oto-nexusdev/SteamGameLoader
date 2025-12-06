@@ -1,0 +1,749 @@
+<!-- zip.html – módulo único de upload ZIP/RAR -->
+
+<div class="zip-card" id="zipModuleRoot" role="region" aria-label="Upload de arquivos ZIP - módulo">
+  <div class="card-title">📤 Upload de Arquivos ZIP</div>
+
+  <div class="upload-container" id="uploadContainerRoot">
+    <div
+      id="zipUploadArea"
+      class="upload-area"
+      tabindex="0"
+      role="button"
+      aria-label="Área de upload de arquivos ZIP"
+    >
+      <div class="upload-icon">📁</div>
+      <div class="upload-text">Arraste e solte arquivos aqui</div>
+      <div class="upload-subtext small">
+        Aceitamos .zip / .rar contendo manifests, scripts e configs. Máx 500MB.
+      </div>
+
+      <div class="format-list" aria-hidden="true">
+        <div class="format-item">.manifest</div>
+        <div class="format-item">.lua</div>
+        <div class="format-item">.vdf</div>
+        <div class="format-item">.zip / .rar</div>
+      </div>
+
+      <div class="upload-actions">
+        <button id="browseFilesBtn_zip" class="btn ghost" type="button">
+          Selecionar arquivo
+        </button>
+        <button
+          id="pasteZipBtn"
+          class="btn"
+          type="button"
+          title="Colar caminhos (quando suportado)"
+        >
+          📋 Colar link/nome
+        </button>
+        <input
+          type="file"
+          id="fileInput_zip"
+          accept=".zip,.rar"
+          style="display:none"
+          aria-hidden="true"
+        />
+      </div>
+    </div>
+
+    <div id="uploadStatus_zip" class="upload-status" role="status" aria-live="polite">
+      <div class="upload-progress">
+        <div class="progress-bar">
+          <div id="uploadProgressFill_zip" class="progress-fill"></div>
+        </div>
+        <div id="uploadProgressText_zip" class="progress-text">0%</div>
+      </div>
+      <div id="uploadDetails_zip" class="small" style="margin-top:8px">Pronto</div>
+      <div id="currentFileName_zip" class="small filename" style="margin-top:4px; opacity:.8;">
+        Nenhum arquivo selecionado
+      </div>
+    </div>
+
+    <div id="uploadResult_zip" class="upload-result" aria-live="polite">
+      <div class="result-header">
+        <span class="result-icon">✅</span>
+        <span class="result-title">Upload processado</span>
+      </div>
+      <div id="uploadResultContent_zip" class="result-content"></div>
+    </div>
+
+    <div id="uploadError_zip" class="result-error" role="alert">
+      <div class="error-icon">❌</div>
+      <div id="uploadErrorMessage_zip" style="margin-left:8px">Erro</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .zip-card {
+    box-sizing: border-box;
+    background:
+      radial-gradient(circle at top left, rgba(102, 192, 244, 0.12), transparent 55%),
+      var(--card-bg, #050816);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    border: 1px solid rgba(102, 192, 244, 0.35);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.65);
+  }
+
+  .zip-card .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary, #e5e7eb);
+    letter-spacing: 0.02em;
+  }
+
+  .upload-container {
+    margin-top: 10px;
+  }
+
+  .upload-area {
+    border-radius: 14px;
+    padding: 26px 20px;
+    border: 1px dashed rgba(148, 163, 184, 0.55);
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.96));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition:
+      border-color 0.18s,
+      box-shadow 0.18s,
+      transform 0.12s,
+      background 0.18s,
+      opacity 0.15s;
+  }
+
+  .upload-area:hover {
+    border-color: rgba(148, 163, 184, 0.9);
+    box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.3);
+  }
+
+  .upload-area.drag-over {
+    border-color: #4de0ff;
+    box-shadow: 0 0 0 1px rgba(77, 224, 255, 0.4);
+    transform: translateY(-1px);
+    background: radial-gradient(circle at top, rgba(15, 23, 42, 1), rgba(15, 23, 42, 0.98));
+  }
+
+  .upload-area.uploading {
+    opacity: 0.85;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .upload-icon {
+    font-size: 40px;
+    margin-bottom: 4px;
+  }
+
+  .upload-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary, #e5e7eb);
+  }
+
+  .upload-subtext {
+    text-align: center;
+    max-width: 360px;
+  }
+
+  .format-list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .format-item {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    font-size: 11px;
+    color: var(--muted, #9aa3b8);
+  }
+
+  .upload-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .upload-status {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    display: none;
+  }
+
+  .upload-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.9);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #7a2aff, #ff2a6d, #4de0ff);
+    transition: width 0.15s linear;
+  }
+
+  .progress-text {
+    font-size: 12px;
+    color: #e5e7eb;
+    min-width: 34px;
+    text-align: right;
+  }
+
+  .upload-result {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(34, 197, 94, 0.5);
+    display: none;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: #bbf7d0;
+  }
+
+  .result-content {
+    color: var(--muted, #9aa3b8);
+    font-size: 13px;
+  }
+
+  .file-list {
+    margin-top: 8px;
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  .file-item {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    color: #e9eef5;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .result-error {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(255, 23, 68, 0.06);
+    border: 1px solid rgba(255, 23, 68, 0.12);
+    color: #ffd6dc;
+    display: none;
+    align-items: center;
+  }
+
+  .result-error .error-icon {
+    font-size: 18px;
+  }
+
+  .small {
+    font-size: 12px;
+    color: var(--muted, #9aa3b8);
+  }
+
+  .filename {
+    word-break: break-all;
+  }
+
+  @media (max-width: 768px) {
+    .upload-area {
+      padding: 20px;
+    }
+    .upload-icon {
+      font-size: 36px;
+    }
+    .upload-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    .upload-actions .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    class ZipUploadManager {
+      constructor(rootId = 'zipModuleRoot') {
+        this.root = document.getElementById(rootId);
+        if (!this.root) {
+          console.error('[ZipUploadManager] root não encontrado');
+          return;
+        }
+
+        this.uploadArea = this.root.querySelector('#zipUploadArea');
+        this.fileInput = this.root.querySelector('#fileInput_zip');
+        this.browseBtn = this.root.querySelector('#browseFilesBtn_zip');
+        this.pasteBtn = this.root.querySelector('#pasteZipBtn');
+
+        this.uploadStatus = this.root.querySelector('#uploadStatus_zip');
+        this.uploadProgressFill = this.root.querySelector('#uploadProgressFill_zip');
+        this.uploadProgressText = this.root.querySelector('#uploadProgressText_zip');
+        this.uploadDetails = this.root.querySelector('#uploadDetails_zip');
+        this.currentFileName = this.root.querySelector('#currentFileName_zip');
+
+        this.uploadResult = this.root.querySelector('#uploadResult_zip');
+        this.uploadResultContent = this.root.querySelector('#uploadResultContent_zip');
+        this.uploadError = this.root.querySelector('#uploadError_zip');
+        this.uploadErrorMessage = this.root.querySelector('#uploadErrorMessage_zip');
+
+        this.isUploading = false;
+        this.currentFile = null;
+        this._simInterval = null;
+        this._eventsBound = false;
+
+        this.init();
+      }
+
+      init() {
+        if (!this.uploadArea || !this.fileInput) {
+          console.error('[ZipUploadManager] elementos de upload faltando');
+          return;
+        }
+        if (this._eventsBound) {
+          // evita bind duplicado se alguém tentar reinicializar
+          return;
+        }
+        this.bindEvents();
+        this._eventsBound = true;
+      }
+
+      bindEvents() {
+        // clique na área -> abrir file picker
+        this.uploadArea.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (this.isUploading) return;
+          this.fileInput.click();
+        });
+
+        // acessibilidade teclado
+        this.uploadArea.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (this.isUploading) return;
+            this.fileInput.click();
+          }
+        });
+
+        // botão "Selecionar arquivo"
+        if (this.browseBtn) {
+          this.browseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.isUploading) return;
+            this.fileInput.click();
+          });
+        }
+
+        // botão "Colar"
+        if (this.pasteBtn) {
+          this.pasteBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+              const text = await navigator.clipboard.readText();
+              if (text && text.trim()) {
+                this.showToast('Colado: ' + text.slice(0, 80), 'info');
+              } else {
+                this.showToast('Nada no clipboard', 'warning');
+              }
+            } catch (err) {
+              this.showToast('Clipboard não disponível', 'error');
+            }
+          });
+        }
+
+        // drag & drop
+        this.uploadArea.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          if (this.isUploading) return;
+          if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+          this.uploadArea.classList.add('drag-over');
+        });
+
+        this.uploadArea.addEventListener('dragleave', (e) => {
+          // só remove se sair realmente da área
+          if (!this.uploadArea.contains(e.relatedTarget)) {
+            this.uploadArea.classList.remove('drag-over');
+          }
+        });
+
+        this.uploadArea.addEventListener('drop', (e) => {
+          e.preventDefault();
+          this.uploadArea.classList.remove('drag-over');
+          if (this.isUploading) return;
+          const files = e.dataTransfer && e.dataTransfer.files;
+          if (files && files.length > 0) {
+            this.handleFile(files[0]);
+          }
+        });
+
+        // input file
+        this.fileInput.addEventListener('change', (e) => {
+          const files = e.target.files;
+          if (files && files.length > 0) {
+            this.handleFile(files[0]);
+          }
+          // permite selecionar o mesmo arquivo de novo depois
+          e.target.value = '';
+        });
+      }
+
+      handleFile(file) {
+        if (this.isUploading) {
+          this.showToast('Aguarde o upload atual terminar', 'warning');
+          return;
+        }
+
+        if (!file) {
+          this.showToast('Nenhum arquivo selecionado', 'warning');
+          return;
+        }
+
+        if (!this.validateFile(file)) return;
+
+        this.currentFile = file;
+        if (this.currentFileName) {
+          this.currentFileName.textContent = file.name;
+        }
+
+        this.startUpload();
+      }
+
+      validateFile(file) {
+        const maxSize = 500 * 1024 * 1024; // 500MB
+        const allowed = [
+          'application/zip',
+          'application/x-zip-compressed',
+          'application/octet-stream',
+          'application/x-rar-compressed',
+          'application/vnd.rar'
+        ];
+        const name = (file.name || '').toLowerCase();
+        const typeOk = allowed.includes(file.type);
+
+        const isZip = name.endsWith('.zip');
+        const isRar = name.endsWith('.rar');
+
+        if (!typeOk && !isZip && !isRar) {
+          this.showToast('Selecione um arquivo ZIP/RAR válido', 'error');
+          return false;
+        }
+        if (file.size === 0) {
+          this.showToast('Arquivo vazio', 'error');
+          return false;
+        }
+        if (file.size > maxSize) {
+          this.showToast('Arquivo muito grande (máx 500MB)', 'error');
+          return false;
+        }
+        return true;
+      }
+
+      async startUpload() {
+        if (!this.currentFile) {
+          this.showToast('Nenhum arquivo selecionado', 'error');
+          return;
+        }
+
+        this.isUploading = true;
+        this.showUploadStatus();
+        this.updateProgress(2, 'Preparando upload...');
+
+        try {
+          const form = new FormData();
+          form.append('zip_file', this.currentFile);
+
+          this.simulateProgress();
+
+          const ctrl = new AbortController();
+          const timeout = setTimeout(() => ctrl.abort(), 120000); // 120s
+
+          const res = await fetch('/api/upload/zip', {
+            method: 'POST',
+            body: form,
+            signal: ctrl.signal
+          });
+
+          clearTimeout(timeout);
+
+          if (!res.ok) {
+            const text = await res.text().catch(() => null);
+            throw new Error(
+              `HTTP ${res.status} ${res.statusText}${
+                text ? ' - ' + text.slice(0, 200) : ''
+              }`
+            );
+          }
+
+          const json = await res.json().catch(() => null);
+          this.handleResult(json || { success: false, error: 'Resposta inválida do servidor' });
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            this.handleError('Tempo de conexão esgotado');
+          } else {
+            this.handleError(err.message || 'Erro no upload');
+          }
+        } finally {
+          this.isUploading = false;
+          this.stopSimulatedProgress();
+          this.hideUploadStatus();
+        }
+      }
+
+      simulateProgress() {
+        this.stopSimulatedProgress();
+
+        let p = 5;
+        this.updateProgress(p, 'Enviando arquivo...');
+
+        this._simInterval = setInterval(() => {
+          if (p >= 90) {
+            this.stopSimulatedProgress();
+            return;
+          }
+          p += Math.random() * 12;
+          if (p > 90) p = 90;
+          this.updateProgress(p, 'Enviando arquivo...');
+        }, 180);
+      }
+
+      stopSimulatedProgress() {
+        if (this._simInterval) {
+          clearInterval(this._simInterval);
+          this._simInterval = null;
+        }
+      }
+
+      updateProgress(percent, message) {
+        const pct = Math.max(0, Math.min(100, Math.round(percent)));
+
+        if (this.uploadProgressFill) {
+          this.uploadProgressFill.style.width = pct + '%';
+        }
+        if (this.uploadProgressText) {
+          this.uploadProgressText.textContent = pct + '%';
+        }
+        if (this.uploadDetails && message) {
+          this.uploadDetails.textContent = message;
+        }
+      }
+
+      handleResult(result) {
+        this.updateProgress(100, 'Processando resultado...');
+
+        if (result && result.success) {
+          this.showSuccess(result);
+          this.showToast('Upload processado com sucesso', 'success');
+
+          const meta = result.upload_metadata || {};
+          const appids = meta.detected_appids || [];
+          if (appids.length > 0) {
+            const gameData = {
+              name: `Jogo do ZIP (${appids[0]})`,
+              appid: appids[0],
+              is_free: true,
+              installed_via_zip: true
+            };
+            try {
+              window.dispatchEvent(
+                new CustomEvent('gameInstallRequest', { detail: gameData })
+              );
+            } catch (e) {
+              console.warn('[ZipUploadManager] falha ao emitir gameInstallRequest', e);
+            }
+          }
+        } else {
+          this.handleError(
+            (result && (result.error || result.message)) ||
+              'Erro no processamento do ZIP'
+          );
+        }
+      }
+
+      showSuccess(result) {
+        if (!this.uploadResult || !this.uploadResultContent) return;
+
+        const meta = result.upload_metadata || {};
+        const appids = meta.detected_appids || [];
+        const moved = result.moved_files || [];
+
+        let html = '';
+        html += '<div class="file-list">';
+        html += `
+          <div class="file-item">
+            <div>Arquivo:</div>
+            <div style="opacity:.9">
+              ${meta.zip_file || (this.currentFile && this.currentFile.name) || 'N/A'}
+            </div>
+          </div>`;
+        html += `
+          <div class="file-item">
+            <div>Extraídos:</div>
+            <div>${meta.extracted_files || 0}</div>
+          </div>`;
+        html += `
+          <div class="file-item">
+            <div>Válidos:</div>
+            <div>${meta.valid_files_found || 0}</div>
+          </div>`;
+
+        if (appids.length > 0) {
+          html += `
+            <div class="file-item">
+              <div>AppIDs:</div>
+              <div>${appids.join(', ')}</div>
+            </div>`;
+        }
+
+        html += '</div>';
+
+        if (moved.length > 0) {
+          html += `
+            <div style="margin-top:8px;font-weight:600;">Arquivos instalados:</div>
+            <div class="file-list">
+          `;
+          moved.slice(0, 5).forEach((f) => {
+            html += `
+              <div class="file-item">
+                <div>📄 ${f.filename}</div>
+                <div>${f.destination_type || ''}</div>
+              </div>`;
+          });
+          if (moved.length > 5) {
+            html += `
+              <div class="file-item">
+                <div>+ ${moved.length - 5} arquivos adicionais...</div>
+                <div></div>
+              </div>`;
+          }
+          html += '</div>';
+        }
+
+        this.uploadResultContent.innerHTML = html;
+        this.uploadResult.style.display = 'block';
+        if (this.uploadError) this.uploadError.style.display = 'none';
+      }
+
+      handleError(msg) {
+        const message = msg || 'Erro no upload';
+
+        this.showToast(`Erro no upload: ${message}`, 'error');
+
+        if (this.uploadError && this.uploadErrorMessage) {
+          this.uploadErrorMessage.textContent = message;
+          this.uploadError.style.display = 'flex';
+        }
+        if (this.uploadResult) {
+          this.uploadResult.style.display = 'none';
+        }
+      }
+
+      showUploadStatus() {
+        if (this.uploadStatus) this.uploadStatus.style.display = 'block';
+        if (this.uploadResult) this.uploadResult.style.display = 'none';
+        if (this.uploadError) this.uploadError.style.display = 'none';
+        if (this.uploadArea) this.uploadArea.classList.add('uploading');
+      }
+
+      hideUploadStatus() {
+        setTimeout(() => {
+          if (this.uploadStatus) this.uploadStatus.style.display = 'none';
+          if (this.uploadArea) this.uploadArea.classList.remove('uploading');
+          this.updateProgress(0, 'Pronto');
+        }, 450);
+      }
+
+      showToast(message, type = 'info') {
+        if (window.showToast && typeof window.showToast === 'function') {
+          window.showToast(message, type);
+          return;
+        }
+        const el = document.createElement('div');
+        el.textContent = message;
+        el.style.cssText =
+          'position:fixed;right:18px;top:110px;padding:10px 14px;border-radius:8px;color:#fff;' +
+          'font-weight:700;z-index:12000;box-shadow:0 6px 28px rgba(0,0,0,0.5);transition:opacity .2s;';
+        el.style.background =
+          type === 'error'
+            ? '#ff5555'
+            : type === 'success'
+            ? '#00c853'
+            : type === 'warning'
+            ? '#ff9800'
+            : '#2196f3';
+        el.style.opacity = '0';
+        document.body.appendChild(el);
+        requestAnimationFrame(() => {
+          el.style.opacity = '1';
+        });
+        setTimeout(() => {
+          el.style.opacity = '0';
+          setTimeout(() => el.remove(), 320);
+        }, 2800);
+      }
+    }
+
+    // inicializador global único
+    window.initializeZipUpload = function () {
+      try {
+        if (!window.zipUploadManager || !window.zipUploadManager.root) {
+          window.zipUploadManager = new ZipUploadManager('zipModuleRoot');
+          console.log('[zip.html] ZipUploadManager inicializado');
+        } else {
+          console.log('[zip.html] ZipUploadManager já ativo');
+        }
+      } catch (err) {
+        console.error('[zip.html] falha ao inicializar ZipUploadManager', err);
+      }
+    };
+
+    // auto-init direto se o módulo já estiver no DOM (uso direto do zip.html)
+    if (document.getElementById('zipModuleRoot')) {
+      window.initializeZipUpload();
+    } else {
+      // fallback leve caso seja inserido logo após a execução do script
+      document.addEventListener(
+        'DOMContentLoaded',
+        () => {
+          if (document.getElementById('zipModuleRoot')) {
+            window.initializeZipUpload();
+          }
+        },
+        { once: true }
+      );
+    }
+  })();
+</script>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<style>
+  :root {
+    --muted: #9aa3b8;
+    --glass-bg: rgba(27,40,56,0.32);
+    --glass-border: rgba(102,192,244,0.22);
+    --footer-bg: rgba(10,10,18,0.92);
+    --footer-border: rgba(255,255,255,0.05);
+    --primary: #66c0f4;
+    --success: #00e676;
+    --warning: #ffab00;
+    --error: #ff1744;
+  }
+
+  .footer-wrapper {
+    width: 100%;
+    margin-top: 40px;
+    padding: 25px 0 35px;
+    background: var(--footer-bg);
+    border-top: 1px solid var(--footer-border);
+    backdrop-filter: blur(18px);
+    position: relative;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .status-card-footer {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 22px;
+    border-radius: 14px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+
+  .footer-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+
+  .footer-status-item {
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .footer-status-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  .footer-status-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .status-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 13px;
+  }
+
+  .status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+  .status-dot.ok { background: var(--success); box-shadow: 0 0 10px var(--success); }
+  .status-dot.warn { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+  .status-dot.err { background: var(--error); box-shadow: 0 0 10px var(--error); }
+
+  .quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .quick-action-btn {
+    background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 16px 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-height: 80px;
+  }
+
+  .quick-action-btn:not(.disabled):hover {
+    background: linear-gradient(135deg, #3a3a4a, #2a2a3a);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 192, 244, 0.2);
+  }
+
+  .quick-action-btn:active {
+    transform: scale(0.95);
+  }
+
+  .quick-action-icon {
+    font-size: 24px;
+  }
+
+  .quick-action-text {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .system-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .status-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 12px;
+    border-left: 4px solid #333;
+    transition: border-color 0.3s ease;
+  }
+
+  .status-item:hover {
+    border-left-color: var(--primary);
+  }
+
+  .status-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .status-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color 0.3s ease;
+  }
+
+  .status-value.active {
+    color: var(--primary);
+  }
+
+  .status-value.error {
+    color: var(--error);
+  }
+
+  .footer-text-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  .footer-text-sub {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .footer-text-small {
+    font-size: 11px;
+    color: var(--muted);
+    opacity: 0.7;
+    margin-top: 6px;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  .status-value:not(.active):not(.error) {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  @media (max-width: 768px) {
+    .quick-actions-grid { grid-template-columns: repeat(2, 1fr); }
+    .system-status-grid { grid-template-columns: 1fr; }
+    .footer-status-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+<div class="footer-wrapper">
+  <div class="footer-content">
+
+    <!-- CONTROLES RÁPIDOS -->
+    <div class="status-card-footer fade-in">
+      <div class="footer-text-title">🎮 Controles Rápidos</div>
+      <p class="footer-text-sub">Acesso rápido às principais funcionalidades do sistema.</p>
+
+      <div class="quick-actions-grid">
+        <button class="quick-action-btn" id="btnDlcManager">
+          <div class="quick-action-icon">🎁</div>
+          <div class="quick-action-text">Gerenciar DLCs</div>
+        </button>
+
+        <button class="quick-action-btn" id="btnFixCheck">
+          <div class="quick-action-icon">🛠️</div>
+          <div class="quick-action-text">Verificar Fixes</div>
+        </button>
+
+        <button class="quick-action-btn" id="btnInstalledOnly">
+          <div class="quick-action-icon">📂</div>
+          <div class="quick-action-text">Jogos Instalados</div>
+        </button>
+
+        <button class="quick-action-btn" id="btnDetectGames">
+          <div class="quick-action-icon">🔍</div>
+          <div class="quick-action-text">Detectar Jogos</div>
+        </button>
+
+        <button class="quick-action-btn" id="btnRefreshAll">
+          <div class="quick-action-icon">🔄</div>
+          <div class="quick-action-text">Atualizar Tudo</div>
+        </button>
+
+        <button class="quick-action-btn" id="btnSystemStatus">
+          <div class="quick-action-icon">📊</div>
+          <div class="quick-action-text">Status do Sistema</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- STATUS DO SISTEMA EM TEMPO REAL -->
+    <div class="status-card-footer fade-in">
+      <div class="footer-text-title">📊 Status do Sistema</div>
+      <div class="system-status-grid">
+        <div class="status-item">
+          <div class="status-label">Sistema Principal</div>
+          <div class="status-value" id="coreStatus">🔄 Inicializando...</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Gerenciador DLC</div>
+          <div class="status-value" id="dlcStatus">🔄 Inicializando...</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Jogos Detectados</div>
+          <div class="status-value" id="gamesCount">0</div>
+        </div>
+        <div class="status-item">
+          <div class="status-label">Status Steam</div>
+          <div class="status-value" id="steamStatus">🔄 Verificando...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATUS BACKEND -->
+    <div class="status-card-footer fade-in">
+      <div class="footer-status-grid">
+        <div class="footer-status-item">
+          <div class="footer-status-label">Sistema Backend</div>
+          <div id="footerBackendStatus" class="status-chip">
+            <span class="status-dot warn"></span> <span>Verificando...</span>
+          </div>
+        </div>
+
+        <div class="footer-status-item">
+          <div class="footer-status-label">Steam API</div>
+          <div id="footerSteamStatus" class="status-chip">
+            <span class="status-dot warn"></span> <span>Verificando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER FINAL -->
+    <div style="text-align:center;">
+      <div class="footer-text-title">Steam GameLoader Ultimate v8.0</div>
+      <div class="footer-text-sub">Desenvolvido por OtoNexusCloud • Modo AMOLED Purple Cyber Evolution</div>
+      <div class="footer-text-small">Interface Premium • Gerenciador de Jogos • Sistema DLC Completo</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ✅ SISTEMA FOOTER DEFINITIVO - CORRIGIDO
+  class FooterSystem {
+    constructor() {
+      this.ready = false;
+      this.init();
+    }
+
+    async init() {
+      console.log('🚀 FooterSystem: Iniciando...');
+      
+      // Aguardar sistemas principais carregarem
+      await this.waitForMainSystems();
+      
+      this.setupEventHandlers();
+      this.startStatusPolling();
+      this.setupButtonAnimations();
+      
+      this.ready = true;
+      console.log('✅ FooterSystem: Pronto e integrado');
+    }
+
+    async waitForMainSystems() {
+      // Aguardar até que os sistemas principais estejam carregados
+      let attempts = 0;
+      const maxAttempts = 30; // 15 segundos máximo
+      
+      while (attempts < maxAttempts) {
+        if (window.appInitializer && (window.gameManagement || window.dlcManagement || window.dlcManager)) {
+          console.log('✅ Sistemas principais detectados pelo footer');
+          return true;
+        }
+        await new Promise(resolve => setTimeout(resolve, 500));
+        attempts++;
+      }
+      
+      console.warn('⚠️ Footer: Sistemas principais não carregados no tempo esperado');
+    }
+
+    setupEventHandlers() {
+      console.log('🎯 Footer: Configurando event handlers...');
+
+      // ✅ BOTÕES QUE FUNCIONAM COM FALLBACKS INTELIGENTES
+      this.safeBind('btnDlcManager', () => {
+        this.executeWithFallback(
+          () => {
+            // Tentativa 1: DLC Management moderno
+            if (window.dlcManagement?.openForGame) {
+              window.dlcManagement.openForGame();
+              return true;
+            }
+            // Tentativa 2: DLC Manager legacy
+            if (window.dlcManager?.openDlcModal) {
+              window.dlcManager.openDlcModal();
+              return true;
+            }
+            return false;
+          },
+          () => this.scrollToSection('dlcManagementContainer', 'Gerenciador de DLCs')
+        );
+      });
+
+      this.safeBind('btnFixCheck', () => {
+        this.executeWithFallback(
+          () => {
+            if (window.gameManagement?.checkAllFixes) {
+              window.gameManagement.checkAllFixes();
+              return true;
+            }
+            return false;
+          },
+          () => this.scrollToSection('gameManagementContainer', 'Sistema de Fixes')
+        );
+      });
+
+      this.safeBind('btnInstalledOnly', () => {
+        this.executeWithFallback(
+          () => {
+            if (window.gameManagement?.toggleInstalledFilter) {
+              window.gameManagement.toggleInstalledFilter();
+              return true;
+            }
+            return false;
+          },
+          () => this.scrollToSection('gameManagementContainer', 'Jogos Instalados')
+        );
+      });
+
+      this.safeBind('btnDetectGames', () => {
+        this.executeWithFallback(
+          () => {
+            if (window.gameManagement?.detectGames) {
+              window.gameManagement.detectGames();
+              return true;
+            }
+            return false;
+          },
+          () => this.scrollToSection('gameManagementContainer', 'Detecção de Jogos')
+        );
+      });
+
+      this.safeBind('btnRefreshAll', () => {
+        this.refreshAllSystems();
+      });
+
+      this.safeBind('btnSystemStatus', () => {
+        this.showSystemStatus();
+      });
+    }
+
+    executeWithFallback(mainAction, fallbackAction) {
+      try {
+        const success = mainAction();
+        if (success) {
+          this.showToast('Ação executada com sucesso!', 'success');
+        } else {
+          fallbackAction();
+        }
+      } catch (error) {
+        console.error('Erro na ação principal:', error);
+        fallbackAction();
+      }
+    }
+
+    scrollToSection(sectionId, sectionName) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+        
+        // Efeito visual de destaque
+        const originalBorder = section.style.border;
+        section.style.border = '2px solid #66c0f4';
+        section.style.transition = 'border 0.3s ease';
+        
+        setTimeout(() => {
+          section.style.border = originalBorder;
+        }, 2000);
+        
+        this.showToast(`Navegando para: ${sectionName}`, 'info');
+      } else {
+        this.showError(`Seção "${sectionName}" não encontrada. Aguarde o carregamento.`);
+      }
+    }
+
+    refreshAllSystems() {
+      let actions = [];
+      
+      // Game Management
+      if (window.gameManagement) {
+        if (window.gameManagement.refreshAllFixes) {
+          window.gameManagement.refreshAllFixes();
+          actions.push('Fixes atualizados');
+        }
+        if (window.gameManagement.detectGames) {
+          window.gameManagement.detectGames();
+          actions.push('Jogos detectados');
+        }
+      }
+      
+      // DLC Management
+      if (window.dlcManagement?.refreshAllData) {
+        setTimeout(() => {
+          window.dlcManagement.refreshAllData();
+          actions.push('DLCs atualizadas');
+        }, 500);
+      } else if (window.dlcManager?.refreshDlcGamesList) {
+        setTimeout(() => {
+          window.dlcManager.refreshDlcGamesList();
+          actions.push('DLCs atualizadas');
+        }, 500);
+      }
+      
+      if (actions.length > 0) {
+        this.showToast(`Sistema atualizado: ${actions.join(', ')}`, 'success');
+      } else {
+        this.showToast('Nenhuma ação de atualização disponível', 'info');
+      }
+    }
+
+    safeBind(buttonId, handler) {
+      const button = document.getElementById(buttonId);
+      if (button) {
+        button.onclick = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          try { 
+            handler(ev); 
+          } catch (err) { 
+            console.error('Handler error:', err);
+            this.showError('Erro na operação: ' + err.message);
+          }
+        };
+        console.log(`✅ Botão ${buttonId} configurado`);
+      } else {
+        console.warn(`❌ Botão ${buttonId} não encontrado`);
+      }
+    }
+
+    setupButtonAnimations() {
+      document.querySelectorAll('.quick-action-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.style.transform = 'scale(0.95)';
+          setTimeout(() => { this.style.transform = 'scale(1)'; }, 150);
+        });
+      });
+    }
+
+    startStatusPolling() {
+      // Polling para status do sistema
+      setInterval(() => {
+        this.updateSystemStatus();
+      }, 3000);
+
+      // Polling para status do backend (menos frequente)
+      setInterval(() => {
+        this.updateBackendStatus();
+      }, 10000);
+    }
+
+    updateSystemStatus() {
+      // Status do Game Management
+      if (window.gameManagement) {
+        this.updateElement('coreStatus', '✅ Ativo', 'status-value active');
+      } else {
+        this.updateElement('coreStatus', '❌ Inativo', 'status-value error');
+      }
+
+      // Status do DLC Management
+      const dlcActive = window.dlcManagement || window.dlcManager;
+      if (dlcActive) {
+        this.updateElement('dlcStatus', '✅ Ativo', 'status-value active');
+      } else {
+        this.updateElement('dlcStatus', '❌ Inativo', 'status-value error');
+      }
+
+      // Contagem de jogos
+      try {
+        const count = window.gameManagement?.detectedGames?.length || 0;
+        this.updateElement('gamesCount', count.toString());
+      } catch (err) {
+        this.updateElement('gamesCount', '0');
+      }
+
+      // Status do Steam
+      this.updateSteamStatus();
+    }
+
+    async updateSteamStatus() {
+      try {
+        const response = await fetch('/api/steam/status');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            const status = data.running ? '✅ Online' : '❌ Offline';
+            this.updateElement('steamStatus', status, 
+              data.running ? 'status-value active' : 'status-value error');
+          }
+        }
+      } catch (error) {
+        this.updateElement('steamStatus', '🔴 Erro', 'status-value error');
+      }
+    }
+
+    async updateBackendStatus() {
+      try {
+        const [systemStatus, steamStatus] = await Promise.allSettled([
+          fetch('/api/system/status').then(r => r.json()),
+          fetch('/api/steam/status').then(r => r.json())
+        ]);
+
+        // Backend Status
+        const backendOk = systemStatus.status === 'fulfilled' && systemStatus.value?.success;
+        this.updateStatus('footerBackendStatus', backendOk, 
+          backendOk ? 'Backend Online' : 'Backend Offline');
+
+        // Steam API Status
+        const steamOk = steamStatus.status === 'fulfilled' && steamStatus.value?.success;
+        this.updateStatus('footerSteamStatus', steamOk,
+          steamOk ? 'Steam API Online' : 'Steam API Offline');
+
+      } catch (error) {
+        this.updateStatus('footerBackendStatus', false, 'Erro de Conexão');
+        this.updateStatus('footerSteamStatus', false, 'Erro de Conexão');
+      }
+    }
+
+    updateStatus(elementId, isOnline, message) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.innerHTML = isOnline 
+          ? `<span class="status-dot ok"></span><span>${message}</span>`
+          : `<span class="status-dot err"></span><span>${message}</span>`;
+      }
+    }
+
+    updateElement(elementId, text, className = null) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        element.textContent = text;
+        if (className) element.className = className;
+      }
+    }
+
+    showSystemStatus() {
+      const systems = {
+        'Game Management': window.gameManagement ? '✅ Ativo' : '❌ Inativo',
+        'DLC Management': window.dlcManagement ? '✅ Ativo' : window.dlcManager ? '✅ Ativo (Legacy)' : '❌ Inativo',
+        'Jogos Detectados': window.gameManagement?.detectedGames?.length || 0,
+        'Steam': this.getElementText('steamStatus') || '🔄 Verificando...',
+        'Footer System': this.ready ? '✅ Pronto' : '🔄 Inicializando'
+      };
+
+      let message = '📊 Status do Sistema (Footer):\n\n';
+      for (const [system, status] of Object.entries(systems)) {
+        message += `${system}: ${status}\n`;
+      }
+
+      alert(message);
+    }
+
+    getElementText(elementId) {
+      const element = document.getElementById(elementId);
+      return element ? element.textContent : null;
+    }
+
+    showToast(message, type = 'info') {
+      console.log(`[FOOTER ${type.toUpperCase()}] ${message}`);
+      
+      // Usar sistema de toast existente ou fallback
+      if (typeof window.showToast === 'function') {
+        window.showToast(message, type);
+      } else {
+        // Fallback simples
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: ${type === 'error' ? '#ff4444' : type === 'success' ? '#00c853' : '#2196f3'};
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          z-index: 10000;
+          font-size: 14px;
+          font-weight: 600;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        `;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+    }
+
+    showError(message) {
+      this.showToast(message, 'error');
+    }
+  }
+
+  // ✅ INICIALIZAÇÃO ROBUSTA
+  function initializeFooterSystem() {
+    // Aguardar um pouco para garantir que o DOM esteja totalmente pronto
+    setTimeout(() => {
+      if (!window.footerSystem) {
+        window.footerSystem = new FooterSystem();
+        
+        // Registrar globalmente para debug
+        window.footerSystemReady = true;
+        console.log('🎯 FooterSystem registrado globalmente');
+      }
+    }, 1000);
+  }
+
+  // Iniciar quando o DOM estiver pronto
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeFooterSystem);
+  } else {
+    initializeFooterSystem();
+  }
+
+  // Exportar para uso global
+  window.FooterSystem = FooterSystem;
+</script>
+
+</body>
+</html>

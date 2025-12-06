@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam GameLoader Ultimate | Home v16.0</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <style>
+        /* CSS mínimo apenas para ajustes de layout - MANTIDO ORIGINAL */
+        :root {
+            --header-height: 80px;
+            --sidebar-width: 280px;
+        }
+        
+        .main-container-home {
+            display: flex;
+            min-height: 100vh;
+            padding-top: var(--header-height);
+        }
+        
+        .main-content-home {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: calc(100vh - var(--header-height));
+            background: rgba(10, 8, 20, 0.6);
+            backdrop-filter: blur(10px);
+        }
+        
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            z-index: 1001;
+            background: linear-gradient(135deg, #7a2aff 0%, #ff2a6d 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(122, 42, 255, 0.6);
+        }
+        
+        @media (max-width: 992px) {
+            #sidebar-container {
+                transform: translateX(-100%);
+            }
+            
+            #sidebar-container.active {
+                transform: translateX(0);
+            }
+            
+            .main-content-home {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+        
+        /* Estilos de diagnóstico */
+        .debug-panel {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #00ff88;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 9999;
+            display: none;
+        }
+        
+        .debug-panel.visible {
+            display: block;
+        }
+        
+        .debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #ff2a6d;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background e partículas -->
+    <div class="home-background"></div>
+    <div id="particles-js"></div>
+    
+    <!-- Header fixo -->
+    <div id="header-container"></div>
+    
+    <!-- Botão toggle para mobile -->
+    <div class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+    
+    <!-- Container principal -->
+    <div class="main-container-home" id="main-container">
+        <!-- Sidebar fixa -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Conteúdo principal HOME -->
+        <main class="main-content-home" id="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-card">
+                    <div class="hero-content">
+                        <div class="hero-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="hero-text">
+                            <h1 class="hero-title">Steam GameLoader Ultimate</h1>
+                            <h2 class="hero-subtitle">Sistema Unificado v16.0</h2>
+                            <p class="hero-description">
+                                Bem-vindo ao sistema definitivo para gerenciamento de jogos Steam. 
+                                Instale, gerencie e otimize sua biblioteca completa em um só lugar.
+                            </p>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <div class="stat-number" id="hero-steam-status">--</div>
+                                <div class="stat-label">Status Steam</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="stat-number" id="hero-dll-status">--</div>
+                                <div class="stat-label">Status DLL</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="stat-number" id="hero-api-status">--</div>
+                                <div class="stat-label">API Online</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Informações do Usuário - POSIÇÃO ORIGINAL (APÓS HERO) -->
+            <section class="user-info-section">
+                <div class="user-card">
+                    <div class="user-header">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-astronaut"></i>
+                        </div>
+                        <div class="user-details">
+                            <h3 id="user-display-name">Carregando usuário...</h3>
+                            <p class="user-status" id="user-status-message">
+                                <i class="fas fa-circle"></i>
+                                <span>Conectando ao Steam...</span>
+                            </p>
+                        </div>
+                        <div class="user-time">
+                            <div class="time-display">
+                                <i class="fas fa-clock"></i>
+                                <span id="current-time-display">--:--:--</span>
+                            </div>
+                            <div class="date-display" id="current-date-display">
+                                ---/---/----
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-stats">
+                        <div class="user-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="user-games-count">0</div>
+                                <div class="stat-label">Jogos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-hdd"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="user-space-used">-- GB</div>
+                                <div class="stat-label">Espaço</div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-stat">
+                            <div class="stat-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value" id="user-dlc-count">0</div>
+                                <div class="stat-label">DLCs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Seção de Status Rápido -->
+            <section class="quick-status-section">
+                <div class="status-card">
+                    <div class="status-header">
+                        <h3>
+                            <i class="fas fa-bolt"></i>
+                            <span>Status do Sistema</span>
+                        </h3>
+                        <button class="btn-refresh" onclick="window.refreshSystemStatusHome()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="status-label">
+                                <i class="fab fa-steam"></i>
+                                <span>Steam</span>
+                            </div>
+                            <div class="status-value" id="quick-steam-status">
+                                <span class="status-indicator loading"></span>
+                                <span>Verificando...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-label">
+                                <i class="fas fa-cogs"></i>
+                                <span>DLL</span>
+                            </div>
+                            <div class="status-value" id="quick-dll-status">
+                                <span class="status-indicator loading"></span>
+                                <span>Verificando...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-label">
+                                <i class="fas fa-server"></i>
+                                <span>Backend</span>
+                            </div>
+                            <div class="status-value" id="quick-backend-status">
+                                <span class="status-indicator loading"></span>
+                                <span>Verificando...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-label">
+                                <i class="fas fa-database"></i>
+                                <span>Cache</span>
+                            </div>
+                            <div class="status-value" id="quick-cache-status">
+                                <span class="status-indicator loading"></span>
+                                <span>Verificando...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-actions">
+                        <button class="btn-action" onclick="window.refreshUserDataHome()">
+                            <i class="fas fa-plug"></i>
+                            <span>Atualizar Dados</span>
+                        </button>
+                        <button class="btn-action" onclick="window.location.href='/dashboard'">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Ver Dashboard</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Cards de Funcionalidades -->
+            <section class="features-section">
+                <h2 class="section-title">
+                    <i class="fas fa-star"></i>
+                    <span>Funcionalidades Principais</span>
+                </h2>
+                
+                <div class="features-grid">
+                    <!-- Card 1: Busca de Jogos -->
+                    <div class="feature-card" onclick="window.location.href='/search'">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Busca de Jogos</h3>
+                            <p class="feature-description">
+                                Encontre qualquer jogo na Steam Store. Busque por nome, gênero ou categoria.
+                            </p>
+                            <div class="feature-badge">
+                                <span class="badge">NOVO</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <button class="btn-feature">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: Upload ZIP -->
+                    <div class="feature-card" onclick="showNotification('Upload', 'Funcionalidade disponível no Dashboard', 'info')">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-archive"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Upload ZIP</h3>
+                            <p class="feature-description">
+                                Faça upload de arquivos ZIP contendo jogos completos para instalação automática.
+                            </p>
+                            <div class="feature-badge">
+                                <span class="badge">RÁPIDO</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <button class="btn-feature">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3: Gerenciamento de Jogos -->
+                    <div class="feature-card" onclick="window.location.href='/games'">
+                        <div class="feature-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Meus Jogos</h3>
+                            <p class="feature-description">
+                                Gerencie todos os seus jogos instalados e detectados em uma interface única.
+                            </p>
+                            <div class="feature-badge">
+                                <span class="badge" id="games-count-badge">0 jogos</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <button class="btn-feature">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4: Fix Manager -->
+                    <div class="feature-card highlight" onclick="window.location.href='/fixes'">
+                        <div class="feature-icon">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Fix Manager</h3>
+                            <p class="feature-description">
+                                Aplique correções e patches automáticos para melhor compatibilidade dos jogos.
+                            </p>
+                            <div class="feature-badge">
+                                <span class="badge">CRÍTICO</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <button class="btn-feature">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 5: DLC Manager -->
+                    <div class="feature-card" onclick="window.location.href='/dlc'">
+                        <div class="feature-icon">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Gerenciador DLC</h3>
+                            <p class="feature-description">
+                                Visualize e gerencie todas as DLCs dos seus jogos de forma organizada.
+                            </p>
+                            <div class="feature-badge">
+                                <span class="badge">INTEGRADO</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <button class="btn-feature">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 6: Dashboard -->
+                    <div class="feature-card" onclick="window.location.href='/dashboard'">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3 class="feature-title">Dashboard Avançado</h3>
+                            <p class="feature-description">
+                                Acesse estatísticas detalhadas, métricas do sistema e status em tempo real.
+                            </p>
+                            <div class="feature-badge">
+                                <span class="badge">RECOMENDADO</span>
+                            </div>
+                        </div>
+                        <div class="feature-action">
+                            <button class="btn-feature">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Footer fixo -->
+    <div id="footer-container"></div>
+    
+    <!-- Painel de debug -->
+    <div class="debug-panel" id="debugPanel">
+        <div><strong>DEBUG:</strong> Steam GameLoader</div>
+        <div id="debugUsername">Usuário: --</div>
+        <div id="debugSteamStatus">Steam: --</div>
+        <div id="debugDllStatus">DLL: --</div>
+        <div id="debugLastUpdate">Última atualização: --</div>
+    </div>
+    
+    <div class="debug-toggle" id="debugToggle" onclick="toggleDebugPanel()">
+        <i class="fas fa-bug"></i>
+    </div>
+    
+    <!-- Scripts -->
+    <!-- ORDEM CRÍTICA: notification.js DEVE carregar antes de qualquer script que use notificações -->
+    <script src="/js/particles.js"></script>
+    <script src="/js/notification.js"></script> <!-- SISTEMA UNIFICADO DE NOTIFICAÇÃO -->
+    <script src="/js/index.js"></script> <!-- Sistema de apoio -->
+    
+    <!-- Script específico para Home - VERSÃO REVISADA E INTEGRADA -->
+    <script>
+        // ====== SISTEMA PRINCIPAL DO HOME ======
+        // Este é o CONTROLE PRINCIPAL - index.js apenas apoia
+        
+        console.log('🎮 Steam GameLoader Ultimate v16.0 - Sistema Principal');
+        
+        // Estado do Home
+        const HomeState = {
+            userData: null,
+            componentsLoaded: false,
+            initialized: false
+        };
+        
+        // ====== INICIALIZAÇÃO PRINCIPAL ======
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Inicializando Sistema Principal...');
+            
+            // Verificar se sistema de notificação está carregado
+            if (!window.unifiedNotifications) {
+                console.warn('⚠️ Sistema de notificação unificado não carregado - usando fallback');
+            }
+            
+            // 1. Configurar menu mobile (não interfere com dados)
+            setupMobileMenu();
+            
+            // 2. Iniciar partículas (efeito visual)
+            initializeParticles();
+            
+            // 3. Carregar componentes SEM conflito
+            loadComponentsSafe();
+            
+            // 4. Iniciar relógio próprio
+            startHomeClock();
+            
+            // 5. Carregar dados do usuário DIRETAMENTE
+            loadHomeUserData();
+            
+            HomeState.initialized = true;
+            console.log('✅ Sistema Principal inicializado');
+            
+            // 6. Executar diagnóstico após 2 segundos
+            setTimeout(runHomeDiagnostics, 2000);
+        });
+        
+        // ====== FUNÇÕES DO HOME ======
+        
+        function initializeParticles() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    particles: {
+                        number: { value: 60 },
+                        color: { value: ["#7a2aff", "#bb33ff", "#00f3ff", "#ff2a6d"] },
+                        opacity: { value: 0.2 },
+                        size: { value: 2 },
+                        move: { enable: true, speed: 0.3 }
+                    }
+                });
+                console.log('✨ Partículas inicializadas');
+            }
+        }
+        
+        function setupMobileMenu() {
+            const toggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar-container');
+            
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('active');
+                    toggle.querySelector('i').className = 
+                        sidebar.classList.contains('active') ? 'fas fa-times' : 'fas fa-bars';
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 992 && sidebar && toggle && 
+                        !sidebar.contains(e.target) && 
+                        !toggle.contains(e.target) && 
+                        sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                        toggle.querySelector('i').className = 'fas fa-bars';
+                    }
+                });
+            }
+        }
+        
+        async function loadComponentsSafe() {
+            try {
+                console.log('📦 Carregando componentes de forma segura...');
+                
+                // Carregar componentes mas NÃO processar scripts internos deles
+                const [headerHTML, sidebarHTML] = await Promise.all([
+                    fetch('/header.html').then(r => r.ok ? r.text() : ''),
+                    fetch('/sidebar.html').then(r => r.ok ? r.text() : '')
+                ]);
+                
+                // Inserir componentes SEM scripts (evitar conflitos)
+                const headerContainer = document.getElementById('header-container');
+                const sidebarContainer = document.getElementById('sidebar-container');
+                
+                if (headerHTML && headerContainer) {
+                    // Remover scripts do header para evitar conflitos
+                    const cleanHeader = headerHTML.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+                    headerContainer.innerHTML = cleanHeader;
+                    console.log('✅ Header carregado (scripts removidos)');
+                }
+                
+                if (sidebarHTML && sidebarContainer) {
+                    // Remover scripts da sidebar para evitar conflitos
+                    const cleanSidebar = sidebarHTML.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+                    sidebarContainer.innerHTML = cleanSidebar;
+                    console.log('✅ Sidebar carregada (scripts removidos)');
+                }
+                
+                HomeState.componentsLoaded = true;
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar componentes:', error);
+                showNotification('Erro', 'Não foi possível carregar componentes', 'error');
+            }
+        }
+        
+        function startHomeClock() {
+            console.log('⏰ Iniciando relógio do Home...');
+            
+            function updateClock() {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR', { hour12: false });
+                const dateStr = now.toLocaleDateString('pt-BR');
+                
+                // Atualizar elementos do Home
+                const timeEl = document.getElementById('current-time-display');
+                const dateEl = document.getElementById('current-date-display');
+                
+                if (timeEl) timeEl.textContent = timeStr;
+                if (dateEl) dateEl.textContent = dateStr;
+                
+                // Também atualizar elementos gerais se existirem
+                const generalTimeEls = document.querySelectorAll('[id*="time"]:not(#current-time-display)');
+                const generalDateEls = document.querySelectorAll('[id*="date"]:not(#current-date-display)');
+                
+                generalTimeEls.forEach(el => {
+                    if (!el.textContent || el.textContent.includes('--')) {
+                        el.textContent = timeStr;
+                    }
+                });
+                
+                generalDateEls.forEach(el => {
+                    if (!el.textContent || el.textContent.includes('--')) {
+                        el.textContent = dateStr;
+                    }
+                });
+            }
+            
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+        
+        // ====== FUNÇÃO PRINCIPAL: CARREGAR DADOS DO USUÁRIO ======
+        
+        async function loadHomeUserData() {
+            console.log('👤 Carregando dados do usuário (Home)...');
+            
+            try {
+                // Buscar dados da API PRINCIPAL
+                const response = await fetch('/api/steam/user/full-info', {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('📊 API Response (Home):', data);
+                
+                if (data.success && data.user) {
+                    const user = data.user;
+                    HomeState.userData = user;
+                    
+                    // ATUALIZAR TODOS OS ELEMENTOS DO HOME
+                    updateHomeUserElements(user);
+                    
+                    // Atualizar painel de debug
+                    updateDebugPanel(user);
+                    
+                    console.log('✅ Dados do usuário carregados no Home:', user.username);
+                    return true;
+                } else {
+                    throw new Error('Dados inválidos da API');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do usuário (Home):', error);
+                showNotification('Erro de conexão', 'Não foi possível carregar dados do usuário', 'error');
+                return false;
+            }
+        }
+        
+        function updateHomeUserElements(user) {
+            console.log('🎨 Atualizando elementos do Home com dados do usuário...');
+            
+            // 1. NOME DO USUÁRIO (CRÍTICO)
+            const displayNameEl = document.getElementById('user-display-name');
+            if (displayNameEl) {
+                displayNameEl.textContent = user.username || 'Jogador';
+                console.log(`✅ Nome atualizado: ${user.username}`);
+            }
+            
+            // 2. STATUS DO USUÁRIO
+            const statusEl = document.getElementById('user-status-message');
+            if (statusEl) {
+                const icon = statusEl.querySelector('i');
+                const text = statusEl.querySelector('span');
+                if (icon && text) {
+                    if (user.steam_running) {
+                        icon.style.color = '#00ff88';
+                        text.textContent = 'Steam Online';
+                    } else {
+                        icon.style.color = '#ff2a6d';
+                        text.textContent = 'Steam Offline';
+                    }
+                }
+            }
+            
+            // 3. HERO STATS
+            updateHeroStatsHome(user);
+            
+            // 4. QUICK STATUS
+            updateQuickStatusHome('steam', user.steam_running);
+            updateQuickStatusHome('dll', user.dll_available);
+            updateQuickStatusHome('backend', true);  // Backend sempre online
+            updateQuickStatusHome('cache', true);    // Cache sempre ativo
+            
+            // 5. Atualizar contadores de jogos
+            updateGamesCountHome();
+            
+            // 6. Disparar evento para outros sistemas
+            const event = new CustomEvent('homeUserDataUpdated', { 
+                detail: user 
+            });
+            window.dispatchEvent(event);
+        }
+        
+        function updateHeroStatsHome(user) {
+            // Steam Status
+            const steamEl = document.getElementById('hero-steam-status');
+            if (steamEl) {
+                steamEl.textContent = user.steam_running ? 'ON' : 'OFF';
+                steamEl.style.color = user.steam_running ? '#00ff88' : '#ff2a6d';
+            }
+            
+            // DLL Status
+            const dllEl = document.getElementById('hero-dll-status');
+            if (dllEl) {
+                dllEl.textContent = user.dll_available ? 'OK' : 'ERR';
+                dllEl.style.color = user.dll_available ? '#00ff88' : '#ff2a6d';
+            }
+            
+            // API Status (sempre OK)
+            const apiEl = document.getElementById('hero-api-status');
+            if (apiEl) {
+                apiEl.textContent = 'OK';
+                apiEl.style.color = '#00ff88';
+            }
+        }
+        
+        function updateQuickStatusHome(type, status) {
+            const element = document.getElementById(`quick-${type}-status`);
+            if (!element) return;
+            
+            const indicator = element.querySelector('.status-indicator');
+            const text = element.querySelector('span:last-child');
+            
+            if (!indicator || !text) return;
+            
+            if (status === true) {
+                indicator.className = 'status-indicator online';
+                if (type === 'steam') {
+                    text.textContent = 'Online';
+                } else if (type === 'dll') {
+                    text.textContent = 'OK';
+                } else {
+                    text.textContent = 'OK';
+                }
+                text.style.color = '#00ff88';
+            } else if (status === false) {
+                indicator.className = 'status-indicator offline';
+                if (type === 'steam') {
+                    text.textContent = 'Offline';
+                } else if (type === 'dll') {
+                    text.textContent = 'Ausente';
+                } else {
+                    text.textContent = 'Erro';
+                }
+                text.style.color = type === 'dll' ? '#ffaa00' : '#ff2a6d';
+            }
+        }
+        
+        async function updateGamesCountHome() {
+            try {
+                const response = await fetch('/api/dlc/games');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.games) {
+                        const count = data.games.length;
+                        
+                        // Atualizar elementos do Home
+                        const gamesCountEl = document.getElementById('user-games-count');
+                        const gamesBadgeEl = document.getElementById('games-count-badge');
+                        const dlcCountEl = document.getElementById('user-dlc-count');
+                        
+                        if (gamesCountEl) gamesCountEl.textContent = count;
+                        if (gamesBadgeEl) gamesBadgeEl.textContent = `${count} jogos`;
+                        if (dlcCountEl) dlcCountEl.textContent = count;
+                        
+                        console.log(`✅ Contador de jogos atualizado: ${count} jogos`);
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar contagem de jogos:', error);
+            }
+        }
+        
+        // ====== FUNÇÕES DE ATUALIZAÇÃO DO HOME ======
+        
+        window.refreshSystemStatusHome = async function() {
+            console.log('🔄 Atualizando status do sistema (Home)...');
+            showNotification('Atualizando', 'Verificando status do sistema...', 'info');
+            
+            const success = await loadHomeUserData();
+            
+            if (success) {
+                showNotification('Atualizado', 'Status do sistema verificado', 'success');
+            } else {
+                showNotification('Erro', 'Falha ao atualizar status', 'error');
+            }
+        };
+        
+        window.refreshUserDataHome = async function() {
+            console.log('🔄 Atualizando dados do usuário (Home)...');
+            
+            try {
+                // Usar rota de refresh
+                const response = await fetch('/api/steam/user/refresh', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    showNotification('Dados atualizados', 'Informações do Steam atualizadas com sucesso', 'success');
+                    await loadHomeUserData();
+                } else {
+                    showNotification('Aviso', 'Não foi possível atualizar os dados', 'warning');
+                }
+            } catch (error) {
+                console.error('❌ Erro ao atualizar dados:', error);
+                showNotification('Erro', 'Falha ao atualizar dados', 'error');
+            }
+        };
+        
+        // ====== SISTEMA UNIFICADO DE NOTIFICAÇÕES ======
+        
+        function showNotification(title, message, type = 'info') {
+            // Usar sistema unificado se disponível
+            if (window.unifiedNotifications && typeof window.unifiedNotifications.show === 'function') {
+                return window.unifiedNotifications.show(title, message, type, 7000);
+            } else {
+                // Fallback: console log
+                console.log(`🔔 [${type.toUpperCase()}] ${title}: ${message}`);
+                return null;
+            }
+        }
+        
+        // ====== DIAGNÓSTICO DO HOME ======
+        
+        function runHomeDiagnostics() {
+            console.log('🔍 Executando diagnóstico do Home...');
+            
+            // Verificar elementos críticos
+            const criticalElements = [
+                'user-display-name',
+                'hero-steam-status', 
+                'hero-dll-status',
+                'quick-steam-status',
+                'quick-dll-status'
+            ];
+            
+            let problems = 0;
+            
+            criticalElements.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const content = el.textContent || '';
+                    if (content.includes('--') || content.includes('Carregando') || content.trim() === '') {
+                        console.warn(`⚠️ Elemento ${id} não foi atualizado: "${content}"`);
+                        problems++;
+                    } else {
+                        console.log(`✅ ${id}: "${content}"`);
+                    }
+                } else {
+                    console.error(`❌ Elemento ${id} não encontrado`);
+                    problems++;
+                }
+            });
+            
+            if (problems === 0) {
+                console.log('✅ Diagnóstico: Todos os elementos estão atualizados');
+            } else {
+                console.warn(`⚠️ Diagnóstico: ${problems} problemas encontrados`);
+                // Tentar corrigir automaticamente
+                setTimeout(() => {
+                    if (HomeState.userData) {
+                        updateHomeUserElements(HomeState.userData);
+                    } else {
+                        loadHomeUserData();
+                    }
+                }, 1000);
+            }
+        }
+        
+        // ====== PAINEL DE DEBUG ======
+        
+        function updateDebugPanel(user) {
+            const panel = document.getElementById('debugPanel');
+            if (!panel) return;
+            
+            const usernameEl = document.getElementById('debugUsername');
+            const steamStatusEl = document.getElementById('debugSteamStatus');
+            const dllStatusEl = document.getElementById('debugDllStatus');
+            const lastUpdateEl = document.getElementById('debugLastUpdate');
+            
+            if (usernameEl) usernameEl.textContent = `Usuário: ${user.username}`;
+            if (steamStatusEl) steamStatusEl.textContent = `Steam: ${user.steam_running ? 'Online' : 'Offline'}`;
+            if (dllStatusEl) dllStatusEl.textContent = `DLL: ${user.dll_available ? 'OK' : 'Ausente'}`;
+            if (lastUpdateEl) lastUpdateEl.textContent = `Última atualização: ${new Date().toLocaleTimeString()}`;
+        }
+        
+        function toggleDebugPanel() {
+            const panel = document.getElementById('debugPanel');
+            if (panel) {
+                panel.classList.toggle('visible');
+            }
+        }
+        
+        // ====== EXPORTAÇÕES DO HOME ======
+        
+        // Exportar funções principais - USANDO SISTEMA UNIFICADO
+        window.showNotification = showNotification;
+        window.refreshSystemStatus = window.refreshSystemStatusHome;
+        window.refreshUserData = window.refreshUserDataHome;
+        
+        // Funções de navegação
+        window.scanLibrary = () => window.location.href = '/games';
+        window.detectGames = () => window.location.href = '/games';
+        window.openSettings = () => window.location.href = '/dashboard#settings';
+        window.showSystemLogs = () => window.location.href = '/dashboard#logs';
+        window.toggleDebugPanel = toggleDebugPanel;
+        
+        // ====== SISTEMA DE ATUALIZAÇÃO AUTOMÁTICA ======
+        
+        // Atualizar dados a cada 30 segundos
+        setInterval(async () => {
+            if (HomeState.initialized) {
+                await loadHomeUserData();
+            }
+        }, 30000);
+        
+        // Atualizar contadores a cada 2 minutos
+        setInterval(async () => {
+            if (HomeState.initialized) {
+                await updateGamesCountHome();
+            }
+        }, 120000);
+        
+        console.log('🎯 Sistema Principal do Home configurado com sucesso!');
+        
+    </script>
+</body>
+</html>

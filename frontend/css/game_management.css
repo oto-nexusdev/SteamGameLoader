@@ -1,0 +1,932 @@
+/* frontend/css/game_management.css - SISTEMA PREMIUM DE GERENCIAMENTO DE JOGOS V3 */
+/* Sistema de Gerenciamento de Jogos - Integração Total com CSS Modular */
+/* by @OtoNexusCloud */
+
+/* ========== IMPORTAÇÕES IMPLÍCITAS ========== */
+/* Este arquivo DEPENDE de (carregue na ordem):
+   1. variables.css          - Todas as variáveis globais
+   2. global_components.css  - Componentes e reset
+   3. animations.css         - Animações
+   4. style.css              - Estilos globais
+*/
+
+/* ========== CONTAINER PRINCIPAL DO GERENCIAMENTO ========== */
+.gm-container {
+    background: var(--gradient-steam-dark);
+    border: 1px solid var(--border-steam);
+    border-radius: var(--radius-2xl);
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(20px);
+    gap: 32px;
+    display: flex;
+    flex-direction: column;
+    animation: slideInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.gm-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(102, 157, 246, 0.2);
+}
+
+.gm-title {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--steam-light-blue) 0%, var(--neon-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+}
+
+.gm-subtitle {
+    color: var(--steam-light-blue);
+    font-size: 15px;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+/* ========== LAYOUT DE DUAS COLUNAS ESPECÍFICO ========== */
+.gm-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 32px;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .gm-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+/* ========== LISTA DE JOGOS ESPECÍFICA ========== */
+.gm-games-container {
+    background: var(--gradient-steam);
+    border: 1px solid rgba(102, 157, 246, 0.2);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.gm-games-header {
+    padding: 20px 24px;
+    background: linear-gradient(90deg, rgba(27, 40, 56, 0.9) 0%, rgba(42, 71, 94, 0.9) 100%);
+    border-bottom: 1px solid rgba(102, 157, 246, 0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+.gm-games-title {
+    font-weight: 700;
+    color: var(--steam-light-blue);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gm-games-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.gm-games-list {
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.gm-games-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.gm-games-list::-webkit-scrollbar-track {
+    background: rgba(27, 40, 56, 0.5);
+    border-radius: var(--radius-sm);
+}
+
+.gm-games-list::-webkit-scrollbar-thumb {
+    background: var(--steam-light-blue);
+    border-radius: var(--radius-sm);
+}
+
+.gm-games-list::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-purple);
+}
+
+/* ========== ITEM DE JOGO ESPECÍFICO ========== */
+.gm-game-item {
+    padding: 20px;
+    border-bottom: 1px solid rgba(102, 157, 246, 0.1);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+    border-radius: var(--radius-lg);
+    background: rgba(27, 40, 56, 0.6);
+    border: 1px solid transparent;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.gm-game-item:hover {
+    background: rgba(102, 157, 246, 0.08);
+    transform: translateX(8px);
+    border-color: rgba(102, 157, 246, 0.3);
+    box-shadow: 0 4px 20px rgba(102, 157, 246, 0.15);
+}
+
+.gm-game-item.selected {
+    background: linear-gradient(135deg, rgba(102, 157, 246, 0.15) 0%, rgba(122, 42, 255, 0.1) 100%);
+    border-left: 6px solid var(--steam-light-blue);
+    box-shadow: 0 6px 25px rgba(102, 157, 246, 0.25);
+    transform: translateX(4px);
+}
+
+.gm-game-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+/* Capa do jogo específica */
+.gm-game-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--steam-light-blue) 0%, var(--neon-purple) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+}
+
+.gm-game-cover:hover {
+    transform: scale(1.05);
+    border-color: rgba(102, 157, 246, 0.6);
+}
+
+.gm-game-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gm-game-cover.fallback {
+    background: linear-gradient(135deg, var(--steam-blue) 0%, var(--steam-blue-light) 100%);
+    color: var(--steam-light-blue);
+    font-weight: bold;
+}
+
+.gm-game-cover.loading {
+    background: linear-gradient(90deg, var(--steam-blue-light) 25%, #3C5A78 50%, var(--steam-blue-light) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+/* Informações do jogo específicas */
+.gm-game-info {
+    flex: 1;
+    min-width: 0;
+    padding-right: 16px;
+}
+
+.gm-game-name {
+    font-weight: 700;
+    color: var(--steam-light-blue);
+    margin-bottom: 8px;
+    font-size: 15px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gm-game-details {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-wrap: wrap;
+}
+
+.gm-game-detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
+}
+
+.gm-game-detail:hover {
+    background: rgba(102, 157, 246, 0.15);
+    border-color: rgba(102, 157, 246, 0.3);
+}
+
+/* Status do jogo específico */
+.gm-game-status {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.gm-status-badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+    transition: all 0.3s ease;
+}
+
+.gm-status-badge.fixes {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ff9800;
+    border-color: rgba(255, 152, 0, 0.4);
+}
+
+.gm-status-badge.fixes:hover {
+    background: rgba(255, 152, 0, 0.25);
+    transform: translateY(-1px);
+}
+
+.gm-status-badge.cache {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border-color: rgba(76, 175, 80, 0.4);
+}
+
+.gm-status-badge.api {
+    background: rgba(33, 150, 243, 0.15);
+    color: #2196f3;
+    border-color: rgba(33, 150, 243, 0.4);
+}
+
+.gm-status-badge.steam {
+    background: rgba(102, 192, 244, 0.15);
+    color: var(--steam-light-blue);
+    border-color: rgba(102, 192, 244, 0.4);
+}
+
+/* ========== ESTATÍSTICAS ESPECÍFICAS ========== */
+.gm-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+    padding: 20px;
+    background: rgba(27, 40, 56, 0.8);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(102, 157, 246, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.gm-stat-card {
+    background: linear-gradient(135deg, rgba(27, 40, 56, 0.9) 0%, rgba(34, 49, 68, 0.9) 100%);
+    border: 1px solid rgba(102, 157, 246, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 20px 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.gm-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--steam-light-blue) 0%, var(--neon-purple) 100%);
+}
+
+.gm-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(102, 157, 246, 0.3);
+    border-color: rgba(102, 157, 246, 0.6);
+}
+
+.gm-stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--steam-light-blue) 0%, var(--neon-cyan) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.gm-stat-label {
+    font-size: 12px;
+    color: var(--steam-light-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* ========== PAINEL DE CONTROLE ESPECÍFICO ========== */
+.gm-control-panel {
+    background: var(--gradient-steam);
+    border: 1px solid rgba(102, 157, 246, 0.3);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    position: sticky;
+    top: 20px;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(10px);
+}
+
+.gm-control-section {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(102, 157, 246, 0.2);
+}
+
+.gm-control-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.gm-control-title {
+    font-weight: 700;
+    color: var(--steam-light-blue);
+    margin-bottom: 16px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gm-control-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gm-action-btn {
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.gm-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.gm-action-btn:hover::before {
+    left: 100%;
+}
+
+.gm-action-btn.primary {
+    background: linear-gradient(135deg, var(--steam-light-blue) 0%, var(--neon-purple) 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 157, 246, 0.4);
+}
+
+.gm-action-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 157, 246, 0.6);
+}
+
+.gm-action-btn.secondary {
+    background: rgba(27, 40, 56, 0.8);
+    color: var(--steam-light-blue);
+    border: 1px solid rgba(102, 157, 246, 0.3);
+}
+
+.gm-action-btn.secondary:hover {
+    background: rgba(102, 157, 246, 0.1);
+    border-color: var(--steam-light-blue);
+    transform: translateY(-1px);
+}
+
+.gm-action-btn.danger {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--error);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.gm-action-btn.danger:hover {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: var(--error);
+    transform: translateY(-1px);
+}
+
+.gm-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.gm-action-btn:disabled::before {
+    display: none;
+}
+
+/* ========== CONFIGURAÇÕES ESPECÍFICAS ========== */
+.gm-settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.gm-setting-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: var(--radius-md);
+}
+
+.gm-setting-item:hover {
+    background: rgba(102, 157, 246, 0.05);
+}
+
+.gm-setting-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(102, 157, 246, 0.5);
+    border-radius: var(--radius-sm);
+    background: rgba(27, 40, 56, 0.8);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gm-setting-checkbox.checked {
+    background: var(--steam-light-blue);
+    border-color: var(--steam-light-blue);
+}
+
+.gm-setting-checkbox.checked::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.gm-setting-label {
+    font-size: 14px;
+    color: var(--steam-light-blue);
+    cursor: pointer;
+    flex: 1;
+}
+
+/* ========== LOGS DE OPERAÇÃO ESPECÍFICOS ========== */
+.gm-operations-log {
+    background: rgba(23, 26, 33, 0.8);
+    border: 1px solid rgba(102, 157, 246, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.gm-log-entry {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(102, 157, 246, 0.1);
+    transition: all 0.2s ease;
+}
+
+.gm-log-entry:hover {
+    background: rgba(102, 157, 246, 0.05);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+    margin: 0 -8px 8px -8px;
+}
+
+.gm-log-entry:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.gm-log-timestamp {
+    color: var(--steam-light-blue);
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.gm-log-message {
+    color: var(--steam-text);
+}
+
+.gm-log-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+/* ========== ESTADOS ESPECIAIS DO GERENCIAMENTO ========== */
+.gm-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--steam-light-blue);
+}
+
+.gm-empty-state .gm-empty-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.7;
+    color: var(--steam-light-blue);
+}
+
+.gm-empty-state .gm-empty-message h3 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--steam-light-blue);
+    font-weight: 600;
+}
+
+.gm-empty-state .gm-empty-message p {
+    font-size: 14px;
+    opacity: 0.8;
+    line-height: 1.5;
+    color: var(--steam-text-dark);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.gm-error-state {
+    background: rgba(244, 67, 54, 0.1);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    color: var(--error);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.gm-success-state {
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    color: var(--success);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.gm-warning-state {
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    color: #ff9800;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* ========== ANIMAÇÕES ESPECÍFICAS DO GERENCIAMENTO ========== */
+@keyframes gm-game-appear {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.gm-game-item {
+    animation: gm-game-appear 0.4s ease-out;
+}
+
+/* Delays para itens de jogo */
+.gm-game-item:nth-child(1) { animation-delay: 0.1s; }
+.gm-game-item:nth-child(2) { animation-delay: 0.2s; }
+.gm-game-item:nth-child(3) { animation-delay: 0.3s; }
+.gm-game-item:nth-child(4) { animation-delay: 0.4s; }
+.gm-game-item:nth-child(5) { animation-delay: 0.5s; }
+.gm-game-item:nth-child(6) { animation-delay: 0.6s; }
+.gm-game-item:nth-child(7) { animation-delay: 0.7s; }
+.gm-game-item:nth-child(8) { animation-delay: 0.8s; }
+
+/* ========== RESPONSIVIDADE ESPECÍFICA ========== */
+@media (max-width: 1200px) {
+    .gm-layout {
+        grid-template-columns: 1fr 350px;
+    }
+    
+    .gm-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .gm-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .gm-control-panel {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .gm-container {
+        padding: 20px;
+        margin: 16px;
+        border-radius: var(--radius-xl);
+    }
+    
+    .gm-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 16px;
+    }
+    
+    .gm-games-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .gm-games-controls {
+        justify-content: center;
+    }
+    
+    .gm-game-item {
+        padding: 16px;
+        gap: 12px;
+    }
+    
+    .gm-game-cover {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .gm-game-details {
+        gap: 8px;
+    }
+    
+    .gm-game-detail {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+    
+    .gm-stat-value {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gm-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .gm-game-item {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        gap: 12px;
+    }
+    
+    .gm-game-info {
+        padding-right: 0;
+        width: 100%;
+    }
+    
+    .gm-game-status {
+        align-self: flex-end;
+        margin-top: 8px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .gm-game-details {
+        justify-content: flex-start;
+    }
+    
+    .gm-control-actions {
+        gap: 8px;
+    }
+    
+    .gm-action-btn {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+}
+
+/* ========== ACESSIBILIDADE DO GERENCIAMENTO ========== */
+.gm-game-item:focus-visible {
+    outline: 2px solid var(--steam-light-blue);
+    outline-offset: 2px;
+    box-shadow: 0 0 15px rgba(102, 192, 244, 0.4);
+}
+
+.gm-action-btn:focus-visible {
+    outline: 2px solid var(--neon-cyan);
+    outline-offset: 2px;
+    box-shadow: 0 0 20px rgba(77, 224, 255, 0.5);
+}
+
+.gm-setting-item:focus-visible {
+    outline: 2px solid var(--steam-light-blue);
+    outline-offset: 2px;
+    background: rgba(102, 157, 246, 0.1);
+}
+
+/* ========== UTILITÁRIOS ESPECÍFICOS DO GERENCIAMENTO ========== */
+.gm-text-muted {
+    color: var(--steam-text-dark);
+}
+
+.gm-text-success {
+    color: var(--steam-success);
+}
+
+.gm-text-warning {
+    color: var(--steam-warning);
+}
+
+.gm-text-error {
+    color: var(--steam-error);
+}
+
+.gm-text-info {
+    color: var(--steam-light-blue);
+}
+
+.gm-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.gm-badge.steam {
+    background: rgba(102, 192, 244, 0.15);
+    color: var(--steam-light-blue);
+    border: 1px solid rgba(102, 192, 244, 0.3);
+}
+
+.gm-badge.dlc {
+    background: rgba(91, 163, 43, 0.15);
+    color: var(--steam-success);
+    border: 1px solid rgba(91, 163, 43, 0.3);
+}
+
+.gm-badge.fix {
+    background: rgba(230, 164, 46, 0.15);
+    color: var(--steam-warning);
+    border: 1px solid rgba(230, 164, 46, 0.3);
+}
+
+.gm-badge.update {
+    background: rgba(33, 150, 243, 0.15);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.3);
+}
+
+/* ========== FILTROS E ORDENAÇÃO ========== */
+.gm-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.gm-filter-btn {
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    background: rgba(27, 40, 56, 0.6);
+    border: 1px solid rgba(102, 157, 246, 0.2);
+    color: var(--steam-text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gm-filter-btn:hover {
+    background: rgba(102, 157, 246, 0.1);
+    border-color: rgba(102, 157, 246, 0.4);
+}
+
+.gm-filter-btn.active {
+    background: rgba(102, 157, 246, 0.2);
+    border-color: var(--steam-light-blue);
+    color: var(--steam-light-blue);
+}
+
+.gm-sort-select {
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    background: rgba(27, 40, 56, 0.6);
+    border: 1px solid rgba(102, 157, 246, 0.2);
+    color: var(--steam-text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 150px;
+}
+
+.gm-sort-select:focus {
+    outline: none;
+    border-color: var(--steam-light-blue);
+    box-shadow: 0 0 0 2px rgba(102, 157, 246, 0.2);
+}
+
+/* ========== PAGINAÇÃO ========== */
+.gm-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(102, 157, 246, 0.1);
+}
+
+.gm-page-btn {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background: rgba(27, 40, 56, 0.6);
+    border: 1px solid rgba(102, 157, 246, 0.2);
+    color: var(--steam-text);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 36px;
+    text-align: center;
+}
+
+.gm-page-btn:hover {
+    background: rgba(102, 157, 246, 0.1);
+    border-color: rgba(102, 157, 246, 0.4);
+}
+
+.gm-page-btn.active {
+    background: rgba(102, 157, 246, 0.2);
+    border-color: var(--steam-light-blue);
+    color: var(--steam-light-blue);
+}
+
+.gm-page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ========== FIM DO GAME_MANAGEMENT.CSS INTEGRADO ========== */

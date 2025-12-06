@@ -1,0 +1,185 @@
+/* frontend/css/animations.css - SISTEMA UNIFICADO DE ANIMAÇÕES V1.0 */
+
+/* ========== ANIMAÇÕES DE PARTÍCULAS ========== */
+@keyframes pulseDot {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* ========== ANIMAÇÕES DE CARREGAMENTO ========== */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========== ANIMAÇÕES DE GRADIENTE ========== */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ========== ANIMAÇÕES DE ENTRADA ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sidebarSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* ========== ANIMAÇÕES DE EFEITOS ========== */
+@keyframes neonPulse {
+  0% { 
+    filter: drop-shadow(0 0 10px rgba(122, 42, 255, 0.3)); 
+    transform: translateY(0); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 30px rgba(189, 90, 255, 0.6)); 
+    transform: translateY(-5px); 
+  }
+  100% { 
+    filter: drop-shadow(0 0 10px rgba(122, 42, 255, 0.3)); 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(122, 42, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(122, 42, 255, 0.6);
+  }
+}
+
+@keyframes steamGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(102, 192, 244, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(102, 192, 244, 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  50% { 
+    transform: translateY(-15px) rotate(180deg); 
+  }
+}
+
+/* ========== CLASSES DE ANIMAÇÃO UTILITÁRIAS ========== */
+.neon-animate { 
+  animation: neonPulse 3s infinite;
+}
+
+.gradient-animate {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+}
+
+.steam-glow {
+  animation: steamGlow 2s ease-in-out infinite;
+}
+
+.floating-icon {
+  animation: float 6s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(122, 42, 255, 0.6));
+}
+
+.pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.fade-in { 
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(102, 192, 244, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--steam-accent);
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+.sidebar-loaded .app-sidebar {
+  animation: sidebarSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* ========== ESTADOS ESPECIAIS DE ANIMAÇÃO ========== */
+.app-sidebar.installing {
+  animation: glowPulse 2s ease-in-out infinite;
+  border-color: rgba(77, 224, 255, 0.5);
+}
+
+.app-sidebar.steam-online {
+  border-color: rgba(0, 230, 118, 0.4);
+}
+
+.app-sidebar.steam-offline {
+  border-color: rgba(255, 23, 68, 0.4);
+}
+
+.status-dot {
+  animation: pulseDot 2s infinite;
+}

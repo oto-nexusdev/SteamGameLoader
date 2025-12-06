@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DLC Manager Pro - Steam GameLoader</title>
+    
+    <!-- Fontes e ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/dlc_manager.css">
+</head>
+<body>
+    <div class="dlc-manager-page">
+        <!-- Header será injetado aqui -->
+        <div id="header-container"></div>
+        
+        <!-- Sidebar será injetado aqui -->
+        <div id="sidebar-container"></div>
+        
+        <!-- Conteúdo Principal -->
+        <main class="main-content" id="mainContent">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div class="page-title">
+                    <div class="page-title-icon float-animation">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div class="page-title-text">
+                        <h1>DLC Manager Pro <span class="glow-animation" style="color: var(--accent-color);">v10.1</span></h1>
+                        <p>Gerencie todas as DLCs dos seus jogos Steam com precisão e controle total</p>
+                        <div class="loading-indicator" id="initLoader" style="margin-top: 15px;">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Inicializando sistema DLC...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mensagens de Status -->
+            <div id="statusMessage" class="status-message"></div>
+            
+            <!-- Cartões de Estatísticas -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <h3 id="statsTotalGames">0</h3>
+                        <p>Jogos Instalados</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <h3 id="statsGamesWithDLC">0</h3>
+                        <p>Jogos com DLC</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <h3 id="statsAvailableDLCs">0</h3>
+                        <p>DLCs Disponíveis</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <h3 id="statsInstalledDLCs">0</h3>
+                        <p>DLCs Instaladas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Controles Principais -->
+            <div class="main-controls">
+                <button class="btn btn-primary" onclick="loadGames()" id="refreshBtn">
+                    <i class="fas fa-redo"></i>
+                    <span>Atualizar Lista</span>
+                </button>
+                
+                <button class="btn btn-secondary" onclick="selectAllDLCs()">
+                    <i class="fas fa-check-square"></i>
+                    <span>Selecionar Todas</span>
+                </button>
+                
+                <button class="btn btn-secondary" onclick="deselectAllDLCs()">
+                    <i class="fas fa-square"></i>
+                    <span>Deselecionar Todas</span>
+                </button>
+                
+                <button class="btn btn-success" onclick="installSelectedDLCs()">
+                    <i class="fas fa-download"></i>
+                    <span>Instalar Selecionadas</span>
+                    <span class="count-badge" id="globalSelectedCount">0</span>
+                </button>
+                
+                <button class="btn btn-danger" onclick="uninstallSelectedDLCs()">
+                    <i class="fas fa-trash"></i>
+                    <span>Remover Selecionadas</span>
+                    <span class="count-badge" id="globalRemoveCount">0</span>
+                </button>
+                
+                <button class="btn btn-info" onclick="showSystemStatus()">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Status do Sistema</span>
+                </button>
+                
+                <button class="btn btn-warning" onclick="clearDlcCache()">
+                    <i class="fas fa-broom"></i>
+                    <span>Limpar Cache</span>
+                </button>
+                
+                <button class="btn btn-validation" onclick="validateAllGamesData()">
+                    <i class="fas fa-check-double"></i>
+                    <span>Validar Dados</span>
+                </button>
+            </div>
+            
+            <!-- Barra de Busca -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar jogos por nome, AppID ou DLC..." 
+                           onkeyup="searchGames()" autocomplete="off">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div id="searchResults" style="margin-top: 10px; font-size: 14px; color: var(--text-muted); display: none;">
+                    <span id="searchCount">0</span> jogos encontrados
+                </div>
+            </div>
+            
+            <!-- Container de Jogos -->
+            <div class="games-container">
+                <div class="games-header">
+                    <h2>
+                        <i class="fas fa-list"></i>
+                        <span>Jogos Instalados</span>
+                        <span class="games-count" id="gamesCount">0</span>
+                    </h2>
+                    
+                    <div class="game-actions">
+                        <button class="dlc-toggle-btn" onclick="toggleAllDlcSections()">
+                            <i class="fas fa-chevron-down"></i>
+                            <span>Expandir/Recolher Tudo</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshAllDLCs()" style="padding: 12px 24px;">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Atualizar Todas as DLCs</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Loader Principal -->
+                <div class="loader" id="mainLoader">
+                    <i class="fas fa-spinner"></i>
+                    <p>Carregando jogos e DLCs...</p>
+                </div>
+                
+                <!-- Lista de Jogos -->
+                <div class="games-list" id="gamesList">
+                    <!-- Os jogos serão inseridos aqui via JavaScript -->
+                </div>
+            </div>
+        </main>
+        
+        <!-- Modal de Confirmação -->
+        <div class="modal" id="confirmationModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3 id="modalTitle">Confirmação</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage">Tem certeza que deseja continuar?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                        <span>Cancelar</span>
+                    </button>
+                    <button class="btn btn-primary" id="modalConfirmBtn" onclick="confirmAction()">
+                        <i class="fas fa-check"></i>
+                        <span>Confirmar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal de Status do Sistema -->
+        <div class="modal" id="statusModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Status do Sistema DLC</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="status-modal-body" id="statusModalContent">
+                        <!-- Conteúdo do status será inserido aqui -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="closeStatusModal()">
+                        <i class="fas fa-times"></i>
+                        <span>Fechar</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshSystemStatus()">
+                        <i class="fas fa-redo"></i>
+                        <span>Atualizar</span>
+                    </button>
+                    <button class="btn btn-validation" onclick="runSystemDiagnostics()">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Diagnóstico</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal de Resumo do Jogo -->
+        <div class="modal" id="gameSummaryModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-gamepad"></i>
+                    <h3 id="gameSummaryTitle">Resumo do Jogo</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="status-modal-body" id="gameSummaryContent">
+                        <!-- Conteúdo do resumo será inserido aqui -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="closeGameSummaryModal()">
+                        <i class="fas fa-times"></i>
+                        <span>Fechar</span>
+                    </button>
+                    <button class="btn btn-validation" onclick="validateGameData()" id="validateGameBtn">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Validar Dados</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal de Validação -->
+        <div class="modal" id="validationModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-check-double"></i>
+                    <h3 id="validationTitle">Validação de Dados</h3>
+                </div>
+                <div class="modal-body">
+                    <div id="validationContent">
+                        <!-- Conteúdo da validação será inserido aqui -->
+                    </div>
+                    <div class="progress-bar" style="margin-top: 20px;">
+                        <div class="progress-fill" id="validationProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="closeValidationModal()">
+                        <i class="fas fa-times"></i>
+                        <span>Fechar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal de Diagnóstico -->
+        <div class="modal" id="diagnosticModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-stethoscope"></i>
+                    <h3>Diagnóstico do Sistema</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="status-modal-body" id="diagnosticContent">
+                        <!-- Conteúdo do diagnóstico será inserido aqui -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="closeDiagnosticModal()">
+                        <i class="fas fa-times"></i>
+                        <span>Fechar</span>
+                    </button>
+                    <button class="btn btn-success" onclick="applyDiagnosticFix()">
+                        <i class="fas fa-magic"></i>
+                        <span>Aplicar Correções</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript do DLC Manager -->
+    <script src="js/dlc_manager.js"></script>
+</body>
+</html>

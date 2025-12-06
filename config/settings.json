@@ -1,0 +1,7 @@
+{
+    "make_backup": true,
+    "extract_archives": true,
+    "steam_path": "C:/Program Files (x86)/Steam",
+    "theme": "dark",
+    "auto_detect_games": true
+}

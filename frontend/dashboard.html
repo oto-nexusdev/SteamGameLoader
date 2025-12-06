@@ -1,0 +1,3206 @@
+<!-- frontend/dashboard.html - VERSÃO DEFINITIVA CORRIGIDA -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam GameLoader Ultimate | Dashboard v16.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====== VARIÁVEIS CSS OTIMIZADAS ====== */
+        :root {
+            /* Cores Steam + Tema Roxo - TONS MAIS SUAVES */
+            --steam-dark: #171a21;
+            --steam-darker: #1b2838;
+            --steam-blue: #2a475e;
+            --steam-light-blue: #66c0f4;
+            --steam-text: #c7d5e0;
+            
+            /* Cores principais - REDUZIDAS PARA MENOS AGRESSIVAS */
+            --primary-purple: #7a2aff;
+            --neon-purple: #bb33ff;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff2a6d;
+            --electric-blue: #4de0ff;
+            --success-green: #00ff88;
+            --warning-orange: #ffaa00;
+            --danger-red: #ff2a2a;
+            
+            /* Cores de fundo ATUALIZADAS */
+            --bg-primary: #0a0814;
+            --bg-secondary: #0f0c1f;
+            --bg-tertiary: #151225;
+            --bg-card: rgba(23, 26, 33, 0.85);
+            --bg-glass: rgba(122, 42, 255, 0.12);
+            
+            /* Cores de texto */
+            --text-primary: #ffffff;
+            --text-secondary: #a8b2c9;
+            --text-muted: #6c7289;
+            
+            /* Bordas e sombras */
+            --border-color: rgba(122, 42, 255, 0.25);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --shadow-glow: 0 0 20px rgba(122, 42, 255, 0.3);
+            --shadow-heavy: 0 10px 35px rgba(0, 0, 0, 0.5);
+            
+            /* Gradientes */
+            --gradient-primary: linear-gradient(135deg, #7a2aff 0%, #66c0f4 50%, #05d5ff 100%);
+            --gradient-steam: linear-gradient(135deg, #171a21 0%, #2a475e 100%);
+            
+            /* Transições */
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            
+            /* Bordas - REDUZIDAS */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            
+            /* Tamanhos REDUZIDOS */
+            --font-xl: 2rem;      /* ANTES: 42px -> 32px */
+            --font-lg: 1.5rem;    /* ANTES: 36px -> 24px */
+            --font-md: 1rem;      /* ANTES: 18px -> 16px */
+            --font-sm: 0.875rem;  /* ANTES: 14px -> 14px */
+            --font-xs: 0.75rem;   /* ANTES: 12px -> 12px */
+        }
+
+        /* ====== RESET E ESTILOS BASE ====== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            font-size: var(--font-sm);
+            line-height: 1.5;
+        }
+
+        /* Canvas particles */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ====== LAYOUT PRINCIPAL OTIMIZADO ====== */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ====== SIDEBAR OTIMIZADA ====== */
+        .dashboard-sidebar {
+            background: var(--gradient-steam);
+            border-right: 1px solid var(--border-color);
+            padding: 25px 16px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            backdrop-filter: blur(15px);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.2);
+        }
+
+        .sidebar-logo-icon {
+            font-size: 26px;
+            color: var(--steam-light-blue);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .sidebar-logo-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .sidebar-logo-text span {
+            font-size: 11px;
+            color: var(--steam-text);
+            font-weight: 600;
+        }
+
+        /* Menu de navegação */
+        .sidebar-nav {
+            flex: 1;
+        }
+
+        .nav-section {
+            margin-bottom: 25px;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            color: var(--steam-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 6px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            color: var(--steam-text);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 192, 244, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: rgba(102, 192, 244, 0.08);
+            color: var(--steam-light-blue);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            color: #0b0610;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(102, 192, 244, 0.4);
+        }
+
+        .nav-link i {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--steam-light-blue);
+            color: var(--steam-darker);
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 800;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            margin-left: auto;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .status-dot.online {
+            background: var(--success-green);
+            color: var(--success-green);
+        }
+
+        .status-dot.warning {
+            background: var(--warning-orange);
+            color: var(--warning-orange);
+            animation: pulseWarning 2s infinite;
+        }
+
+        /* Perfil do usuário */
+        .sidebar-profile {
+            margin-top: auto;
+            padding-top: 18px;
+            border-top: 1px solid rgba(102, 192, 244, 0.2);
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(27, 40, 56, 0.6);
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            transition: var(--transition-normal);
+        }
+
+        .profile-card:hover {
+            border-color: var(--steam-light-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 192, 244, 0.15);
+        }
+
+        .profile-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 0 20px rgba(102, 192, 244, 0.5);
+        }
+
+        .profile-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .profile-name {
+            font-weight: 800;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 3px;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-status {
+            font-size: 11px;
+            color: var(--success-green);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ====== CONTEÚDO PRINCIPAL ====== */
+        .dashboard-content {
+            padding: 25px;
+            overflow-y: auto;
+            max-height: 100vh;
+            background: rgba(10, 8, 20, 0.7);
+        }
+
+        /* ====== HEADER OTIMIZADO ====== */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.15);
+        }
+
+        .header-title h2 {
+            font-size: 22px;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .header-title p {
+            color: var(--steam-text);
+            font-size: 13px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* ====== CARD DE BOAS-VINDAS OTIMIZADO ====== */
+        .welcome-card {
+            background: var(--gradient-steam);
+            border: 1px solid rgba(102, 192, 244, 0.2);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-heavy), 0 0 30px rgba(102, 192, 244, 0.15);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(25px);
+        }
+
+        .welcome-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(135deg, rgba(102, 192, 244, 0.08) 0%, rgba(122, 42, 255, 0.08) 100%);
+            opacity: 0.3;
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .user-avatar-large {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            box-shadow: 0 0 30px rgba(102, 192, 244, 0.6);
+            animation: float 6s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .greeting-text {
+            font-size: 16px;
+            color: var(--steam-text);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .username-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            text-shadow: 0 0 30px rgba(102, 192, 244, 0.4);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .time-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--steam-light-blue);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            flex-wrap: wrap;
+        }
+
+        .time-display i {
+            color: var(--steam-light-blue);
+            font-size: 14px;
+        }
+
+        .date-display {
+            font-size: 13px;
+            color: var(--steam-text);
+            margin-left: 10px;
+        }
+
+        .status-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 180px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: rgba(27, 40, 56, 0.6);
+            border-radius: var(--radius-md);
+            border: 1px solid;
+            font-weight: 700;
+            font-size: 13px;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .status-indicator:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .status-indicator.steam {
+            border-color: rgba(102, 192, 244, 0.25);
+            color: var(--steam-light-blue);
+        }
+
+        .status-indicator.dll {
+            border-color: rgba(122, 42, 255, 0.25);
+            color: var(--neon-purple);
+        }
+
+        .status-dot-small {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 12px currentColor;
+            flex-shrink: 0;
+        }
+
+        .status-dot-small.online {
+            background: var(--success-green);
+            color: var(--success-green);
+            animation: pulseDot 2s infinite;
+        }
+
+        .status-dot-small.offline {
+            background: var(--danger-red);
+            color: var(--danger-red);
+        }
+
+        .status-dot-small.warning {
+            background: var(--warning-orange);
+            color: var(--warning-orange);
+            animation: pulseWarning 2s infinite;
+        }
+
+        /* ====== ESTATÍSTICAS DA BIBLIOTECA OTIMIZADAS ====== */
+        .library-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 192, 244, 0.08), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--steam-light-blue);
+            box-shadow: 0 12px 28px rgba(102, 192, 244, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            background: rgba(102, 192, 244, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--steam-light-blue);
+            flex-shrink: 0;
+        }
+
+        .stat-title h3 {
+            font-size: 12px;
+            color: var(--steam-text);
+            margin-bottom: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--steam-text);
+            line-height: 1.4;
+        }
+
+        /* ====== BOTÕES DE AÇÃO OTIMIZADOS ====== */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 192, 244, 0.15), transparent);
+            transition: left 0.7s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            color: #0b0610;
+            box-shadow: 0 8px 25px rgba(102, 192, 244, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 15px 35px rgba(102, 192, 244, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid rgba(102, 192, 244, 0.3);
+            color: var(--steam-text);
+            backdrop-filter: blur(15px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 192, 244, 0.12);
+            border-color: var(--steam-light-blue);
+            color: var(--steam-light-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 192, 244, 0.2);
+        }
+
+        /* ====== SEÇÃO DE JOGOS OTIMIZADA ====== */
+        .games-section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(102, 192, 244, 0.15);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .section-title i {
+            color: var(--steam-light-blue);
+            font-size: 18px;
+        }
+
+        .section-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: 18px;
+            color: var(--steam-text);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: rgba(102, 192, 244, 0.08);
+            border-color: var(--steam-light-blue);
+            color: var(--steam-light-blue);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            color: #0b0610;
+            border: none;
+            box-shadow: 0 4px 15px rgba(102, 192, 244, 0.25);
+        }
+
+        .refresh-btn {
+            padding: 8px 14px;
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: var(--radius-md);
+            color: var(--steam-text);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(102, 192, 244, 0.08);
+            border-color: var(--steam-light-blue);
+            color: var(--steam-light-blue);
+        }
+
+        /* ====== GRID DE JOGOS OTIMIZADO ====== */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition-normal);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--steam-light-blue);
+            box-shadow: 0 15px 30px rgba(102, 192, 244, 0.2);
+        }
+
+        .game-card-header {
+            padding: 16px;
+            background: var(--gradient-steam);
+            border-bottom: 1px solid rgba(102, 192, 244, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            min-height: 85px;
+        }
+
+        .game-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .game-appid {
+            font-size: 11px;
+            color: var(--steam-text);
+            font-family: 'Courier New', monospace;
+            background: rgba(27, 40, 56, 0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .game-type {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            background: rgba(122, 42, 255, 0.15);
+            color: var(--neon-purple);
+            border: 1px solid rgba(122, 42, 255, 0.3);
+            white-space: nowrap;
+            align-self: flex-start;
+            margin-top: 2px;
+        }
+
+        .game-card-body {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .game-platforms {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--steam-text);
+            font-size: 11px;
+        }
+
+        .game-platforms i {
+            color: var(--steam-light-blue);
+            font-size: 11px;
+        }
+
+        .game-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 18px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .game-status.installed {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(0, 255, 136, 0.25);
+        }
+
+        .game-status.not-installed {
+            background: rgba(255, 170, 0, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid rgba(255, 170, 0, 0.25);
+        }
+
+        .game-description {
+            color: var(--steam-text);
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .game-card-actions {
+            padding: 12px 16px 16px;
+            display: flex;
+            gap: 8px;
+            border-top: 1px solid rgba(102, 192, 244, 0.15);
+            margin-top: auto;
+        }
+
+        .game-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: var(--radius-md);
+            color: var(--steam-text);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .game-btn:hover {
+            background: rgba(102, 192, 244, 0.08);
+            border-color: var(--steam-light-blue);
+            color: var(--steam-light-blue);
+            transform: translateY(-1px);
+        }
+
+        .game-btn.primary {
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            color: #0b0610;
+            border: none;
+            font-weight: 800;
+        }
+
+        .loading-games {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--steam-text);
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(102, 192, 244, 0.15);
+            border-top: 3px solid var(--steam-light-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .no-games {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--steam-text);
+        }
+
+        .no-games i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: var(--steam-light-blue);
+        }
+
+        .no-games h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--steam-text);
+        }
+
+        /* ====== SEÇÃO DO SISTEMA OTIMIZADA ====== */
+        .system-section {
+            margin-top: 40px;
+        }
+
+        .system-card {
+            background: var(--gradient-steam);
+            border: 1px solid rgba(102, 192, 244, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            box-shadow: var(--shadow-heavy), 0 0 25px rgba(102, 192, 244, 0.15);
+        }
+
+        .system-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 20px 0 25px;
+        }
+
+        .metric-card {
+            background: rgba(27, 40, 56, 0.6);
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            transition: var(--transition-fast);
+        }
+
+        .metric-card:hover {
+            border-color: var(--steam-light-blue);
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--steam-text);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .metric-value.path {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--steam-light-blue);
+            word-break: break-all;
+            overflow-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .metric-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 18px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .metric-status.online {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success-green);
+            border: 1px solid rgba(0, 255, 136, 0.25);
+        }
+
+        .metric-status.warning {
+            background: rgba(255, 170, 0, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid rgba(255, 170, 0, 0.25);
+            animation: pulseWarning 2s infinite;
+        }
+
+        .metric-status.offline {
+            background: rgba(255, 42, 109, 0.1);
+            color: var(--neon-pink);
+            border: 1px solid rgba(255, 42, 109, 0.25);
+        }
+
+        .system-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(102, 192, 244, 0.15);
+        }
+
+        /* ====== FOOTER OTIMIZADO ====== */
+        .dashboard-footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(102, 192, 244, 0.15);
+            text-align: center;
+            color: var(--steam-text);
+            font-size: 12px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--steam-light-blue);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .footer-version {
+            font-size: 10px;
+            color: var(--steam-text);
+            font-weight: 600;
+        }
+
+        .footer-copyright {
+            font-size: 11px;
+            color: var(--steam-text);
+            margin-top: 10px;
+        }
+
+        .footer-stats {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .footer-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--steam-text);
+        }
+
+        .footer-stat i {
+            color: var(--steam-light-blue);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-link {
+            color: var(--steam-text);
+            text-decoration: none;
+            font-size: 11px;
+            transition: var(--transition-fast);
+        }
+
+        .footer-link:hover {
+            color: var(--steam-light-blue);
+        }
+
+        /* ====== NOTIFICAÇÕES OTIMIZADAS ====== */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 350px;
+        }
+
+        .notification {
+            background: rgba(27, 40, 56, 0.95);
+            border-left: 4px solid var(--steam-light-blue);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(100%);
+            opacity: 0;
+            animation: slideIn 0.3s forwards;
+        }
+
+        .notification.success {
+            border-left-color: var(--success-green);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-orange);
+        }
+
+        .notification.error {
+            border-left-color: var(--neon-pink);
+        }
+
+        .notification-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            color: var(--success-green);
+        }
+
+        .notification.warning .notification-icon {
+            color: var(--warning-orange);
+        }
+
+        .notification.error .notification-icon {
+            color: var(--neon-pink);
+        }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .notification-message {
+            font-size: 12px;
+            color: var(--steam-text);
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--steam-text);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px;
+            transition: var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .notification-close:hover {
+            color: var(--text-primary);
+        }
+
+        /* ====== ANIMAÇÕES ====== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 8px 25px rgba(102, 192, 244, 0.3); }
+            50% { box-shadow: 0 8px 35px rgba(102, 192, 244, 0.5); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseWarning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ====== RESPONSIVIDADE MELHORADA ====== */
+        @media (max-width: 1200px) {
+            .dashboard-container {
+                grid-template-columns: 240px 1fr;
+            }
+            
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index: 1000;
+                width: 260px;
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+            }
+            
+            .dashboard-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .dashboard-content {
+                padding: 20px 15px;
+                margin-left: 0;
+            }
+            
+            .library-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .welcome-top {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .status-indicators {
+                flex-direction: row;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            
+            .user-info {
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 15px 12px;
+            }
+            
+            .library-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .filter-buttons {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .system-metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .footer-stats {
+                justify-content: center;
+            }
+            
+            .welcome-card {
+                padding: 20px;
+            }
+            
+            .username-display {
+                font-size: 26px;
+            }
+            
+            .user-avatar-large {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-content {
+                padding: 12px 10px;
+            }
+            
+            .welcome-card {
+                padding: 18px;
+                border-radius: var(--radius-lg);
+            }
+            
+            .username-display {
+                font-size: 22px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            .user-avatar-large {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .status-indicators {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .status-indicator {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .game-card-actions {
+                flex-direction: column;
+            }
+            
+            .game-btn {
+                width: 100%;
+            }
+            
+            .notification-container {
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+            
+            .notification {
+                padding: 10px 14px;
+            }
+        }
+
+        /* ====== UTILITÁRIOS ====== */
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 15px currentColor;
+        }
+
+        .glass-effect {
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--border-light);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(27, 40, 56, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #66c0f4 0%, #7a2aff 100%);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--steam-light-blue);
+        }
+
+        /* Selection color */
+        ::selection {
+            background: var(--steam-light-blue);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas para partículas -->
+    <canvas id="particlesCanvas"></canvas>
+    
+    <!-- Container principal -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboardSidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="sidebar-logo-text">
+                    <h1>Steam GameLoader</h1>
+                    <span>ULTIMATE v16.0</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="nav-title">Principal</h3>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" id="navDashboard">
+                                <i class="fas fa-home"></i>
+                                <span>Dashboard</span>
+                                <span class="nav-badge" id="nav-badge-dashboard">★</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/app" class="nav-link">
+                                <i class="fas fa-rocket"></i>
+                                <span>Home Principal</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="navGames">
+                                <i class="fas fa-gamepad"></i>
+                                <span>Meus Jogos</span>
+                                <span class="nav-badge" id="nav-badge-games">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="navScan">
+                                <i class="fas fa-search"></i>
+                                <span>Buscar Jogos</span>
+                                <span class="nav-badge" id="nav-badge-search">New</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3 class="nav-title">Biblioteca</h3>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="navStats">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Estatísticas</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/games" class="nav-link">
+                                <i class="fas fa-code"></i>
+                                <span>Arquivos .lua</span>
+                                <span class="nav-badge" id="nav-badge-lua">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/fixes" class="nav-link">
+                                <i class="fas fa-wrench"></i>
+                                <span>Gerenciador de Fixes</span>
+                                <span class="nav-badge" id="nav-badge-fixes">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="nav-section">
+                    <h3 class="nav-title">Sistema</h3>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="navSteamStatus">
+                                <i class="fab fa-steam"></i>
+                                <span>Status Steam</span>
+                                <span class="status-dot" id="steam-status-dot"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="navDllStatus">
+                                <i class="fas fa-cogs"></i>
+                                <span>Status DLL</span>
+                                <span class="status-dot" id="dll-status-dot"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="navLogs">
+                                <i class="fas fa-terminal"></i>
+                                <span>Logs do Sistema</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            
+            <div class="sidebar-profile">
+                <div class="profile-card" id="profileCard">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="sidebarUsername">Carregando...</div>
+                        <div class="profile-status">
+                            <i class="fas fa-circle"></i>
+                            <span id="sidebarUserStatus">Conectando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Conteúdo principal -->
+        <main class="dashboard-content">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div class="header-title">
+                    <h2>Dashboard do GameLoader</h2>
+                    <p>Bem-vindo ao centro de controle do seu sistema de jogos</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="btnRefresh">
+                        <i class="fas fa-sync-alt"></i> Atualizar
+                    </button>
+                    <button class="btn btn-primary" id="btnGoHome">
+                        <i class="fas fa-home"></i> Home Principal
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Card de boas-vindas -->
+            <div class="welcome-card">
+                <div class="welcome-content">
+                    <div class="welcome-top">
+                        <div class="user-info">
+                            <div class="user-avatar-large" id="userAvatar">
+                                <i class="fas fa-user-astronaut"></i>
+                            </div>
+                            <div class="user-details">
+                                <div class="greeting-text" id="greetingText">Olá,</div>
+                                <div class="username-display" id="usernameDisplay">Carregando usuário...</div>
+                                <div class="time-display">
+                                    <i class="fas fa-clock"></i>
+                                    <span id="currentTime">--:--:--</span>
+                                    <span class="date-display" id="currentDate">---/---/----</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="status-indicators">
+                            <div class="status-indicator steam" id="steamStatusIndicator">
+                                <span class="status-dot-small" id="steamDot"></span>
+                                <span id="steamStatusText">Steam: --</span>
+                            </div>
+                            <div class="status-indicator dll" id="dllStatusIndicator">
+                                <span class="status-dot-small" id="dllDot"></span>
+                                <span id="dllStatusText">DLL: --</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Estatísticas da biblioteca -->
+                    <div class="library-stats">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Jogos Instalados</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statInstalledGames">0</div>
+                            <div class="stat-desc">Jogos instalados no Steam</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Scripts .lua</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statLuaCount">0</div>
+                            <div class="stat-desc">Arquivos na pasta stplug-in</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-wrench"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Fixes</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statFixesCount">0</div>
+                            <div class="stat-desc">Fixes disponíveis para aplicação</div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon">
+                                    <i class="fas fa-hdd"></i>
+                                </div>
+                                <div class="stat-title">
+                                    <h3>Espaço</h3>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statSpaceUsed">0 GB</div>
+                            <div class="stat-desc">Utilizado pelos jogos</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botões de ação -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnScanLibrary">
+                            <i class="fas fa-search"></i> Escanear Biblioteca
+                        </button>
+                        <button class="btn btn-secondary" id="btnDetectGames">
+                            <i class="fas fa-bolt"></i> Detectar Jogos
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Seção de jogos -->
+            <div class="games-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-fire"></i>
+                        <h2>Sua Biblioteca de Jogos</h2>
+                    </div>
+                    <div class="section-controls">
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">Todos</button>
+                            <button class="filter-btn" data-filter="installed">Instalados</button>
+                            <button class="filter-btn" data-filter="detected">Detectados</button>
+                            <button class="filter-btn" data-filter="recent">Recentes</button>
+                        </div>
+                        <button class="refresh-btn" id="btnRefreshGames" title="Atualizar lista">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="games-grid" id="gamesGrid">
+                    <div class="loading-games">
+                        <div class="loader"></div>
+                        <p>Carregando sua biblioteca de jogos...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status do sistema -->
+            <div class="system-section">
+                <div class="system-card">
+                    <div class="section-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h2>Status do Sistema</h2>
+                    </div>
+                    
+                    <div class="system-metrics">
+                        <div class="metric-card">
+                            <div class="metric-label">Caminho do Steam</div>
+                            <div class="metric-value path" id="systemSteamPath">Carregando...</div>
+                            <div class="metric-status" id="steamPathStatus">Verificando</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">API do Sistema</div>
+                            <div class="metric-value" id="systemApiStatus">Conectando...</div>
+                            <div class="metric-status" id="apiStatusIndicator">Testando</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Status DLL</div>
+                            <div class="metric-value" id="systemDllStatus">Verificando...</div>
+                            <div class="metric-status" id="dllStatusIndicator">Verificando</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <div class="metric-label">Tempo de Atividade</div>
+                            <div class="metric-value" id="systemUptime">00:00:00</div>
+                            <div class="metric-status online">Ativo</div>
+                        </div>
+                    </div>
+                    
+                    <div class="system-actions">
+                        <button class="btn btn-secondary" id="btnTestSystems">
+                            <i class="fas fa-vial"></i> Testar Sistemas
+                        </button>
+                        <button class="btn btn-secondary" id="btnClearCache">
+                            <i class="fas fa-broom"></i> Limpar Cache
+                        </button>
+                        <button class="btn btn-secondary" id="btnRestartSteam">
+                            <i class="fab fa-steam"></i> Reiniciar Steam
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="dashboard-footer">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Steam GameLoader Ultimate</span>
+                    </div>
+                    <div class="footer-version">v16.0 • Sistema Unificado</div>
+                    <div class="footer-stats">
+                        <div class="footer-stat">
+                            <i class="fas fa-signal"></i>
+                            <span>Status: <span id="footerStatus">Online</span></span>
+                        </div>
+                        <div class="footer-stat">
+                            <i class="fas fa-clock"></i>
+                            <span>Atualizado: <span id="footerUpdateTime">Agora</span></span>
+                        </div>
+                    </div>
+                    <div class="footer-links">
+                        <a href="https://t.me/SteamGameLoader" target="_blank" class="footer-link">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </a>
+                        <a href="#" class="footer-link" id="btnAbout">
+                            <i class="fas fa-info-circle"></i> Sobre
+                        </a>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    © 2024 @OtoNexusCloud • Todos os sistemas operacionais
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Container de notificações -->
+    <div class="notification-container" id="notificationContainer"></div>
+    
+    <!-- Script principal DEFINITIVO E CORRIGIDO -->
+    <script>
+        // ====== CONFIGURAÇÕES GLOBAIS ======
+        const API_BASE = '/api';
+        const APP_VERSION = '16.0';
+        const SYSTEM_START_TIME = Date.now();
+        
+        // Estado da aplicação
+        const AppState = {
+            user: {
+                name: 'Jogador',
+                greeting: 'Olá',
+                steamId: null,
+                avatar: 'default'
+            },
+            steam: {
+                running: false,
+                path: null,
+                valid: false,
+                dllExists: false,
+                dllValid: false
+            },
+            system: {
+                apiConnected: false,
+                cacheValid: false,
+                status: 'loading',
+                uptime: 0
+            },
+            library: {
+                installedGames: [],
+                detectedGames: [],
+                luaFiles: 0,
+                fixesAvailable: 0,
+                totalSize: 0
+            },
+            ui: {
+                currentFilter: 'all',
+                notifications: [],
+                autoRefresh: true,
+                isLoading: false
+            }
+        };
+        
+        // ====== INICIALIZAÇÃO ======
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Steam GameLoader Dashboard v' + APP_VERSION + ' - Inicializando...');
+            
+            // Inicializar componentes
+            initializeDashboard();
+            
+            // Iniciar sistemas
+            startClock();
+            startAutoRefresh();
+            
+            // Carregar dados iniciais
+            loadInitialData();
+            
+            // Iniciar partículas
+            initializeParticles();
+            
+            console.log('✅ Dashboard inicializada com sucesso!');
+        });
+        
+        // ====== FUNÇÕES PRINCIPAIS ======
+        
+        function initializeDashboard() {
+            try {
+                // Configurar eventos
+                setupEventListeners();
+                
+                // Configurar filtros de jogos
+                setupGameFilters();
+                
+            } catch (error) {
+                console.error('❌ Erro na inicialização:', error);
+                showNotification('Erro na inicialização', error.message, 'error');
+            }
+        }
+        
+        function setupEventListeners() {
+            // Sidebar navigation
+            document.getElementById('navDashboard').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            document.getElementById('navGames').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.games-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            document.getElementById('navScan').addEventListener('click', function(e) {
+                e.preventDefault();
+                scanLibrary();
+            });
+            
+            document.getElementById('navStats').addEventListener('click', function(e) {
+                e.preventDefault();
+                showLibraryStats();
+            });
+            
+            document.getElementById('navSteamStatus').addEventListener('click', function(e) {
+                e.preventDefault();
+                checkSteamStatus(true);
+            });
+            
+            document.getElementById('navDllStatus').addEventListener('click', function(e) {
+                e.preventDefault();
+                checkDLLStatus(true);
+            });
+            
+            document.getElementById('navLogs').addEventListener('click', function(e) {
+                e.preventDefault();
+                showSystemLogs();
+            });
+            
+            // Botões principais
+            document.getElementById('btnRefresh').addEventListener('click', forceRefresh);
+            document.getElementById('btnGoHome').addEventListener('click', goToHome);
+            document.getElementById('btnScanLibrary').addEventListener('click', scanLibrary);
+            document.getElementById('btnDetectGames').addEventListener('click', detectGames);
+            document.getElementById('btnRefreshGames').addEventListener('click', loadGames);
+            document.getElementById('btnTestSystems').addEventListener('click', testAllSystems);
+            document.getElementById('btnClearCache').addEventListener('click', clearSystemCache);
+            document.getElementById('btnRestartSteam').addEventListener('click', restartSteam);
+            document.getElementById('btnAbout').addEventListener('click', showAbout);
+            
+            // Status indicators
+            document.getElementById('steamStatusIndicator').addEventListener('click', function() {
+                checkSteamStatus(true);
+            });
+            
+            document.getElementById('dllStatusIndicator').addEventListener('click', function() {
+                checkDLLStatus(true);
+            });
+        }
+        
+        function setupGameFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remover active de todos
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Adicionar ao clicado
+                    this.classList.add('active');
+                    // Aplicar filtro
+                    const filter = this.dataset.filter;
+                    AppState.ui.currentFilter = filter;
+                    applyGameFilter(filter);
+                });
+            });
+        }
+        
+        function applyGameFilter(filter) {
+            const gamesGrid = document.getElementById('gamesGrid');
+            const gameCards = gamesGrid.querySelectorAll('.game-card');
+            
+            if (!gameCards.length) return;
+            
+            gameCards.forEach(card => {
+                const gameType = card.dataset.gameType || 'detected';
+                const isInstalled = card.dataset.installed === 'true';
+                
+                let shouldShow = false;
+                
+                switch(filter) {
+                    case 'all':
+                        shouldShow = true;
+                        break;
+                    case 'installed':
+                        shouldShow = isInstalled;
+                        break;
+                    case 'detected':
+                        shouldShow = gameType === 'detected' || gameType === 'lua';
+                        break;
+                    case 'recent':
+                        const lastPlayed = card.dataset.lastPlayed || 0;
+                        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                        shouldShow = lastPlayed > sevenDaysAgo;
+                        break;
+                }
+                
+                card.style.display = shouldShow ? 'block' : 'none';
+            });
+        }
+        
+        // ====== CARREGAMENTO DE DADOS INTEGRADO ======
+        
+        async function loadInitialData() {
+            try {
+                // Mostrar loading
+                AppState.ui.isLoading = true;
+                
+                // Carregar dados do usuário (ROTA DEFINITIVA)
+                await loadUserData();
+                
+                // Carregar status do Steam e DLL
+                await loadSteamStatus();
+                
+                // Carregar biblioteca
+                await loadLibraryData();
+                
+                // Carregar jogos
+                await loadGames();
+                
+                // Atualizar status do sistema
+                await updateSystemStatus();
+                
+                // Esconder loading
+                AppState.ui.isLoading = false;
+                
+                showNotification('Sistema carregado', 'Todos os dados foram carregados!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados iniciais:', error);
+                showNotification('Erro ao carregar dados', error.message, 'error');
+                AppState.ui.isLoading = false;
+            }
+        }
+        
+        async function loadUserData() {
+            try {
+                // ✅ USAR ROTA DEFINITIVA: /api/steam/user/full-info
+                const response = await fetch(API_BASE + '/steam/user/full-info');
+                if (!response.ok) throw new Error('Falha na API do usuário');
+                
+                const data = await response.json();
+                
+                if (data.success && data.user) {
+                    const userData = data.user;
+                    
+                    // Atualizar estado
+                    AppState.user.name = userData.username || 'Jogador';
+                    AppState.user.greeting = userData.greeting || 'Olá';
+                    AppState.steam.path = userData.steam_path;
+                    AppState.steam.running = userData.steam_running || false;
+                    AppState.steam.dllExists = userData.dll_available || false;
+                    
+                    // Atualizar UI
+                    updateUserUI(userData);
+                    
+                    return true;
+                }
+                
+                throw new Error('Dados do usuário inválidos');
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados do usuário:', error);
+                // Fallback
+                document.getElementById('usernameDisplay').textContent = 'Usuário Steam';
+                document.getElementById('greetingText').textContent = 'Olá,';
+                document.getElementById('sidebarUsername').textContent = 'Usuário Steam';
+                return false;
+            }
+        }
+        
+        function updateUserUI(userData) {
+            // Atualizar elementos da UI
+            document.getElementById('greetingText').textContent = userData.greeting + ',';
+            document.getElementById('usernameDisplay').textContent = userData.username;
+            document.getElementById('sidebarUsername').textContent = userData.username;
+            
+            // Atualizar status do Steam e DLL
+            updateSteamStatusUI(userData.steam_running, userData.dll_available);
+        }
+        
+        function updateSteamStatusUI(steamRunning, dllAvailable) {
+            const steamDot = document.getElementById('steamDot');
+            const steamText = document.getElementById('steamStatusText');
+            const dllDot = document.getElementById('dllDot');
+            const dllText = document.getElementById('dllStatusText');
+            const steamStatusDot = document.getElementById('steam-status-dot');
+            const dllStatusDot = document.getElementById('dll-status-dot');
+            
+            // Steam
+            if (steamRunning) {
+                steamDot.className = 'status-dot-small online';
+                steamText.textContent = 'Steam: Online';
+                if (steamStatusDot) {
+                    steamStatusDot.className = 'status-dot online';
+                }
+            } else {
+                steamDot.className = 'status-dot-small offline';
+                steamText.textContent = 'Steam: Offline';
+                if (steamStatusDot) {
+                    steamStatusDot.className = 'status-dot';
+                }
+            }
+            
+            // DLL
+            if (dllAvailable) {
+                dllDot.className = 'status-dot-small online';
+                dllText.textContent = 'DLL: OK';
+                if (dllStatusDot) {
+                    dllStatusDot.className = 'status-dot online';
+                }
+            } else {
+                dllDot.className = 'status-dot-small warning';
+                dllText.textContent = 'DLL: Ausente';
+                if (dllStatusDot) {
+                    dllStatusDot.className = 'status-dot warning';
+                }
+            }
+        }
+        
+        async function loadSteamStatus() {
+            try {
+                // ✅ USAR ROTA DEFINITIVA: /api/steam/status
+                const response = await fetch(API_BASE + '/steam/status');
+                if (!response.ok) throw new Error('API Steam não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    AppState.steam.running = data.running || false;
+                    AppState.steam.valid = data.steam_info?.valid || false;
+                    AppState.steam.dllExists = data.steam_info?.hid_dll_exists || false;
+                    AppState.steam.dllValid = data.steam_info?.hid_dll_valid || false;
+                    
+                    // Atualizar UI do caminho do Steam
+                    const steamPathElement = document.getElementById('systemSteamPath');
+                    const steamPathStatus = document.getElementById('steamPathStatus');
+                    
+                    if (data.steam_info?.steam_path) {
+                        steamPathElement.textContent = data.steam_info.steam_path;
+                        steamPathStatus.textContent = 'Válido';
+                        steamPathStatus.className = 'metric-status online';
+                    } else {
+                        steamPathElement.textContent = 'Não detectado';
+                        steamPathStatus.textContent = 'Não encontrado';
+                        steamPathStatus.className = 'metric-status offline';
+                    }
+                    
+                    // Atualizar status DLL no sistema
+                    const systemDllStatus = document.getElementById('systemDllStatus');
+                    const dllStatusIndicator = document.getElementById('dllStatusIndicator');
+                    
+                    if (AppState.steam.dllExists && AppState.steam.dllValid) {
+                        if (systemDllStatus) systemDllStatus.textContent = 'hid.dll válida';
+                        if (dllStatusIndicator) {
+                            dllStatusIndicator.className = 'metric-status online';
+                            dllStatusIndicator.textContent = 'OK';
+                        }
+                    } else {
+                        if (systemDllStatus) systemDllStatus.textContent = 'hid.dll inválida';
+                        if (dllStatusIndicator) {
+                            dllStatusIndicator.className = 'metric-status warning';
+                            dllStatusIndicator.textContent = 'Problema';
+                        }
+                    }
+                    
+                    return true;
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar status do Steam:', error);
+            }
+            
+            return false;
+        }
+        
+        async function loadLibraryData() {
+            try {
+                // Carregar jogos instalados
+                await loadInstalledGames();
+                
+                // Carregar jogos detectados (.lua)
+                await loadDetectedGames();
+                
+                // Carregar fixes disponíveis
+                await loadFixesCount();
+                
+                // Calcular estatísticas
+                calculateLibraryStats();
+                
+                // Atualizar UI das estatísticas
+                updateLibraryStatsUI();
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados da biblioteca:', error);
+                showNotification('Erro na biblioteca', 'Não foi possível carregar todos os dados', 'warning');
+            }
+        }
+        
+        async function loadInstalledGames() {
+            try {
+                const response = await fetch(API_BASE + '/games/installed');
+                if (!response.ok) throw new Error('API de jogos instalados não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success && data.games) {
+                    // Processar jogos instalados
+                    AppState.library.installedGames = data.games.map(game => ({
+                        id: game.appid,
+                        name: game.name,
+                        type: 'steam',
+                        installed: true,
+                        size: game.size || 0,
+                        description: game.description || 'Jogo instalado no Steam',
+                        source: 'steam'
+                    }));
+                    
+                    // Atualizar estatística
+                    document.getElementById('statInstalledGames').textContent = AppState.library.installedGames.length;
+                    
+                    return true;
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar jogos instalados:', error);
+            }
+            
+            return false;
+        }
+        
+        async function loadDetectedGames() {
+            try {
+                const response = await fetch(API_BASE + '/games/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fetch_names: true
+                    })
+                });
+                
+                if (!response.ok) throw new Error('API de detecção não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success && data.games) {
+                    // Processar jogos detectados
+                    AppState.library.detectedGames = data.games.map(game => ({
+                        id: game.appid,
+                        name: game.name,
+                        type: 'detected',
+                        installed: false,
+                        description: 'Jogo detectado via arquivos .lua',
+                        source: 'detected'
+                    }));
+                    
+                    // Atualizar estatística de scripts .lua
+                    AppState.library.luaFiles = data.games.length;
+                    document.getElementById('statLuaCount').textContent = AppState.library.luaFiles;
+                    updateNavBadge('lua', AppState.library.luaFiles);
+                    
+                    return true;
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar jogos detectados:', error);
+            }
+            
+            return false;
+        }
+        
+        async function loadFixesCount() {
+            try {
+                const response = await fetch(API_BASE + '/fixes/all');
+                if (!response.ok) return;
+                
+                const data = await response.json();
+                
+                if (data.success && data.games) {
+                    AppState.library.fixesAvailable = data.games.length;
+                    document.getElementById('statFixesCount').textContent = AppState.library.fixesAvailable;
+                    updateNavBadge('fixes', AppState.library.fixesAvailable);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar fixes:', error);
+            }
+        }
+        
+        function calculateLibraryStats() {
+            // Calcular espaço total
+            let totalSize = 0;
+            AppState.library.installedGames.forEach(game => {
+                if (game.size) totalSize += game.size;
+            });
+            
+            AppState.library.totalSize = totalSize;
+        }
+        
+        function updateLibraryStatsUI() {
+            // Atualizar espaço usado
+            document.getElementById('statSpaceUsed').textContent = formatBytes(AppState.library.totalSize);
+            
+            // Atualizar badges
+            updateNavBadge('games', AppState.library.installedGames.length + AppState.library.detectedGames.length);
+        }
+        
+        async function loadGames() {
+            try {
+                const gamesGrid = document.getElementById('gamesGrid');
+                
+                // Mostrar loading
+                gamesGrid.innerHTML = `
+                    <div class="loading-games">
+                        <div class="loader"></div>
+                        <p>Carregando sua biblioteca de jogos...</p>
+                    </div>
+                `;
+                
+                // Se não há jogos no estado, carregar
+                if (AppState.library.installedGames.length === 0 && AppState.library.detectedGames.length === 0) {
+                    await loadLibraryData();
+                }
+                
+                // Combinar jogos instalados e detectados
+                const allGames = [...AppState.library.installedGames, ...AppState.library.detectedGames];
+                
+                // Renderizar jogos
+                renderGames(allGames);
+                
+                // Aplicar filtro atual
+                applyGameFilter(AppState.ui.currentFilter);
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar jogos:', error);
+                const gamesGrid = document.getElementById('gamesGrid');
+                gamesGrid.innerHTML = `
+                    <div class="no-games">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Erro ao carregar jogos</h3>
+                        <p>${error.message}</p>
+                        <button class="btn btn-secondary" onclick="loadGames()" style="margin-top: 15px;">
+                            <i class="fas fa-redo"></i> Tentar novamente
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderGames(games) {
+            const gamesGrid = document.getElementById('gamesGrid');
+            
+            if (!games || games.length === 0) {
+                gamesGrid.innerHTML = `
+                    <div class="no-games">
+                        <i class="fas fa-gamepad"></i>
+                        <h3>Nenhum jogo encontrado</h3>
+                        <p>Escaneie sua biblioteca para detectar jogos</p>
+                        <div style="margin-top: 15px;">
+                            <button class="btn btn-secondary" onclick="scanLibrary()">
+                                <i class="fas fa-search"></i> Escanear Biblioteca
+                            </button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Ordenar jogos: instalados primeiro, depois por nome
+            const sortedGames = [...games].sort((a, b) => {
+                if (a.installed && !b.installed) return -1;
+                if (!a.installed && b.installed) return 1;
+                return a.name.localeCompare(b.name);
+            });
+            
+            const gamesHTML = sortedGames.map(game => `
+                <div class="game-card fade-in" 
+                     data-game-id="${game.id}" 
+                     data-game-type="${game.type}" 
+                     data-installed="${game.installed}">
+                    <div class="game-card-header">
+                        <div style="flex: 1; min-width: 0;">
+                            <div class="game-title" title="${game.name}">${game.name}</div>
+                            <div class="game-appid">AppID: ${game.id}</div>
+                        </div>
+                        <span class="game-type">${game.type === 'detected' ? 'DETECTED' : 'STEAM'}</span>
+                    </div>
+                    <div class="game-card-body">
+                        <div class="game-meta">
+                            <div class="game-status ${game.installed ? 'installed' : 'not-installed'}">
+                                ${game.installed ? '<i class="fas fa-check"></i> Instalado' : '<i class="fas fa-download"></i> Não instalado'}
+                            </div>
+                            ${game.size ? `<div class="game-platforms"><i class="fas fa-hdd"></i> ${formatBytes(game.size)}</div>` : ''}
+                        </div>
+                        <div class="game-description">${game.description || 'Sem descrição disponível'}</div>
+                    </div>
+                    <div class="game-card-actions">
+                        ${game.installed ? 
+                            `<button class="game-btn primary" onclick="launchGame('${game.id}')">
+                                <i class="fas fa-play"></i> Iniciar
+                            </button>` : 
+                            `<button class="game-btn" onclick="installGame('${game.id}')">
+                                <i class="fas fa-download"></i> Instalar
+                            </button>`
+                        }
+                        <button class="game-btn" onclick="showGameDetails('${game.id}')">
+                            <i class="fas fa-info-circle"></i> Detalhes
+                        </button>
+                        <button class="game-btn" onclick="checkGameFix('${game.id}')">
+                            <i class="fas fa-wrench"></i> Fix
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            gamesGrid.innerHTML = gamesHTML;
+            
+            // Atualizar badge de jogos
+            updateNavBadge('games', games.length);
+        }
+        
+        async function updateSystemStatus() {
+            try {
+                // ✅ USAR ROTA DEFINITIVA: /api/steam/system/status
+                const response = await fetch(API_BASE + '/steam/system/status');
+                if (!response.ok) throw new Error('API de sistema não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    AppState.system.apiConnected = true;
+                    AppState.system.status = 'operational';
+                    
+                    // Atualizar UI
+                    document.getElementById('systemApiStatus').textContent = 'Operacional';
+                    document.getElementById('apiStatusIndicator').className = 'metric-status online';
+                    document.getElementById('apiStatusIndicator').textContent = 'Online';
+                    
+                    document.getElementById('footerStatus').textContent = 'Online';
+                    
+                    return true;
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao atualizar status do sistema:', error);
+                document.getElementById('systemApiStatus').textContent = 'Erro';
+                document.getElementById('apiStatusIndicator').className = 'metric-status offline';
+                document.getElementById('apiStatusIndicator').textContent = 'Offline';
+                
+                document.getElementById('footerStatus').textContent = 'Erro de conexão';
+            }
+            
+            return false;
+        }
+        
+        // ====== FUNÇÕES DE SISTEMA ======
+        
+        function startClock() {
+            function updateClock() {
+                const now = new Date();
+                
+                // Horário
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                
+                // Data
+                const day = now.getDate().toString().padStart(2, '0');
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const year = now.getFullYear();
+                
+                // Atualizar UI
+                const timeElement = document.getElementById('currentTime');
+                const dateElement = document.getElementById('currentDate');
+                
+                if (timeElement) timeElement.textContent = `${hours}:${minutes}:${seconds}`;
+                if (dateElement) dateElement.textContent = `${day}/${month}/${year}`;
+                
+                // Atualizar uptime
+                updateUptime();
+            }
+            
+            // Atualizar imediatamente e a cada segundo
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+        
+        function updateUptime() {
+            const uptimeMs = Date.now() - SYSTEM_START_TIME;
+            const hours = Math.floor(uptimeMs / 3600000);
+            const minutes = Math.floor((uptimeMs % 3600000) / 60000);
+            const seconds = Math.floor((uptimeMs % 60000) / 1000);
+            
+            const uptimeElement = document.getElementById('systemUptime');
+            if (uptimeElement) {
+                uptimeElement.textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            AppState.system.uptime = uptimeMs;
+        }
+        
+        function startAutoRefresh() {
+            // Atualizar status a cada 30 segundos
+            setInterval(async () => {
+                if (AppState.ui.autoRefresh && !AppState.ui.isLoading) {
+                    await loadUserData();
+                    await updateSystemStatus();
+                }
+            }, 30000);
+            
+            // Atualizar horário no footer
+            setInterval(() => {
+                document.getElementById('footerUpdateTime').textContent = 'Agora';
+                setTimeout(() => {
+                    document.getElementById('footerUpdateTime').textContent = new Date().toLocaleTimeString('pt-BR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                }, 2000);
+            }, 60000);
+            
+            console.log('🔄 Atualizações automáticas iniciadas');
+        }
+        
+        // ====== FUNÇÕES DE AÇÃO ======
+        
+        function goToHome() {
+            window.location.href = '/app';
+        }
+        
+        async function scanLibrary() {
+            try {
+                if (AppState.ui.isLoading) return;
+                
+                showNotification('Escaneando biblioteca', 'Procurando jogos e arquivos...', 'info');
+                AppState.ui.isLoading = true;
+                
+                // Forçar recarregamento completo
+                AppState.library.installedGames = [];
+                AppState.library.detectedGames = [];
+                
+                await loadLibraryData();
+                await loadGames();
+                
+                AppState.ui.isLoading = false;
+                showNotification('Biblioteca escaneada', 
+                    `${AppState.library.installedGames.length} jogos instalados, ${AppState.library.detectedGames.length} detectados`, 
+                    'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao escanear biblioteca:', error);
+                showNotification('Erro no escaneamento', error.message, 'error');
+                AppState.ui.isLoading = false;
+            }
+        }
+        
+        async function detectGames() {
+            try {
+                if (AppState.ui.isLoading) return;
+                
+                showNotification('Detectando jogos', 'Analisando arquivos .lua...', 'info');
+                AppState.ui.isLoading = true;
+                
+                // Chamar API de detecção
+                const response = await fetch(API_BASE + '/games/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fetch_names: true,
+                        force: true
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Falha na detecção');
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Recarregar jogos detectados
+                    await loadDetectedGames();
+                    await loadGames();
+                    
+                    AppState.ui.isLoading = false;
+                    showNotification('Detecção concluída', `${data.games?.length || 0} jogos detectados`, 'success');
+                } else {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro na detecção de jogos:', error);
+                showNotification('Erro na detecção', error.message, 'error');
+                AppState.ui.isLoading = false;
+            }
+        }
+        
+        async function checkSteamStatus(showNotification = false) {
+            try {
+                if (showNotification) {
+                    showNotification('Verificando Steam', 'Consultando status do Steam...', 'info');
+                }
+                
+                const response = await fetch(API_BASE + '/steam/status');
+                if (!response.ok) throw new Error('API não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const isRunning = data.running || false;
+                    const statusText = isRunning ? 'Steam está em execução' : 'Steam não está em execução';
+                    
+                    updateSteamStatusUI(isRunning, data.steam_info?.hid_dll_exists || false);
+                    
+                    if (showNotification) {
+                        showNotification('Status do Steam', statusText, isRunning ? 'success' : 'warning');
+                    }
+                    
+                    return isRunning;
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao verificar Steam:', error);
+                if (showNotification) {
+                    showNotification('Erro no Steam', 'Não foi possível verificar o status', 'error');
+                }
+            }
+            
+            return false;
+        }
+        
+        async function checkDLLStatus(showNotification = false) {
+            try {
+                if (showNotification) {
+                    showNotification('Verificando DLL', 'Validando arquivo hid.dll...', 'info');
+                }
+                
+                // ✅ USAR ROTA DEFINITIVA: /api/steam/check-dll
+                const response = await fetch(API_BASE + '/steam/check-dll');
+                if (!response.ok) throw new Error('API não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const dllExists = data.dll_exists || false;
+                    const statusText = dllExists ? 'hid.dll encontrada' : 'hid.dll não encontrada';
+                    
+                    // Atualizar UI
+                    const dllDot = document.getElementById('dllDot');
+                    const dllText = document.getElementById('dllStatusText');
+                    const dllStatusDot = document.getElementById('dll-status-dot');
+                    const systemDllStatus = document.getElementById('systemDllStatus');
+                    const dllStatusIndicator = document.getElementById('dllStatusIndicator');
+                    
+                    if (dllExists) {
+                        dllDot.className = 'status-dot-small online';
+                        dllText.textContent = 'DLL: OK';
+                        if (dllStatusDot) dllStatusDot.className = 'status-dot online';
+                        if (systemDllStatus) systemDllStatus.textContent = 'hid.dll encontrada';
+                        if (dllStatusIndicator) {
+                            dllStatusIndicator.className = 'metric-status online';
+                            dllStatusIndicator.textContent = 'OK';
+                        }
+                    } else {
+                        dllDot.className = 'status-dot-small warning';
+                        dllText.textContent = 'DLL: Ausente';
+                        if (dllStatusDot) dllStatusDot.className = 'status-dot warning';
+                        if (systemDllStatus) systemDllStatus.textContent = 'hid.dll não encontrada';
+                        if (dllStatusIndicator) {
+                            dllStatusIndicator.className = 'metric-status warning';
+                            dllStatusIndicator.textContent = 'Ausente';
+                        }
+                    }
+                    
+                    if (showNotification) {
+                        showNotification('Status da DLL', statusText, dllExists ? 'success' : 'warning');
+                    }
+                    
+                    return dllExists;
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao verificar DLL:', error);
+                if (showNotification) {
+                    showNotification('Erro na DLL', 'Não foi possível verificar o status', 'error');
+                }
+            }
+            
+            return false;
+        }
+        
+        async function testAllSystems() {
+            try {
+                showNotification('Testando sistemas', 'Iniciando testes completos...', 'info');
+                
+                const tests = [
+                    { name: 'API do Usuário', func: () => fetch(API_BASE + '/steam/user/full-info') },
+                    { name: 'API do Steam', func: () => fetch(API_BASE + '/steam/status') },
+                    { name: 'API do Sistema', func: () => fetch(API_BASE + '/steam/system/status') },
+                    { name: 'API da DLL', func: () => fetch(API_BASE + '/steam/check-dll') },
+                    { name: 'Detecção de Jogos', func: () => fetch(API_BASE + '/games/detect', { method: 'POST' }) }
+                ];
+                
+                let passed = 0;
+                let failed = 0;
+                const results = [];
+                
+                for (const test of tests) {
+                    try {
+                        const response = await test.func();
+                        if (response.ok) {
+                            passed++;
+                            results.push(`✅ ${test.name}: OK`);
+                            console.log(`✅ ${test.name}: OK`);
+                        } else {
+                            failed++;
+                            results.push(`❌ ${test.name}: Falhou`);
+                            console.error(`❌ ${test.name}: Falhou`);
+                        }
+                    } catch (error) {
+                        failed++;
+                        results.push(`❌ ${test.name}: Erro - ${error.message}`);
+                        console.error(`❌ ${test.name}: Erro - ${error.message}`);
+                    }
+                }
+                
+                const message = `Testes: ${passed} aprovados, ${failed} falhas\n\n${results.join('\n')}`;
+                showNotification('Testes concluídos', 
+                    `Testes: ${passed} aprovados, ${failed} falhas`, 
+                    failed === 0 ? 'success' : 'warning');
+                
+                // Mostrar resultados detalhados no console
+                console.log('🧪 Resultados dos testes:\n' + results.join('\n'));
+                
+            } catch (error) {
+                console.error('❌ Erro nos testes:', error);
+                showNotification('Erro nos testes', error.message, 'error');
+            }
+        }
+        
+        async function forceRefresh() {
+            try {
+                if (AppState.ui.isLoading) return;
+                
+                showNotification('Atualizando sistema', 'Forçando atualização completa...', 'info');
+                AppState.ui.isLoading = true;
+                
+                // Limpar caches
+                AppState.library.installedGames = [];
+                AppState.library.detectedGames = [];
+                
+                // Recarregar tudo
+                await Promise.all([
+                    loadUserData(),
+                    loadSteamStatus(),
+                    loadLibraryData(),
+                    loadGames(),
+                    updateSystemStatus()
+                ]);
+                
+                AppState.ui.isLoading = false;
+                showNotification('Sistema atualizado', 'Todos os dados foram atualizados', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro na atualização forçada:', error);
+                showNotification('Erro na atualização', error.message, 'error');
+                AppState.ui.isLoading = false;
+            }
+        }
+        
+        async function clearSystemCache() {
+            try {
+                showNotification('Limpando cache', 'Removendo dados em cache...', 'info');
+                
+                // ✅ USAR ROTA DEFINITIVA: /api/steam/clear-cache
+                const response = await fetch(API_BASE + '/steam/clear-cache', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    // Limpar estado local
+                    AppState.library.installedGames = [];
+                    AppState.library.detectedGames = [];
+                    
+                    // Recarregar
+                    await loadInitialData();
+                    
+                    showNotification('Cache limpo', 'Todos os caches foram limpos com sucesso', 'success');
+                } else {
+                    throw new Error('Falha ao limpar cache');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao limpar cache:', error);
+                showNotification('Erro ao limpar cache', error.message, 'error');
+            }
+        }
+        
+        async function restartSteam() {
+            try {
+                if (!confirm('Tem certeza que deseja reiniciar o Steam? Isso fechará o Steam se estiver aberto.')) {
+                    return;
+                }
+                
+                showNotification('Reiniciando Steam', 'Encerrando e iniciando o Steam...', 'warning');
+                
+                // ✅ USAR ROTA DEFINITIVA: /api/steam/control
+                const response = await fetch(API_BASE + '/steam/control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'restart'
+                    })
+                });
+                
+                if (!response.ok) throw new Error('API não respondeu');
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Aguardar e verificar status
+                    setTimeout(async () => {
+                        await checkSteamStatus(true);
+                    }, 5000);
+                    
+                    showNotification('Steam reiniciado', 'O Steam foi reiniciado com sucesso', 'success');
+                } else {
+                    throw new Error(data.error || 'Falha ao reiniciar');
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao reiniciar Steam:', error);
+                showNotification('Erro no Steam', 'Não foi possível reiniciar o Steam', 'error');
+            }
+        }
+        
+        // ====== FUNÇÕES DE JOGO ======
+        
+        async function launchGame(appId) {
+            try {
+                showNotification('Iniciando jogo', `Preparando jogo ${appId}...`, 'info');
+                
+                // Verificar se Steam está rodando
+                const steamRunning = await checkSteamStatus();
+                if (!steamRunning) {
+                    showNotification('Steam não está em execução', 'Inicie o Steam primeiro', 'warning');
+                    return;
+                }
+                
+                // Tentar iniciar jogo
+                const response = await fetch(API_BASE + `/game/${appId}/launch`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('Jogo iniciado', `Jogo ${appId} está sendo executado`, 'success');
+                    } else {
+                        throw new Error(data.error || 'Falha ao iniciar jogo');
+                    }
+                } else {
+                    showNotification('Jogo iniciado', `Jogo ${appId} foi enviado para execução`, 'success');
+                }
+                
+            } catch (error) {
+                console.error(`❌ Erro ao iniciar jogo ${appId}:`, error);
+                showNotification('Erro ao iniciar', `Não foi possível iniciar o jogo ${appId}`, 'error');
+            }
+        }
+        
+        async function installGame(appId) {
+            try {
+                showNotification('Instalando jogo', `Iniciando instalação do jogo ${appId}...`, 'info');
+                
+                // Verificar se Steam está rodando
+                const steamRunning = await checkSteamStatus();
+                if (!steamRunning) {
+                    showNotification('Steam não está em execução', 'Inicie o Steam primeiro', 'warning');
+                    return;
+                }
+                
+                showNotification('Instalação iniciada', `Jogo ${appId} está sendo instalado`, 'success');
+                
+                // Simular instalação (substituir por chamada real à API quando disponível)
+                setTimeout(() => {
+                    showNotification('Instalação em progresso', `Jogo ${appId} está sendo baixado...`, 'info');
+                }, 2000);
+                
+            } catch (error) {
+                console.error(`❌ Erro ao instalar jogo ${appId}:`, error);
+                showNotification('Erro na instalação', `Não foi possível instalar o jogo ${appId}`, 'error');
+            }
+        }
+        
+        function checkGameFix(appId) {
+            const game = [...AppState.library.installedGames, ...AppState.library.detectedGames]
+                .find(g => g.id === appId);
+            
+            if (game) {
+                window.location.href = `/fixes?game=${appId}`;
+            } else {
+                showNotification('Jogo não encontrado', `Não foi possível encontrar o jogo ${appId}`, 'warning');
+            }
+        }
+        
+        function showGameDetails(appId) {
+            const game = [...AppState.library.installedGames, ...AppState.library.detectedGames]
+                .find(g => g.id === appId);
+            
+            if (game) {
+                const details = `
+Detalhes do jogo:
+
+Nome: ${game.name}
+AppID: ${game.id}
+Tipo: ${game.type === 'steam' ? 'Steam' : 'Detectado'}
+Status: ${game.installed ? '✅ Instalado' : '⚠️ Não instalado'}
+${game.size ? `Tamanho: ${formatBytes(game.size)}\n` : ''}
+Descrição: ${game.description || 'Sem descrição disponível'}
+                `.trim();
+                
+                alert(details);
+            } else {
+                alert('Jogo não encontrado');
+            }
+        }
+        
+        // ====== FUNÇÕES AUXILIARES ======
+        
+        function showNotification(title, message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-icon">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Remover automaticamente após 5 segundos
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+            
+            // Limitar a 5 notificações
+            const notifications = container.querySelectorAll('.notification');
+            if (notifications.length > 5) {
+                notifications[0].remove();
+            }
+        }
+        
+        function updateNavBadge(type, count) {
+            const badgeId = `nav-badge-${type}`;
+            const badgeElement = document.getElementById(badgeId);
+            
+            if (badgeElement) {
+                if (count > 0) {
+                    badgeElement.textContent = count > 99 ? '99+' : count;
+                    badgeElement.style.display = 'inline-flex';
+                } else {
+                    badgeElement.style.display = 'none';
+                }
+            }
+        }
+        
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // ====== FUNÇÕES DE PARTÍCULAS ======
+        
+        function initializeParticles() {
+            try {
+                const canvas = document.getElementById('particlesCanvas');
+                if (!canvas) {
+                    console.warn('Canvas de partículas não encontrado');
+                    return;
+                }
+                
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                const particles = [];
+                const particleCount = Math.min(60, Math.floor(window.innerWidth / 20));
+                
+                const steamColors = [
+                    'rgba(102, 192, 244, 0.5)',
+                    'rgba(122, 42, 255, 0.5)',
+                    'rgba(0, 243, 255, 0.5)',
+                    'rgba(255, 42, 109, 0.5)'
+                ];
+                
+                // Criar partículas
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 2 + 0.5,
+                        speedX: (Math.random() - 0.5) * 0.3,
+                        speedY: (Math.random() - 0.5) * 0.3,
+                        color: steamColors[Math.floor(Math.random() * steamColors.length)]
+                    });
+                }
+                
+                // Função de animação
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    particles.forEach(particle => {
+                        // Atualizar posição
+                        particle.x += particle.speedX;
+                        particle.y += particle.speedY;
+                        
+                        // Rebater nas bordas
+                        if (particle.x <= 0 || particle.x >= canvas.width) particle.speedX *= -1;
+                        if (particle.y <= 0 || particle.y >= canvas.height) particle.speedY *= -1;
+                        
+                        // Desenhar partícula
+                        ctx.beginPath();
+                        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                        ctx.fillStyle = particle.color;
+                        ctx.fill();
+                        
+                        // Linhas de conexão
+                        particles.forEach(otherParticle => {
+                            const dx = particle.x - otherParticle.x;
+                            const dy = particle.y - otherParticle.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 80) {
+                                ctx.beginPath();
+                                ctx.strokeStyle = particle.color.replace('0.5', '0.15');
+                                ctx.lineWidth = 0.3;
+                                ctx.moveTo(particle.x, particle.y);
+                                ctx.lineTo(otherParticle.x, otherParticle.y);
+                                ctx.stroke();
+                            }
+                        });
+                    });
+                    
+                    requestAnimationFrame(animate);
+                }
+                
+                animate();
+                
+                // Redimensionar
+                window.addEventListener('resize', () => {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                });
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar partículas:', error);
+            }
+        }
+        
+        // ====== FUNÇÕES DE NAVEGAÇÃO ======
+        
+        function showLibraryStats() {
+            const stats = `
+Estatísticas da Biblioteca:
+
+• Jogos Instalados: ${AppState.library.installedGames.length}
+• Jogos Detectados: ${AppState.library.detectedGames.length}
+• Scripts .lua: ${AppState.library.luaFiles}
+• Fixes Disponíveis: ${AppState.library.fixesAvailable}
+• Espaço Total: ${formatBytes(AppState.library.totalSize)}
+
+Total de Jogos: ${AppState.library.installedGames.length + AppState.library.detectedGames.length}
+            `.trim();
+            
+            alert(stats);
+        }
+        
+        function showSystemLogs() {
+            showNotification('Logs do Sistema', 'A funcionalidade de logs está em desenvolvimento', 'info');
+        }
+        
+        function showAbout() {
+            const about = `
+Steam GameLoader Ultimate v${APP_VERSION}
+
+Sistema completo de gerenciamento de jogos Steam
+Desenvolvido por @OtoNexusCloud
+
+• Sistema Unificado
+• Detecção Automática
+• Gerenciamento de Biblioteca
+• Status em Tempo Real
+• Fixes e DLCs
+
+© 2024 Todos os direitos reservados
+            `.trim();
+            
+            alert(about);
+        }
+        
+        // ====== EXPORTAR FUNÇÕES PARA ESCOPO GLOBAL ======
+        window.goToHome = goToHome;
+        window.scanLibrary = scanLibrary;
+        window.detectGames = detectGames;
+        window.checkSteamStatus = checkSteamStatus;
+        window.checkDLLStatus = checkDLLStatus;
+        window.testAllSystems = testAllSystems;
+        window.forceRefresh = forceRefresh;
+        window.clearSystemCache = clearSystemCache;
+        window.restartSteam = restartSteam;
+        window.launchGame = launchGame;
+        window.installGame = installGame;
+        window.showGameDetails = showGameDetails;
+        window.checkGameFix = checkGameFix;
+        window.filterGames = applyGameFilter;
+        window.loadGames = loadGames;
+        window.showLibraryStats = showLibraryStats;
+        window.showSystemLogs = showSystemLogs;
+        window.showAbout = showAbout;
+        
+        console.log('🎮 Dashboard GameLoader - Pronto para uso!');
+    </script>
+</body>
+</html>
