@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steam GameLoader v19.0.0 - Plataforma Steam Avançada</title>
-    <meta name="description" content="Plataforma completa para gerenciamento de jogos Steam com suporte a 60k+ títulos, APIs robustas e integração total.">
-    <meta name="keywords" content="steam, game loader, steamtools, gerenciador, jogos, 60k jogos, download, api">
+    <title>Steam GameLoader v19.0.0 - Plataforma Steam</title>
+    <meta name="description" content="Steam GameLoader - Plataforma completa para gerenciamento de jogos Steam com suporte a 60k+ títulos.">
+    <meta name="keywords" content="steam, game loader, steamtools, gerenciador, jogos, 60k jogos">
     <meta name="author" content="OtoNexusCloud">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Steam GameLoader v19.0.0">
-    <meta property="og:description" content="Plataforma avançada para gerenciamento de jogos Steam">
-    <meta property="og:type" content="website">
     
     <!-- Favicon -->
     <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg" type="image/svg+xml">
@@ -21,9 +17,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- CSS Inline -->
     <style>
-        /* ===== VARIÁVEIS CSS ===== */
+        /* Variáveis CSS atualizadas */
         :root {
             --primary-dark: #0d1117;
             --secondary-dark: #161b22;
@@ -39,12 +34,10 @@
             --card-bg: rgba(22, 27, 34, 0.9);
             --card-border: rgba(255, 255, 255, 0.08);
             --gradient-purple: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-purple-light) 100%);
-            --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.25);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.2);
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --neon-glow: 0 0 20px rgba(124, 92, 252, 0.3);
         }
 
-        /* ===== RESET E BASE ===== */
+        /* Reset e Base */
         * {
             margin: 0;
             padding: 0;
@@ -82,7 +75,19 @@
             pointer-events: none;
         }
 
-        /* ===== CONTAINER PRINCIPAL ===== */
+        /* Canvas de Partículas */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        /* Container Principal */
         .container {
             width: 100%;
             max-width: 1200px;
@@ -90,16 +95,17 @@
             padding: 0 20px;
         }
 
-        /* ===== HEADER ===== */
+        /* Header Remasterizado */
         header {
-            background: rgba(13, 17, 23, 0.95);
+            background: rgba(13, 17, 23, 0.98);
             padding: 16px 0;
             position: fixed;
             width: 100%;
             z-index: 1000;
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(124, 92, 252, 0.1);
             transition: all 0.3s ease;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
         .header-content {
@@ -115,12 +121,18 @@
             gap: 14px;
             text-decoration: none;
             flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateY(-1px);
         }
 
         .logo-icon {
             color: var(--accent-purple-light);
             font-size: 28px;
             position: relative;
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.4));
         }
 
         .logo-text {
@@ -140,6 +152,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 20px rgba(124, 92, 252, 0.3);
         }
 
         .logo span {
@@ -157,11 +170,12 @@
             font-size: 10px;
             font-weight: 700;
             margin-left: 10px;
-            box-shadow: 0 2px 8px rgba(93, 63, 211, 0.3);
+            box-shadow: 0 2px 12px rgba(93, 63, 211, 0.4);
             letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* ===== NAVEGAÇÃO ===== */
+        /* Navegação */
         nav ul {
             display: flex;
             list-style: none;
@@ -198,6 +212,7 @@
             background: var(--gradient-purple);
             transition: width 0.3s ease;
             border-radius: 1px;
+            box-shadow: var(--neon-glow);
         }
 
         nav a:hover {
@@ -215,9 +230,14 @@
             cursor: pointer;
             color: var(--accent-purple-light);
             padding: 6px;
+            transition: all 0.3s ease;
         }
 
-        /* ===== HERO SECTION ===== */
+        .mobile-menu:hover {
+            transform: scale(1.1);
+        }
+
+        /* Hero Section */
         .hero {
             padding: 160px 0 100px;
             position: relative;
@@ -246,6 +266,7 @@
             background-clip: text;
             position: relative;
             display: inline-block;
+            text-shadow: 0 0 30px rgba(124, 92, 252, 0.3);
         }
 
         .hero-text p {
@@ -276,7 +297,7 @@
         .stat-card:hover {
             transform: translateY(-3px);
             border-color: var(--accent-purple);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--neon-glow);
         }
 
         .stat-number {
@@ -285,6 +306,7 @@
             color: var(--accent-purple-light);
             margin-bottom: 6px;
             font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(124, 92, 252, 0.3);
         }
 
         .stat-label {
@@ -302,7 +324,7 @@
             flex-wrap: wrap;
         }
 
-        /* ===== BOTÕES ===== */
+        /* Botões */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -341,25 +363,27 @@
         .btn-primary {
             background: var(--gradient-purple);
             color: var(--text-white);
-            box-shadow: 0 4px 16px rgba(93, 63, 211, 0.3);
+            box-shadow: 0 4px 20px rgba(93, 63, 211, 0.4);
+            border: 1px solid rgba(124, 92, 252, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(93, 63, 211, 0.4);
+            box-shadow: 0 8px 30px rgba(93, 63, 211, 0.6);
         }
 
         .btn-secondary {
             background: transparent;
             color: var(--accent-blue);
             border: 1.5px solid var(--accent-blue);
-            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(88, 166, 255, 0.15);
         }
 
         .btn-secondary:hover {
             background: rgba(88, 166, 255, 0.1);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(88, 166, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.25);
+            border-color: var(--accent-blue);
         }
 
         .btn-github {
@@ -371,10 +395,11 @@
         .btn-github:hover {
             background: rgba(22, 27, 34, 1);
             transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(124, 92, 252, 0.3);
+            box-shadow: var(--neon-glow);
         }
 
-        /* ===== HERO IMAGE ===== */
+        /* Hero Image */
         .hero-image {
             position: relative;
             perspective: 1000px;
@@ -384,15 +409,20 @@
             background: linear-gradient(145deg, var(--secondary-dark), var(--primary-dark));
             border-radius: 14px;
             overflow: hidden;
-            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(93, 63, 211, 0.1);
+            box-shadow: 
+                0 16px 32px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(93, 63, 211, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.08);
             max-width: 500px;
-            transition: transform 0.5s ease;
+            transition: all 0.3s ease;
             backdrop-filter: blur(10px);
         }
 
         .app-window:hover {
             transform: translateY(-5px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                var(--neon-glow);
         }
 
         .window-header {
@@ -454,6 +484,7 @@
         .app-feature:hover {
             background: rgba(93, 63, 211, 0.1);
             border-color: rgba(93, 63, 211, 0.3);
+            transform: translateX(5px);
         }
 
         .app-feature i {
@@ -462,6 +493,7 @@
             margin-right: 14px;
             width: 32px;
             text-align: center;
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .app-feature .text {
@@ -482,7 +514,7 @@
             line-height: 1.5;
         }
 
-        /* ===== SEÇÕES ===== */
+        /* Seções */
         section {
             padding: 80px 0;
             position: relative;
@@ -514,6 +546,7 @@
             height: 4px;
             background: var(--gradient-purple);
             border-radius: 2px;
+            box-shadow: var(--neon-glow);
         }
 
         .section-title p {
@@ -524,7 +557,7 @@
             line-height: 1.6;
         }
 
-        /* ===== FEATURES GRID ===== */
+        /* Features Grid */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -545,7 +578,7 @@
         .feature-card:hover {
             transform: translateY(-5px);
             border-color: var(--accent-purple);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--neon-glow);
         }
 
         .feature-icon {
@@ -553,11 +586,12 @@
             color: var(--accent-purple-light);
             margin-bottom: 20px;
             display: inline-block;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(124, 92, 252, 0.3));
         }
 
         .feature-card:hover .feature-icon {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
         }
 
         .feature-card h3 {
@@ -573,7 +607,7 @@
             font-size: 14px;
         }
 
-        /* ===== APIS SECTION ===== */
+        /* APIs Section */
         .apis-section {
             background: linear-gradient(180deg, var(--secondary-dark) 0%, var(--primary-dark) 100%);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -592,6 +626,7 @@
 
         .apis-category-title i {
             color: var(--accent-purple-light);
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .apis-grid {
@@ -640,7 +675,7 @@
         .api-card:hover {
             transform: translateY(-3px);
             border-color: var(--accent-purple);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--neon-glow);
         }
 
         .api-card:hover::before {
@@ -668,6 +703,7 @@
         .api-name i {
             font-size: 14px;
             color: var(--accent-purple-light);
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .api-status {
@@ -747,7 +783,7 @@
             gap: 5px;
         }
 
-        /* ===== API MONITOR INFO ===== */
+        /* API Monitor Info */
         .api-monitor-info {
             background: linear-gradient(135deg, rgba(31, 41, 55, 0.4), rgba(22, 27, 34, 0.6));
             border-radius: 14px;
@@ -770,6 +806,7 @@
 
         .api-monitor-info h4 i {
             color: var(--accent-purple-light);
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .api-monitor-info p {
@@ -798,6 +835,7 @@
         .monitor-stat i {
             font-size: 20px;
             color: var(--accent-blue);
+            filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.3));
         }
 
         .monitor-stat span {
@@ -806,33 +844,41 @@
             font-weight: 500;
         }
 
-        /* ===== DOWNLOAD SECTION ===== */
+        /* Download Section Corrigida */
         .download-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
             margin-top: 40px;
         }
 
         .download-card {
             background: var(--card-bg);
-            border-radius: 14px;
-            padding: 35px 28px;
-            text-align: center;
+            border-radius: 16px;
+            padding: 0;
             border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
+            height: 100%;
             display: flex;
             flex-direction: column;
+        }
+
+        .download-card-inner {
+            padding: 35px 30px;
             height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .download-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
             border-color: var(--accent-purple);
-            box-shadow: var(--shadow-md);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                var(--neon-glow);
         }
 
         .download-icon {
@@ -840,76 +886,96 @@
             color: var(--accent-purple-light);
             margin-bottom: 20px;
             display: inline-block;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 0 12px rgba(124, 92, 252, 0.4));
+            align-self: center;
         }
 
         .download-card:hover .download-icon {
-            transform: scale(1.1);
+            transform: scale(1.15) rotate(5deg);
         }
 
         .download-card h3 {
             color: var(--text-white);
             font-size: 22px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             font-weight: 700;
+            text-align: center;
         }
 
-        .download-card p {
+        .download-description {
             color: var(--text-muted);
             margin-bottom: 28px;
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.7;
+            text-align: center;
             flex: 1;
+        }
+
+        .download-button {
+            margin: 20px auto 25px;
+            min-width: 200px;
         }
 
         .download-stats {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            margin-top: auto;
         }
 
         .download-stat {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 12px;
-            background: rgba(31, 41, 55, 0.3);
+            padding: 14px;
+            background: rgba(31, 41, 55, 0.4);
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .download-stat:hover {
+            background: rgba(93, 63, 211, 0.1);
+            border-color: rgba(93, 63, 211, 0.3);
         }
 
         .download-stat i {
             color: var(--accent-purple-light);
-            font-size: 16px;
+            font-size: 18px;
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .download-stat div {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
             text-align: left;
         }
 
         .download-stat strong {
             color: var(--text-white);
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(124, 92, 252, 0.3);
         }
 
         .download-stat span {
             color: var(--text-muted);
             font-size: 11px;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .download-details {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 20px;
+            gap: 12px;
             padding-top: 20px;
+            margin-top: 20px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -918,25 +984,50 @@
             flex-direction: column;
             align-items: center;
             gap: 6px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            background: rgba(93, 63, 211, 0.1);
+            transform: translateY(-2px);
         }
 
         .detail-item i {
             color: var(--accent-purple-light);
-            font-size: 12px;
+            font-size: 13px;
+            filter: drop-shadow(0 0 6px rgba(124, 92, 252, 0.3));
         }
 
         .detail-item span {
             color: var(--text-muted);
             font-size: 11px;
             font-weight: 500;
+            text-align: center;
         }
 
-        /* ===== FOOTER ===== */
+        /* Footer Remasterizado */
         footer {
-            background: linear-gradient(180deg, var(--accent-steam) 0%, #111827 100%);
+            background: linear-gradient(180deg, var(--accent-steam) 0%, #0f172a 100%);
             padding: 60px 0 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(124, 92, 252, 0.1);
             position: relative;
+            margin-top: 40px;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--accent-purple-light), 
+                transparent);
         }
 
         .footer-content {
@@ -957,6 +1048,7 @@
             color: var(--text-white);
             font-weight: 800;
             font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
         }
 
         .footer-logo span {
@@ -964,6 +1056,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 20px rgba(124, 92, 252, 0.3);
         }
 
         .footer-description {
@@ -979,12 +1072,21 @@
             padding: 14px;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(124, 92, 252, 0.1);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .dev-info:hover {
+            background: rgba(93, 63, 211, 0.1);
+            border-color: rgba(124, 92, 252, 0.3);
+            transform: translateY(-2px);
         }
 
         .dev-info i {
             font-size: 18px;
             color: var(--accent-purple-light);
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .dev-info div {
@@ -1011,9 +1113,22 @@
             font-size: 16px;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(124, 92, 252, 0.2);
             position: relative;
             font-weight: 700;
+        }
+
+        .footer-links h4::after,
+        .footer-resources h4::after,
+        .footer-compatibility h4::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--gradient-purple);
+            border-radius: 1px;
         }
 
         .footer-links ul,
@@ -1033,12 +1148,26 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
+            padding: 4px 0;
         }
 
         .footer-links a:hover,
         .footer-resources a:hover {
             color: var(--text-white);
-            transform: translateX(3px);
+            transform: translateX(5px);
+        }
+
+        .footer-links a i,
+        .footer-resources a i {
+            color: var(--accent-purple-light);
+            font-size: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover i,
+        .footer-resources a:hover i {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 6px rgba(124, 92, 252, 0.3));
         }
 
         .footer-compatibility .compatibility-grid {
@@ -1060,13 +1189,14 @@
 
         .compatibility-item:hover {
             background: rgba(93, 63, 211, 0.1);
-            border-color: rgba(93, 63, 211, 0.3);
-            transform: translateY(-1px);
+            border-color: rgba(124, 92, 252, 0.3);
+            transform: translateY(-2px);
         }
 
         .compatibility-icon {
             color: var(--accent-green);
             font-size: 12px;
+            filter: drop-shadow(0 0 6px rgba(35, 134, 54, 0.3));
         }
 
         .compatibility-text {
@@ -1114,12 +1244,24 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid rgba(124, 92, 252, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .footer-stat:hover {
+            background: rgba(93, 63, 211, 0.1);
+            border-color: rgba(124, 92, 252, 0.3);
+            transform: translateY(-2px);
         }
 
         .footer-stat i {
             color: var(--accent-purple-light);
             font-size: 16px;
+            filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
         }
 
         .footer-stat span {
@@ -1128,7 +1270,7 @@
             font-weight: 500;
         }
 
-        /* ===== ANIMAÇÕES ===== */
+        /* Animações */
         @keyframes slideInUp {
             from {
                 transform: translateY(30px);
@@ -1140,101 +1282,20 @@
             }
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @keyframes neonPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 8px rgba(124, 92, 252, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 12px rgba(124, 92, 252, 0.6));
+            }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .neon-pulse {
+            animation: neonPulse 2s ease-in-out infinite;
         }
 
-        /* ===== NOTIFICAÇÕES ===== */
-        #notification {
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            z-index: 9999;
-            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: 380px;
-        }
-
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 18px 24px;
-            border-radius: 14px;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            min-width: 320px;
-            font-size: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .notification-content.success {
-            background: linear-gradient(135deg, rgba(35, 134, 54, 0.9) 0%, rgba(29, 115, 46, 0.85) 100%);
-            border-color: rgba(35, 134, 54, 0.4);
-        }
-
-        .notification-content.error {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.85) 100%);
-            border-color: rgba(239, 68, 68, 0.4);
-        }
-
-        .notification-icon {
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            flex-shrink: 0;
-        }
-
-        .notification-message {
-            flex: 1;
-            line-height: 1.5;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%) translateY(0) scale(0.9); opacity: 0; }
-            to { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
-        }
-
-        @keyframes slideOut {
-            from { transform: translateX(0) translateY(0) scale(1); opacity: 1; }
-            to { transform: translateX(100%) translateY(0) scale(0.9); opacity: 0; }
-        }
-
-        /* ===== UTILITÁRIOS ===== */
-        .fade-in {
-            animation: slideInUp 0.6s ease-out forwards;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .visible {
-            display: block !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-20 { margin-top: 20px; }
-        .mt-30 { margin-top: 30px; }
-        .mt-40 { margin-top: 40px; }
-
-        /* ===== RESPONSIVIDADE ===== */
+        /* Responsividade */
         @media (max-width: 1200px) {
             .footer-content {
                 grid-template-columns: repeat(2, 1fr);
@@ -1334,6 +1395,10 @@
                 font-size: 20px;
             }
             
+            .download-cards {
+                grid-template-columns: 1fr;
+            }
+            
             .download-stats {
                 grid-template-columns: 1fr;
             }
@@ -1363,7 +1428,7 @@
             
             .feature-card,
             .api-card,
-            .download-card {
+            .download-card-inner {
                 padding: 20px;
             }
             
@@ -1377,13 +1442,35 @@
                 gap: 15px;
             }
         }
+
+        /* Utilitários */
+        .fade-in {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+
+        /* Efeito de brilho sutil para elementos neon */
+        .neon-glow {
+            position: relative;
+        }
+
+        .neon-glow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            box-shadow: inset 0 0 20px rgba(124, 92, 252, 0.1);
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
     <!-- Canvas de Partículas -->
     <canvas id="particles-canvas"></canvas>
 
-    <!-- Header -->
+    <!-- Header Remasterizado -->
     <header>
         <div class="container header-content">
             <a href="#home" class="logo">
@@ -1430,7 +1517,7 @@
                         <div class="stat-label">APIs Principais</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number" id="hero-total-downloads">45.2k+</div>
+                        <div class="stat-number" id="hero-downloads">6k+</div>
                         <div class="stat-label">Downloads</div>
                     </div>
                     <div class="stat-card">
@@ -1440,7 +1527,7 @@
                 </div>
                 
                 <div class="action-buttons">
-                    <a href="#download" class="btn btn-primary" id="downloadMainBtn">
+                    <a href="#download" class="btn btn-primary" id="download-button">
                         <i class="fas fa-rocket"></i> Baixar Agora
                     </a>
                     <a href="#features" class="btn btn-secondary">
@@ -1560,14 +1647,14 @@
             </div>
             
             <div class="apis-grid">
-                <div class="api-card fade-in premium-card" data-api-key="Sadie API">
+                <div class="api-card fade-in premium-card">
                     <div class="api-header">
                         <div class="api-name">
                             <i class="fas fa-star"></i> Sadie API
                         </div>
                         <div class="api-status online">
                             <i class="fas fa-check-circle"></i>
-                            Online (22ms)
+                            Online (25ms)
                         </div>
                     </div>
                     <div class="api-url" title="http://167.235.229.108/m/<appid>">
@@ -1582,14 +1669,14 @@
                     </div>
                 </div>
                 
-                <div class="api-card fade-in premium-card" data-api-key="Ryuu API">
+                <div class="api-card fade-in premium-card">
                     <div class="api-header">
                         <div class="api-name">
                             <i class="fas fa-star"></i> Ryuu API
                         </div>
                         <div class="api-status online">
                             <i class="fas fa-check-circle"></i>
-                            Online (18ms)
+                            Online (30ms)
                         </div>
                     </div>
                     <div class="api-url" title="http://167.235.229.108/<appid>">
@@ -1598,13 +1685,13 @@
                     <div class="api-description">
                         API alternativa premium com alta velocidade
                         <div class="api-performance">
-                            <span class="perf-badge"><i class="fas fa-tachometer-alt"></i> Máxima Performance</span>
-                            <span class="perf-badge"><i class="fas fa-bolt"></i> Baixa Latência</span>
+                            <span class="perf-badge"><i class="fas fa-tachometer-alt"></i> Alta Velocidade</span>
+                            <span class="perf-badge"><i class="fas fa-shield-alt"></i> 100% Estável</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="api-card fade-in premium-card" data-api-key="TwentyTwo Cloud">
+                <div class="api-card fade-in premium-card">
                     <div class="api-header">
                         <div class="api-name">
                             <i class="fas fa-star"></i> TwentyTwo Cloud
@@ -1615,13 +1702,13 @@
                         </div>
                     </div>
                     <div class="api-url" title="http://masss.pythonanywhere.com/storage?auth=IEOIJE54esfsipoE56GE4&appid=<appid>">
-                        <i class="fas fa-link"></i> http://masss.pythonanywhere.com/storage?auth=...&appid=APPID
+                        <i class="fas fa-link"></i> http://masss.pythonanywhere.com/storage?auth=IEOIJE54esfsipoE56GE4&appid=APPID
                     </div>
                     <div class="api-description">
                         Storage em nuvem com autenticação segura
                         <div class="api-performance">
-                            <span class="perf-badge"><i class="fas fa-cloud"></i> Armazenamento Cloud</span>
-                            <span class="perf-badge"><i class="fas fa-lock"></i> Segurança Máxima</span>
+                            <span class="perf-badge"><i class="fas fa-tachometer-alt"></i> Alta Velocidade</span>
+                            <span class="perf-badge"><i class="fas fa-shield-alt"></i> 100% Estável</span>
                         </div>
                     </div>
                 </div>
@@ -1632,7 +1719,7 @@
                 <i class="fab fa-github"></i> Repositórios de Suporte
             </h3>
             <div class="apis-grid">
-                <div class="api-card fade-in github-card" data-api-key="ManifestHub">
+                <div class="api-card fade-in github-card">
                     <div class="api-header">
                         <div class="api-name">
                             <i class="fab fa-github"></i> ManifestHub
@@ -1652,7 +1739,7 @@
                     </div>
                 </div>
                 
-                <div class="api-card fade-in github-card" data-api-key="GameFiles Central">
+                <div class="api-card fade-in github-card">
                     <div class="api-header">
                         <div class="api-name">
                             <i class="fab fa-github"></i> GameFiles Central
@@ -1694,7 +1781,7 @@
         </div>
     </section>
 
-    <!-- Download Section -->
+    <!-- Download Section Corrigida -->
     <section class="download" id="download">
         <div class="container">
             <div class="section-title fade-in">
@@ -1704,59 +1791,63 @@
             
             <div class="download-cards">
                 <div class="download-card fade-in">
-                    <div class="download-icon">
-                        <i class="fas fa-desktop"></i>
-                    </div>
-                    <h3>Instalador Windows</h3>
-                    <p>Instalador completo com configuração automática, integração com Steam e otimizações para Windows 10/11.</p>
-                    <button class="btn btn-primary" id="downloadInstallerBtn">
-                        <i class="fas fa-download"></i> Baixar v19.0.0
-                    </button>
-                    <div class="download-stats">
-                        <div class="download-stat">
-                            <i class="fas fa-download"></i>
-                            <div>
-                                <strong id="total-downloads">45.2k+</strong>
-                                <span>Downloads Totais</span>
+                    <div class="download-card-inner">
+                        <div class="download-icon">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3>Instalador Windows</h3>
+                        <p class="download-description">Instalador completo com configuração automática, integração com Steam e otimizações para Windows 10/11.</p>
+                        <button class="btn btn-primary download-button" id="installer-download">
+                            <i class="fas fa-download"></i> Baixar v19.0.0
+                        </button>
+                        <div class="download-stats">
+                            <div class="download-stat">
+                                <i class="fas fa-download"></i>
+                                <div>
+                                    <strong id="total-downloads">6k+</strong>
+                                    <span>Downloads Totais</span>
+                                </div>
+                            </div>
+                            <div class="download-stat">
+                                <i class="fas fa-calendar-day"></i>
+                                <div>
+                                    <strong id="today-downloads">25</strong>
+                                    <span>Hoje</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="download-stat">
-                            <i class="fas fa-calendar-day"></i>
-                            <div>
-                                <strong id="today-downloads">127</strong>
-                                <span>Hoje</span>
+                        <div class="download-details">
+                            <div class="detail-item">
+                                <i class="fas fa-hdd"></i>
+                                <span>Tamanho: ~25 MB</span>
                             </div>
-                        </div>
-                    </div>
-                    <div class="download-details">
-                        <div class="detail-item">
-                            <i class="fas fa-hdd"></i>
-                            <span>Tamanho: ~25 MB</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-cog"></i>
-                            <span>Requer: .NET 4.8+</span>
+                            <div class="detail-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Requer: .NET 4.8+</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="download-card fade-in">
-                    <div class="download-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3>Código-Fonte</h3>
-                    <p>Acesse todo o código-fonte do projeto, contribua com melhorias ou crie sua própria versão personalizada.</p>
-                    <a href="https://github.com/oto-nexusdev/SteamGameLoader" target="_blank" class="btn btn-github">
-                        <i class="fab fa-github"></i> Acessar GitHub
-                    </a>
-                    <div class="download-details">
-                        <div class="detail-item">
-                            <i class="fas fa-balance-scale"></i>
-                            <span>Licença MIT</span>
+                    <div class="download-card-inner">
+                        <div class="download-icon">
+                            <i class="fas fa-code"></i>
                         </div>
-                        <div class="detail-item">
-                            <i class="fas fa-code-branch"></i>
-                            <span>Open Source</span>
+                        <h3>Código-Fonte</h3>
+                        <p class="download-description">Acesse todo o código-fonte do projeto, contribua com melhorias ou crie sua própria versão personalizada.</p>
+                        <a href="https://github.com/oto-nexusdev/SteamGameLoader" target="_blank" class="btn btn-github">
+                            <i class="fab fa-github"></i> Acessar GitHub
+                        </a>
+                        <div class="download-details">
+                            <div class="detail-item">
+                                <i class="fas fa-balance-scale"></i>
+                                <span>Licença MIT</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Open Source</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1764,7 +1855,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer Remasterizado -->
     <footer>
         <div class="container">
             <div class="footer-content">
@@ -1778,7 +1869,7 @@
                         <i class="fas fa-code"></i>
                         <div>
                             <strong>OtoNexusCloud</strong>
-                            <span>v19.0.0 • 2024-03-15</span>
+                            <span>v19.0.0 • 2025-01-15</span>
                         </div>
                     </div>
                 </div>
@@ -1828,7 +1919,7 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="compatibility-text">
-                                <strong>GreenLuma 2023</strong>
+                                <strong>GreenLuma 2024</strong>
                                 <span>Compatível</span>
                             </div>
                         </div>
@@ -1865,7 +1956,7 @@
             
             <div class="footer-bottom">
                 <div class="copyright">
-                    <p>&copy; 2024 Steam GameLoader v19.0.0. Plataforma de código aberto.</p>
+                    <p>&copy; 2025 Steam GameLoader v19.0.0. Plataforma de código aberto.</p>
                     <p class="disclaimer">
                         Steam é uma marca registrada da Valve Corporation. Este projeto é independente.
                     </p>
@@ -1881,253 +1972,130 @@
                     </div>
                     <div class="footer-stat">
                         <i class="fas fa-download"></i>
-                        <span id="footer-downloads">45.2k+ Downloads</span>
+                        <span id="footer-downloads">6k+ Downloads</span>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript Unificado -->
     <script>
-        // ===== CONFIGURAÇÕES =====
-        const CONFIG = {
-            version: '19.0.0',
-            releaseDate: '2024-03-15',
-            developer: 'OtoNexusCloud',
-            downloadUrl: 'https://github.com/oto-nexusdev/SteamGameLoader/releases/download/steamtools/SteamGameLoader.exe',
-            sourceUrl: 'https://github.com/oto-nexusdev/SteamGameLoader/archive/refs/heads/main.zip',
-            githubUrl: 'https://github.com/oto-nexusdev/SteamGameLoader',
-            telegramUrl: 'https://t.me/SteamGameLoader',
-            releasesUrl: 'https://github.com/oto-nexusdev/SteamGameLoader/releases/tag/steamtools'
-        };
-
-        // ===== SISTEMA DE PARTÍCULAS =====
-        class ParticleSystem {
+        // Sistema de Partículas
+        class Particles {
             constructor() {
                 this.canvas = document.getElementById('particles-canvas');
                 this.ctx = this.canvas.getContext('2d');
                 this.particles = [];
-                this.particleCount = 80;
-                this.resizeTimeout = null;
-                this.animationId = null;
-                this.isAnimating = false;
+                this.particleCount = 50;
+                this.colors = [
+                    'rgba(124, 92, 252, 0.5)',
+                    'rgba(88, 166, 255, 0.4)',
+                    'rgba(35, 134, 54, 0.3)'
+                ];
                 
                 this.init();
-                this.bindEvents();
-                this.startAnimation();
+                this.animate();
+                window.addEventListener('resize', () => this.init());
             }
             
             init() {
-                this.resizeCanvas();
-                this.createParticles();
-            }
-            
-            resizeCanvas() {
                 this.canvas.width = window.innerWidth;
                 this.canvas.height = window.innerHeight;
-                this.createParticles();
-            }
-            
-            createParticles() {
                 this.particles = [];
+                
                 for (let i = 0; i < this.particleCount; i++) {
                     this.particles.push({
                         x: Math.random() * this.canvas.width,
                         y: Math.random() * this.canvas.height,
-                        size: Math.random() * 2 + 0.8,
-                        speedX: (Math.random() - 0.5) * 0.5,
-                        speedY: (Math.random() - 0.5) * 0.5,
-                        opacity: Math.random() * 0.4 + 0.1,
-                        color: `rgba(${Math.floor(Math.random() * 60 + 195)}, 
-                                  ${Math.floor(Math.random() * 60 + 195)}, 
-                                  255, `
+                        size: Math.random() * 3 + 1,
+                        speedX: Math.random() * 1 - 0.5,
+                        speedY: Math.random() * 1 - 0.5,
+                        color: this.colors[Math.floor(Math.random() * this.colors.length)]
                     });
                 }
             }
             
-            drawParticles() {
+            animate() {
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 
-                // Desenhar conexões primeiro
-                for (let i = 0; i < this.particles.length; i++) {
-                    const p1 = this.particles[i];
+                // Atualizar e desenhar partículas
+                for (let particle of this.particles) {
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
                     
-                    for (let j = i + 1; j < this.particles.length; j++) {
-                        const p2 = this.particles[j];
-                        const dx = p1.x - p2.x;
-                        const dy = p1.y - p2.y;
+                    // Reaparecer nas bordas
+                    if (particle.x > this.canvas.width) particle.x = 0;
+                    if (particle.x < 0) particle.x = this.canvas.width;
+                    if (particle.y > this.canvas.height) particle.y = 0;
+                    if (particle.y < 0) particle.y = this.canvas.height;
+                    
+                    // Desenhar partícula
+                    this.ctx.beginPath();
+                    this.ctx.fillStyle = particle.color;
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    
+                    // Desenhar conexões
+                    for (let otherParticle of this.particles) {
+                        const dx = particle.x - otherParticle.x;
+                        const dy = particle.y - otherParticle.y;
                         const distance = Math.sqrt(dx * dx + dy * dy);
                         
-                        if (distance < 120) {
+                        if (distance < 100) {
                             this.ctx.beginPath();
-                            const opacity = 0.2 * (1 - distance / 120);
-                            this.ctx.strokeStyle = `rgba(93, 63, 211, ${opacity})`;
-                            this.ctx.lineWidth = 0.8;
-                            this.ctx.moveTo(p1.x, p1.y);
-                            this.ctx.lineTo(p2.x, p2.y);
+                            this.ctx.strokeStyle = `rgba(124, 92, 252, ${0.2 * (1 - distance/100)})`;
+                            this.ctx.lineWidth = 0.5;
+                            this.ctx.moveTo(particle.x, particle.y);
+                            this.ctx.lineTo(otherParticle.x, otherParticle.y);
                             this.ctx.stroke();
                         }
                     }
                 }
                 
-                // Desenhar partículas
-                for (let i = 0; i < this.particles.length; i++) {
-                    const p = this.particles[i];
-                    
-                    const gradient = this.ctx.createRadialGradient(
-                        p.x, p.y, 0,
-                        p.x, p.y, p.size * 3
-                    );
-                    gradient.addColorStop(0, `${p.color}${p.opacity})`);
-                    gradient.addColorStop(0.7, `${p.color}${p.opacity * 0.3})`);
-                    gradient.addColorStop(1, `${p.color}0)`);
-                    
-                    this.ctx.beginPath();
-                    this.ctx.fillStyle = gradient;
-                    this.ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
-                    this.ctx.fill();
-                }
-            }
-            
-            updateParticles() {
-                for (let i = 0; i < this.particles.length; i++) {
-                    const p = this.particles[i];
-                    
-                    p.x += p.speedX;
-                    p.y += p.speedY;
-                    
-                    // Rebater nas bordas com suavização
-                    if (p.x <= 0 || p.x >= this.canvas.width) {
-                        p.speedX *= -0.9;
-                        p.x = Math.max(2, Math.min(this.canvas.width - 2, p.x));
-                    }
-                    if (p.y <= 0 || p.y >= this.canvas.height) {
-                        p.speedY *= -0.9;
-                        p.y = Math.max(2, Math.min(this.canvas.height - 2, p.y));
-                    }
-                    
-                    // Adicionar leve movimento aleatório
-                    p.speedX += (Math.random() - 0.5) * 0.02;
-                    p.speedY += (Math.random() - 0.5) * 0.02;
-                    
-                    // Limitar velocidade
-                    const maxSpeed = 1.5;
-                    const speed = Math.sqrt(p.speedX * p.speedX + p.speedY * p.speedY);
-                    if (speed > maxSpeed) {
-                        p.speedX = (p.speedX / speed) * maxSpeed;
-                        p.speedY = (p.speedY / speed) * maxSpeed;
-                    }
-                }
-            }
-            
-            animate() {
-                if (!this.isAnimating) return;
-                
-                this.drawParticles();
-                this.updateParticles();
-                this.animationId = requestAnimationFrame(() => this.animate());
-            }
-            
-            startAnimation() {
-                this.isAnimating = true;
-                this.animate();
-            }
-            
-            stopAnimation() {
-                this.isAnimating = false;
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                }
-            }
-            
-            bindEvents() {
-                // Debounce resize
-                window.addEventListener('resize', () => {
-                    clearTimeout(this.resizeTimeout);
-                    this.resizeTimeout = setTimeout(() => {
-                        this.resizeCanvas();
-                    }, 250);
-                });
-                
-                // Pausar animação quando não visível
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        this.stopAnimation();
-                    } else {
-                        this.startAnimation();
-                    }
-                });
+                requestAnimationFrame(() => this.animate());
             }
         }
 
-        // ===== SISTEMA DE CONTADOR DE DOWNLOADS =====
-        class DownloadTracker {
+        // Sistema de Contador de Downloads
+        class DownloadCounter {
             constructor() {
-                this.stats = {
-                    total: 45217,
-                    today: 127,
-                    yesterday: 89
-                };
-                this.lastIncrement = 0;
-                this.incrementCooldown = 10000; // 10 segundos
-                this.storageKey = 'steamgameloader_stats';
+                this.storageKey = 'steam_gameloader_downloads';
+                this.todayKey = 'steam_gameloader_today';
+                this.currentDate = new Date().toDateString();
+                this.totalDownloads = this.getTotalDownloads();
+                this.todayDownloads = this.getTodayDownloads();
                 
-                this.init();
-            }
-            
-            init() {
-                this.loadStats();
-                this.updateCounterElements();
-                this.startAutoIncrement();
-            }
-            
-            loadStats() {
-                try {
-                    const saved = localStorage.getItem(this.storageKey);
-                    if (saved) {
-                        const parsed = JSON.parse(saved);
-                        if (parsed && parsed.total) {
-                            this.stats = parsed;
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Não foi possível carregar estatísticas salvas');
+                // Inicializar se for o primeiro acesso do dia
+                if (localStorage.getItem(this.todayKey) !== this.currentDate) {
+                    localStorage.setItem(this.todayKey, this.currentDate);
+                    this.todayDownloads = 0;
+                    this.saveTodayDownloads();
                 }
             }
             
-            saveStats() {
-                try {
-                    localStorage.setItem(this.storageKey, JSON.stringify(this.stats));
-                } catch (e) {
-                    console.warn('Não foi possível salvar estatísticas');
-                }
+            getTotalDownloads() {
+                return parseInt(localStorage.getItem(this.storageKey)) || 6000;
             }
             
-            incrementCounter() {
-                const now = Date.now();
-                
-                // Verificar cooldown
-                if (now - this.lastIncrement < this.incrementCooldown) {
-                    return false;
-                }
-                
-                // Incrementar estatísticas
-                const today = new Date().toDateString();
-                this.stats.total++;
-                
-                if (this.stats.lastIncrementDate === today) {
-                    this.stats.today++;
-                } else {
-                    this.stats.yesterday = this.stats.today;
-                    this.stats.today = 1;
-                    this.stats.lastIncrementDate = today;
-                }
-                
-                this.lastIncrement = now;
-                this.saveStats();
-                this.updateCounterElements();
-                return true;
+            getTodayDownloads() {
+                return parseInt(localStorage.getItem(`${this.todayKey}_count`)) || 25;
+            }
+            
+            saveTotalDownloads() {
+                localStorage.setItem(this.storageKey, this.totalDownloads);
+            }
+            
+            saveTodayDownloads() {
+                localStorage.setItem(`${this.todayKey}_count`, this.todayDownloads);
+            }
+            
+            increment() {
+                this.totalDownloads++;
+                this.todayDownloads++;
+                this.saveTotalDownloads();
+                this.saveTodayDownloads();
+                this.updateUI();
+                return this.totalDownloads;
             }
             
             formatCount(count) {
@@ -2139,318 +2107,314 @@
                 return count + '+';
             }
             
-            updateCounterElements() {
-                const totalFormatted = this.formatCount(this.stats.total);
+            updateUI() {
+                // Atualizar todos os elementos de contador
+                const totalFormatted = this.formatCount(this.totalDownloads);
+                const todayFormatted = this.todayDownloads;
                 
-                // Hero stats
-                const heroTotalElement = document.getElementById('hero-total-downloads');
-                if (heroTotalElement) {
-                    heroTotalElement.textContent = totalFormatted;
-                }
+                // Hero section
+                const heroDownloads = document.getElementById('hero-downloads');
+                if (heroDownloads) heroDownloads.textContent = totalFormatted;
                 
-                // Download card stats
-                const totalDownloadsElement = document.getElementById('total-downloads');
-                if (totalDownloadsElement) {
-                    totalDownloadsElement.textContent = totalFormatted;
-                }
+                // Download section
+                const totalDownloadsEl = document.getElementById('total-downloads');
+                if (totalDownloadsEl) totalDownloadsEl.textContent = totalFormatted;
                 
-                const todayDownloadsElement = document.getElementById('today-downloads');
-                if (todayDownloadsElement) {
-                    todayDownloadsElement.textContent = this.stats.today || 0;
-                }
+                const todayDownloadsEl = document.getElementById('today-downloads');
+                if (todayDownloadsEl) todayDownloadsEl.textContent = todayFormatted;
                 
-                // Footer stats
-                const footerDownloadsElement = document.getElementById('footer-downloads');
-                if (footerDownloadsElement) {
-                    footerDownloadsElement.textContent = totalFormatted + ' Downloads';
-                }
+                // Footer
+                const footerDownloads = document.getElementById('footer-downloads');
+                if (footerDownloads) footerDownloads.textContent = totalFormatted + ' Downloads';
             }
             
-            startAutoIncrement() {
-                // Incrementar aleatoriamente para simular downloads contínuos
-                setInterval(() => {
-                    // 10% de chance de incrementar a cada minuto
-                    if (Math.random() < 0.1) {
-                        this.stats.total++;
-                        this.stats.today++;
-                        this.saveStats();
-                        this.updateCounterElements();
-                    }
-                }, 60000); // 1 minuto
+            getStats() {
+                return {
+                    total: this.totalDownloads,
+                    today: this.todayDownloads,
+                    formattedTotal: this.formatCount(this.totalDownloads)
+                };
             }
         }
 
-        // ===== SISTEMA DE NOTIFICAÇÕES =====
-        function showNotification(message, type = 'success') {
-            const existing = document.getElementById('notification');
-            if (existing) existing.remove();
+        // Sistema Principal
+        class SteamGameLoader {
+            constructor() {
+                this.downloadCounter = new DownloadCounter();
+                this.isMenuOpen = false;
+                this.lastDownloadClick = 0;
+                this.downloadCooldown = 1000; // 1 segundo entre cliques
+                
+                this.init();
+            }
             
-            const notification = document.createElement('div');
-            notification.id = 'notification';
-            notification.innerHTML = `
-                <div class="notification-content ${type}">
-                    <div class="notification-icon">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-                    </div>
-                    <div class="notification-message">${message}</div>
-                </div>
-            `;
+            init() {
+                // Inicializar partículas
+                new Particles();
+                
+                // Configurar eventos
+                this.setupEvents();
+                
+                // Atualizar UI inicial
+                this.downloadCounter.updateUI();
+                
+                // Animações de scroll
+                this.setupScrollAnimations();
+                
+                // Tooltips para API cards
+                this.setupTooltips();
+            }
             
-            document.body.appendChild(notification);
-            
-            // Remover automaticamente após 4.5 segundos
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.style.animation = 'slideOut 0.4s ease forwards';
-                    setTimeout(() => {
-                        if (notification.parentNode) {
-                            notification.remove();
+            setupEvents() {
+                // Menu mobile
+                const mobileMenu = document.getElementById('mobileMenu');
+                const mainNav = document.getElementById('mainNav');
+                
+                if (mobileMenu) {
+                    mobileMenu.addEventListener('click', () => {
+                        this.isMenuOpen = !this.isMenuOpen;
+                        mainNav.classList.toggle('active', this.isMenuOpen);
+                        mobileMenu.innerHTML = this.isMenuOpen ? 
+                            '<i class="fas fa-times"></i>' : 
+                            '<i class="fas fa-bars"></i>';
+                    });
+                }
+                
+                // Fechar menu ao clicar em link
+                document.querySelectorAll('nav a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (this.isMenuOpen) {
+                            this.isMenuOpen = false;
+                            mainNav.classList.remove('active');
+                            mobileMenu.innerHTML = '<i class="fas fa-bars"></i>';
                         }
-                    }, 400);
+                    });
+                });
+                
+                // Botão de download
+                const downloadBtn = document.getElementById('installer-download');
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.handleDownload();
+                    });
                 }
-            }, 4500);
-        }
-
-        // ===== SISTEMA DE DOWNLOAD =====
-        async function startDownload(type) {
-            let button;
-            
-            // Encontrar o botão correto
-            if (type === 'installer') {
-                button = document.getElementById('downloadInstallerBtn') || 
-                         document.getElementById('downloadMainBtn');
+                
+                // Botão de download no hero
+                const heroDownloadBtn = document.getElementById('download-button');
+                if (heroDownloadBtn) {
+                    heroDownloadBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.getElementById('download').scrollIntoView({ behavior: 'smooth' });
+                    });
+                }
             }
             
-            if (!button) {
-                const downloadButtons = document.querySelectorAll('.btn-primary');
-                if (downloadButtons.length > 0) {
-                    button = downloadButtons[0];
-                } else {
-                    console.error('Botão de download não encontrado');
-                    showNotification('Erro ao encontrar botão de download', 'error');
+            setupScrollAnimations() {
+                // Observer para animações de entrada
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('fade-in');
+                        }
+                    });
+                }, observerOptions);
+                
+                // Observar todos os elementos com classe fade-in
+                document.querySelectorAll('.fade-in').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+            
+            setupTooltips() {
+                const apiCards = document.querySelectorAll('.api-card');
+                apiCards.forEach(card => {
+                    card.addEventListener('mouseenter', function() {
+                        const apiName = this.querySelector('.api-name').textContent;
+                        const apiUrl = this.querySelector('.api-url').textContent;
+                        
+                        this.title = `${apiName}\n${apiUrl}\nStatus: 100% Online`;
+                    });
+                });
+            }
+            
+            handleDownload() {
+                const now = Date.now();
+                
+                // Prevenir múltiplos cliques rápidos
+                if (now - this.lastDownloadClick < this.downloadCooldown) {
                     return;
                 }
-            }
-            
-            const originalHTML = button.innerHTML;
-            const originalDisabled = button.disabled;
-            
-            // Estado de loading
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
-            button.disabled = true;
-            
-            try {
-                // Incrementar contador
-                if (window.downloadTracker) {
-                    window.downloadTracker.incrementCounter();
-                }
                 
-                // Iniciar download após 1 segundo (para feedback visual)
+                this.lastDownloadClick = now;
+                
+                // Incrementar contador
+                this.downloadCounter.increment();
+                
+                // URL de download real
+                const downloadUrl = 'https://github.com/oto-nexusdev/SteamGameLoader/releases/download/steamtools/SteamGameLoader.exe';
+                
+                // Criar link temporário para download
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.download = 'SteamGameLoader.exe';
+                link.target = '_blank';
+                
+                // Adicionar efeito visual
+                const button = document.getElementById('installer-download');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Baixando...';
+                button.classList.add('btn-success');
+                
+                // Simular download
                 setTimeout(() => {
-                    let downloadUrl;
-                    let filename;
-                    
-                    if (type === 'installer') {
-                        downloadUrl = CONFIG.downloadUrl;
-                        filename = 'SteamGameLoader_v19.0.0.exe';
-                    } else if (type === 'source') {
-                        downloadUrl = CONFIG.sourceUrl;
-                        filename = 'SteamGameLoader_Source.zip';
-                    }
-                    
-                    // Criar link temporário para download
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.target = '_blank';
-                    link.rel = 'noopener noreferrer';
-                    link.download = filename;
-                    document.body.appendChild(link);
                     link.click();
-                    document.body.removeChild(link);
-                    
-                    showNotification('Download iniciado com sucesso!', 'success');
                     
                     // Restaurar botão após 2 segundos
                     setTimeout(() => {
-                        button.innerHTML = originalHTML;
-                        button.disabled = originalDisabled;
+                        button.innerHTML = originalText;
+                        button.classList.remove('btn-success');
                     }, 2000);
                     
-                }, 1000);
+                    // Mostrar notificação
+                    this.showNotification('Download iniciado! Verifique sua pasta de downloads.');
+                }, 500);
+            }
+            
+            showNotification(message) {
+                // Criar elemento de notificação
+                const notification = document.createElement('div');
+                notification.className = 'download-notification';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                `;
                 
-            } catch (error) {
-                console.error('Erro no download:', error);
-                showNotification('Erro ao iniciar download. Tente novamente.', 'error');
+                // Estilos para a notificação
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: var(--gradient-purple);
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    z-index: 10000;
+                    animation: slideInRight 0.3s ease;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    border: 1px solid rgba(255,255,255,0.1);
+                `;
                 
-                // Restaurar botão em caso de erro
-                button.innerHTML = originalHTML;
-                button.disabled = originalDisabled;
+                // Adicionar ao corpo
+                document.body.appendChild(notification);
+                
+                // Remover após 3 segundos
+                setTimeout(() => {
+                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+                
+                // Adicionar animações CSS dinamicamente
+                if (!document.querySelector('#notification-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'notification-styles';
+                    style.textContent = `
+                        @keyframes slideInRight {
+                            from { transform: translateX(100%); opacity: 0; }
+                            to { transform: translateX(0); opacity: 1; }
+                        }
+                        @keyframes slideOutRight {
+                            from { transform: translateX(0); opacity: 1; }
+                            to { transform: translateX(100%); opacity: 0; }
+                        }
+                        .btn-success {
+                            background: linear-gradient(135deg, #238636 0%, #2ea043 100%) !important;
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
             }
         }
 
-        // ===== INICIALIZAÇÃO DO SISTEMA =====
+        // Inicializar quando o DOM estiver carregado
         document.addEventListener('DOMContentLoaded', () => {
-            // Inicializar sistemas
-            new ParticleSystem();
-            window.downloadTracker = new DownloadTracker();
+            const app = new SteamGameLoader();
             
-            // Menu responsivo
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mainNav = document.getElementById('mainNav');
+            // Expor algumas funções globalmente se necessário
+            window.trackDownload = () => app.handleDownload();
+            window.startDownload = (type) => {
+                if (type === 'installer') {
+                    app.handleDownload();
+                }
+            };
             
-            if (mobileMenu && mainNav) {
-                mobileMenu.addEventListener('click', function() {
-                    mainNav.classList.toggle('active');
-                    this.innerHTML = mainNav.classList.contains('active') 
-                        ? '<i class="fas fa-times"></i>' 
-                        : '<i class="fas fa-bars"></i>';
-                    
-                    // Animar ícone
-                    this.style.transform = 'rotate(90deg)';
-                    setTimeout(() => {
-                        this.style.transform = 'rotate(0deg)';
-                    }, 300);
-                });
+            // Adicionar classe de carregamento ao body
+            document.body.classList.add('loaded');
+            
+            // Efeito de digitação no título (opcional)
+            const heroTitle = document.querySelector('.hero-text h2');
+            if (heroTitle) {
+                const text = heroTitle.innerHTML;
+                heroTitle.innerHTML = '';
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < text.length) {
+                        heroTitle.innerHTML += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50);
+                    }
+                };
+                // Iniciar após 500ms
+                setTimeout(typeWriter, 500);
             }
-            
-            // Fechar menu ao clicar em link
-            document.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (mainNav) {
-                        mainNav.classList.remove('active');
-                        if (mobileMenu) {
-                            mobileMenu.innerHTML = '<i class="fas fa-bars"></i>';
-                        }
-                    }
-                });
-            });
-            
-            // Scroll suave
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    const href = this.getAttribute('href');
-                    if (href === '#' || href === '#!') return;
-                    
-                    e.preventDefault();
-                    const targetElement = document.querySelector(href);
-                    if (targetElement) {
-                        const headerHeight = document.querySelector('header').offsetHeight;
-                        const targetPosition = targetElement.offsetTop - headerHeight - 20;
-                        
-                        window.scrollTo({
-                            top: targetPosition,
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
-            
-            // Efeito de scroll no header
-            window.addEventListener('scroll', () => {
-                const header = document.querySelector('header');
-                if (header) {
-                    if (window.scrollY > 50) {
-                        header.classList.add('scrolled');
+        });
+
+        // Suporte para navegadores mais antigos
+        if (!String.prototype.includes) {
+            String.prototype.includes = function(search, start) {
+                if (typeof start !== 'number') {
+                    start = 0;
+                }
+                if (start + search.length > this.length) {
+                    return false;
+                } else {
+                    return this.indexOf(search, start) !== -1;
+                }
+            };
+        }
+
+        // Polyfill para classList.toggle com segundo parâmetro
+        if (typeof DOMTokenList !== 'undefined' && !DOMTokenList.prototype.toggleWithForce) {
+            DOMTokenList.prototype.toggle = function(token, force) {
+                if (force !== undefined) {
+                    if (force) {
+                        this.add(token);
+                        return true;
                     } else {
-                        header.classList.remove('scrolled');
+                        this.remove(token);
+                        return false;
                     }
                 }
                 
-                // Animações de entrada
-                document.querySelectorAll('.fade-in').forEach(element => {
-                    const elementTop = element.getBoundingClientRect().top;
-                    const windowHeight = window.innerHeight;
-                    const revealPoint = 100;
-                    
-                    if (elementTop < windowHeight - revealPoint) {
-                        element.style.opacity = '1';
-                        element.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-            
-            // Inicializar animações de entrada
-            document.querySelectorAll('.fade-in').forEach(element => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(30px)';
-                element.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
-            });
-            
-            // Configurar botões de download
-            document.getElementById('downloadMainBtn')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                startDownload('installer');
-            });
-            
-            document.getElementById('downloadInstallerBtn')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                startDownload('installer');
-            });
-            
-            // Tooltips para API cards
-            document.querySelectorAll('.api-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    const apiName = this.querySelector('.api-name').textContent.trim();
-                    const apiUrl = this.querySelector('.api-url').textContent.trim();
-                    const apiStatus = this.querySelector('.api-status').textContent.trim();
-                    
-                    this.setAttribute('title', `${apiName}\n${apiUrl}\nStatus: ${apiStatus}`);
-                });
-            });
-            
-            // Simular atualização de ping das APIs
-            setInterval(() => {
-                document.querySelectorAll('.api-card .api-status.online').forEach(statusElement => {
-                    const newPing = `${Math.floor(Math.random() * 30) + 15}ms`;
-                    const icon = statusElement.querySelector('i').outerHTML;
-                    statusElement.innerHTML = `${icon} Online (${newPing})`;
-                });
-            }, 30000);
-            
-            // Trigger inicial de scroll
-            setTimeout(() => {
-                window.dispatchEvent(new Event('scroll'));
-            }, 150);
-            
-            // Efeito de hover nos cards
-            document.querySelectorAll('.feature-card, .api-card, .download-card, .stat-card').forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    card.style.zIndex = '10';
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    card.style.zIndex = '1';
-                });
-            });
-            
-            // Efeito de clique nos botões
-            document.querySelectorAll('.btn').forEach(button => {
-                button.addEventListener('mousedown', () => {
-                    button.style.transform = 'scale(0.98)';
-                });
-                
-                button.addEventListener('mouseup', () => {
-                    button.style.transform = '';
-                });
-                
-                button.addEventListener('mouseleave', () => {
-                    button.style.transform = '';
-                });
-            });
-        });
-
-        // ===== FUNÇÕES GLOBAIS =====
-        window.startDownload = startDownload;
-        window.showNotification = showNotification;
-
-        // ===== TRATAMENTO DE ERROS GLOBAL =====
-        window.addEventListener('error', function(e) {
-            console.error('Erro global capturado:', e.error);
-        });
-
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Promise rejeitada não tratada:', e.reason);
-        });
+                var hasToken = this.contains(token);
+                if (hasToken) {
+                    this.remove(token);
+                } else {
+                    this.add(token);
+                }
+                return !hasToken;
+            };
+        }
     </script>
 </body>
 </html>
